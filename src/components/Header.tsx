@@ -2,22 +2,30 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Search, Menu, User, Globe, X, Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getL1Categories } from '../utils/categories';
-import { getL1Areas, getL2Areas } from '../utils/areas';
+import { Menu, User, Globe, X, Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function Home() {
+interface HeaderProps {
+  isBannerVisible: boolean;
+  setIsBannerVisible: (visible: boolean) => void;
+  currentLanguage: string;
+  setCurrentLanguage: (lang: string) => void;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (logged: boolean) => void;
+}
+
+export default function Header({
+  isBannerVisible,
+  setIsBannerVisible,
+  currentLanguage,
+  setCurrentLanguage,
+  isLoggedIn,
+  setIsLoggedIn,
+}: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = React.useState(false);
-  const [currentLanguage, setCurrentLanguage] = React.useState('ko');
-  const [isBannerVisible, setIsBannerVisible] = React.useState(true);
+  const [isMyPageOpen, setIsMyPageOpen] = React.useState(false);
   const [currentBannerIndex, setCurrentBannerIndex] = React.useState(0);
   const [isBannerPaused, setIsBannerPaused] = React.useState(false);
-  const [userCountry, setUserCountry] = React.useState('대한민국');
-  const [selectedCategory, setSelectedCategory] = React.useState('');
-  const [selectedArea, setSelectedArea] = React.useState('');
-  const [isMyPageOpen, setIsMyPageOpen] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false); // 로그인 상태 관리
 
   const languages = [
     { code: 'ko', name: '한국어', flag: '🇰🇷' },
@@ -33,31 +41,7 @@ export default function Home() {
     { id: 4, title: '고객 만족도 조사', color: 'from-pink-500 to-rose-600' },
   ];
 
-  // Close language dropdown when clicking outside
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (!target.closest('.language-dropdown')) {
-        setIsLanguageOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Banner auto-rotation
-  React.useEffect(() => {
-    if (!isBannerPaused && isMenuOpen) {
-      const interval = setInterval(() => {
-        setCurrentBannerIndex((prev) => (prev + 1) % banners.length);
-      }, 3000);
-
-      return () => clearInterval(interval);
-    }
-  }, [isBannerPaused, isMenuOpen, banners.length]);
-
-  const handleLanguageChange = (languageCode: string) => {
+  const handleLanguageSelect = (languageCode: string) => {
     setCurrentLanguage(languageCode);
     setIsLanguageOpen(false);
   };
@@ -70,56 +54,15 @@ export default function Home() {
     setCurrentBannerIndex((prev) => (prev + 1) % banners.length);
   };
 
-  // Get user's country based on IP
+  // Banner auto-rotation
   React.useEffect(() => {
-    const getUserCountry = async () => {
-      try {
-        const response = await fetch('https://ipapi.co/json/');
-        const data = await response.json();
-        const countryNames: { [key: string]: string } = {
-          'KR': '대한민국',
-          'US': '미국',
-          'JP': '일본',
-          'CN': '중국',
-          'GB': '영국',
-          'DE': '독일',
-          'FR': '프랑스',
-          'CA': '캐나다',
-          'AU': '호주',
-          'IN': '인도',
-          'BR': '브라질',
-          'RU': '러시아',
-          'IT': '이탈리아',
-          'ES': '스페인',
-          'NL': '네덜란드',
-          'SE': '스웨덴',
-          'NO': '노르웨이',
-          'DK': '덴마크',
-          'FI': '핀란드',
-          'SG': '싱가포르',
-          'TH': '태국',
-          'VN': '베트남',
-          'ID': '인도네시아',
-          'MY': '말레이시아',
-          'PH': '필리핀'
-        };
-        
-        const country = countryNames[data.country_code] || data.country_name || '대한민국';
-        setUserCountry(country);
-      } catch (error) {
-        console.log('Failed to get user country:', error);
-        // 기본값으로 대한민국 유지
-      }
-    };
-
-    getUserCountry();
-  }, []);
-
-  // 카테고리 데이터 가져오기
-  const l1Categories = React.useMemo(() => getL1Categories(currentLanguage), [currentLanguage]);
-  
-  // 지역 데이터 가져오기
-  const l1Areas = React.useMemo(() => getL1Areas(currentLanguage), [currentLanguage]);
+    if (!isBannerPaused && isMenuOpen) {
+      const interval = setInterval(() => {
+        setCurrentBannerIndex((prev) => (prev + 1) % banners.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isBannerPaused, isMenuOpen, banners.length]);
 
   // Language-specific text content
   const getText = (key: string) => {
@@ -130,47 +73,10 @@ export default function Home() {
         suppliers: '공급사',
         top100: 'TOP100',
         board: '게시판',
-        heroTitle: '최적의 공급사를 찾아보세요',
-        heroSubtitle: '다양한 산업 분야의 신뢰할 수 있는 공급사들을 검색하고 비교해보세요. 품질과 가격을 모두 만족하는 최적의 파트너를 찾을 수 있습니다.',
-        searchTitle: '공급사 검색',
-        searchSubtitle: '원하는 조건을 입력하여 공급사를 검색해보세요',
-        searchPlaceholder: '제품/서비스명, 공급사명 등 입력하세요',
-        searchButton: '검색하기',
-        category: '제품/서비스',
-        location: '지역',
-        companySize: '기업 규모',
-        allCategories: '전체 품목',
-        allLocations: '전체 지역',
-        allSizes: '전체 규모',
-        popularCategories: '인기 업종',
-        accurateSearch: '정확한 검색',
-        accurateSearchDesc: '다양한 필터를 통해 원하는 조건에 맞는 공급사를 정확하게 찾을 수 있습니다.',
-        reliableInfo: '신뢰할 수 있는 정보',
-        reliableInfoDesc: '검증된 공급사 정보와 실시간 업데이트로 신뢰할 수 있는 데이터를 제공합니다.',
-        fastConnection: '빠른 연결',
-        fastConnectionDesc: '원하는 공급사를 찾으면 바로 연락처 정보를 확인하고 연결할 수 있습니다.',
-        footerTagline: '최적의 공급사를 찾는 가장 쉬운 방법',
-        services: '서비스',
-        customerSupport: '고객지원',
-        contact: '연락처',
-        supplierSearch: '공급사 검색',
-        categoryClassification: '업종별 분류',
-        comparisonAnalysis: '비교 분석',
-        faq: 'FAQ',
-        terms: '이용약관',
-        email: '이메일: contact@seepn.com',
-        phone: '전화: 02-1234-5678',
-        address: '주소: 서울시 강남구',
-        copyright: '© 2025 SEEPN. All rights reserved.',
-        accessCountry: '접속한 국가',
-        ylia: '일리아',
-        termsOfService: '이용약관',
-        privacyPolicy: '개인정보처리방침',
-        partnershipInquiry: '제휴/광고문의',
-        supplier: '공급사',
         // 메뉴 관련
         menu: '메뉴',
         notice: '공지사항',
+        faq: 'FAQ',
         // 마이페이지 관련
         mypage: '마이페이지',
         loginPrompt: '로그인 하세요.',
@@ -192,47 +98,10 @@ export default function Home() {
         suppliers: 'Suppliers',
         top100: 'TOP100',
         board: 'Board',
-        heroTitle: 'Find the Best Suppliers',
-        heroSubtitle: 'Search and compare reliable suppliers across various industries. Find the perfect partner that meets both quality and price requirements.',
-        searchTitle: 'Supplier Search',
-        searchSubtitle: 'Enter your desired conditions to search for suppliers',
-        searchPlaceholder: 'Enter product/service name, supplier name, etc.',
-        searchButton: 'Search',
-        category: 'Product/Service',
-        location: 'Location',
-        companySize: 'Company Size',
-        allCategories: 'All Industries',
-        allLocations: 'All Locations',
-        allSizes: 'All Sizes',
-        popularCategories: 'Popular Industries',
-        accurateSearch: 'Accurate Search',
-        accurateSearchDesc: 'Find suppliers that match your exact requirements through various filters.',
-        reliableInfo: 'Reliable Information',
-        reliableInfoDesc: 'Provide verified supplier information and real-time updates for reliable data.',
-        fastConnection: 'Fast Connection',
-        fastConnectionDesc: 'Find the supplier you want and immediately check contact information and connect.',
-        footerTagline: 'The easiest way to find the best suppliers',
-        services: 'Services',
-        customerSupport: 'Customer Support',
-        contact: 'Contact',
-        supplierSearch: 'Supplier Search',
-        categoryClassification: 'Category Classification',
-        comparisonAnalysis: 'Comparison Analysis',
-        faq: 'FAQ',
-        terms: 'Terms of Service',
-        email: 'Email: contact@seepn.com',
-        phone: 'Phone: 02-1234-5678',
-        address: 'Address: Gangnam-gu, Seoul',
-        copyright: '© 2025 SEEPN. All rights reserved.',
-        accessCountry: 'Access Country',
-        ylia: 'Ylia',
-        termsOfService: 'Terms of Service',
-        privacyPolicy: 'Privacy Policy',
-        partnershipInquiry: 'Partnership/Ad Inquiry',
-        supplier: 'Supplier',
         // 메뉴 관련
         menu: 'Menu',
         notice: 'Notice',
+        faq: 'FAQ',
         // 마이페이지 관련
         mypage: 'My Page',
         loginPrompt: 'Please log in.',
@@ -254,47 +123,10 @@ export default function Home() {
         suppliers: 'サプライヤー',
         top100: 'TOP100',
         board: '掲示板',
-        heroTitle: '最高のサプライヤーを見つけましょう',
-        heroSubtitle: '様々な業界の信頼できるサプライヤーを検索・比較してください。品質と価格の両方を満たす最適なパートナーを見つけることができます。',
-        searchTitle: 'サプライヤー検索',
-        searchSubtitle: '希望する条件を入力してサプライヤーを検索してください',
-        searchPlaceholder: '製品/サービス名、サプライヤー名など入力してください',
-        searchButton: '検索',
-        category: '製品/サービス',
-        location: '地域',
-        companySize: '企業規模',
-        allCategories: '全業界',
-        allLocations: '全地域',
-        allSizes: '全規模',
-        popularCategories: '人気業界',
-        accurateSearch: '正確な検索',
-        accurateSearchDesc: '様々なフィルターを通じて希望する条件に合うサプライヤーを正確に見つけることができます。',
-        reliableInfo: '信頼できる情報',
-        reliableInfoDesc: '検証されたサプライヤー情報とリアルタイム更新で信頼できるデータを提供します。',
-        fastConnection: '迅速な接続',
-        fastConnectionDesc: '希望するサプライヤーを見つけたら、すぐに連絡先情報を確認して接続できます。',
-        footerTagline: '最高のサプライヤーを見つける最も簡単な方法',
-        services: 'サービス',
-        customerSupport: 'カスタマーサポート',
-        contact: 'お問い合わせ',
-        supplierSearch: 'サプライヤー検索',
-        categoryClassification: '業界別分類',
-        comparisonAnalysis: '比較分析',
-        faq: 'FAQ',
-        terms: '利用規約',
-        email: 'メール: contact@seepn.com',
-        phone: '電話: 02-1234-5678',
-        address: '住所: ソウル市江南区',
-        copyright: '© 2025 SEEPN. All rights reserved.',
-        accessCountry: 'アクセス国',
-        ylia: 'イリア',
-        termsOfService: '利用規約',
-        privacyPolicy: 'プライバシーポリシー',
-        partnershipInquiry: '提携/広告お問い合わせ',
-        supplier: 'サプライヤー',
         // 메뉴 관련
         menu: 'メニュー',
         notice: 'お知らせ',
+        faq: 'FAQ',
         // 마이페이지 관련
         mypage: 'マイページ',
         loginPrompt: 'ログインしてください。',
@@ -315,48 +147,11 @@ export default function Home() {
         home: '首页',
         suppliers: '供应商',
         top100: 'TOP100',
-        board: '公告板',
-        heroTitle: '寻找最佳供应商',
-        heroSubtitle: '搜索和比较各个行业的可靠供应商。找到满足质量和价格要求的最佳合作伙伴。',
-        searchTitle: '供应商搜索',
-        searchSubtitle: '输入您想要的条件来搜索供应商',
-        searchPlaceholder: '输入产品/服务名称、供应商名称等',
-        searchButton: '搜索',
-        category: '产品/服务',
-        location: '地区',
-        companySize: '企业规模',
-        allCategories: '所有行业',
-        allLocations: '所有地区',
-        allSizes: '所有规模',
-        popularCategories: '热门行业',
-        accurateSearch: '精确搜索',
-        accurateSearchDesc: '通过各种过滤器找到符合您确切要求的供应商。',
-        reliableInfo: '可靠信息',
-        reliableInfoDesc: '提供经过验证的供应商信息和实时更新，确保数据可靠。',
-        fastConnection: '快速连接',
-        fastConnectionDesc: '找到您想要的供应商后，立即查看联系信息并进行连接。',
-        footerTagline: '寻找最佳供应商的最简单方法',
-        services: '服务',
-        customerSupport: '客户支持',
-        contact: '联系我们',
-        supplierSearch: '供应商搜索',
-        categoryClassification: '行业分类',
-        comparisonAnalysis: '比较分析',
-        faq: '常见问题',
-        terms: '服务条款',
-        email: '邮箱: contact@seepn.com',
-        phone: '电话: 02-1234-5678',
-        address: '地址: 首尔市江南区',
-        copyright: '© 2025 SEEPN. All rights reserved.',
-        accessCountry: '访问国家',
-        ylia: '一利亚',
-        termsOfService: '服务条款',
-        privacyPolicy: '隐私政策',
-        partnershipInquiry: '合作/广告咨询',
-        supplier: '供应商',
+        board: '论坛',
         // 메뉴 관련
         menu: '菜单',
         notice: '公告',
+        faq: '常见问题',
         // 마이페이지 관련
         mypage: '我的页面',
         loginPrompt: '请登录。',
@@ -378,7 +173,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <>
       {/* Top Banner */}
       {isBannerVisible && (
         <div className="fixed top-0 left-0 right-0 bg-blue-600 text-white z-50 flex items-center" style={{ height: '48px' }}>
@@ -403,16 +198,16 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <a href="/" className="flex items-center hover:opacity-80 transition-opacity">
+              <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
                 <h1 className="text-2xl font-bold text-gray-900">SEEPN</h1>
                 <span className="hidden md:block ml-2 text-sm text-gray-500">{getText('serviceName')}</span>
-              </a>
+              </Link>
             </div>
             
             {/* Menu, User, and Language Icons */}
             <div className="flex items-center space-x-4">
               {/* Menu Icon */}
-              <button
+              <button 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
@@ -442,7 +237,7 @@ export default function Home() {
                     {languages.map((language) => (
                       <button
                         key={language.code}
-                        onClick={() => handleLanguageChange(language.code)}
+                        onClick={() => handleLanguageSelect(language.code)}
                         className={`w-full flex items-center px-4 py-2 text-sm hover:bg-gray-100 transition-colors ${
                           currentLanguage === language.code ? 'text-blue-600 font-medium' : 'text-gray-700'
                         }`}
@@ -750,136 +545,6 @@ export default function Home() {
           </nav>
         </div>
       </div>
-
-      {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center" style={{ paddingTop: isBannerVisible ? '48px' : '0px' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-8">
-            {getText('heroTitle')}
-          </h2>
-        </div>
-
-        {/* Search Section */}
-        <div className="mb-16">
-          {/* Search Form */}
-          <div className="space-y-6">
-              {/* Filters */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                    {getText('category')}
-                  </label>
-                  <select
-                    id="category"
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">{getText('allCategories')}</option>
-                    {l1Categories.map((category) => (
-                      <option key={category.value} value={category.value}>
-                        {category.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div>
-                  <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-                    {getText('location')}
-                  </label>
-                  <select
-                    id="location"
-                    value={selectedArea}
-                    onChange={(e) => setSelectedArea(e.target.value)}
-                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">{getText('allLocations')}</option>
-                    {l1Areas.map((area) => (
-                      <option key={area.value} value={area.value}>
-                        {area.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Main Search */}
-              <div>
-                <label htmlFor="main-search" className="block text-sm font-medium text-gray-700 mb-2">
-                  검색어
-                </label>
-                <div className="flex gap-4">
-                  <div className="relative flex-1">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Search className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="text"
-                      id="main-search"
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder={getText('searchPlaceholder')}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 whitespace-nowrap"
-                  >
-                    {getText('searchButton')}
-                  </button>
-                </div>
-                
-                {/* Popular Search Terms */}
-                <div className="mt-4">
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {['비상구', '사무용품', '모바일상품권', '마케팅', 'MKCUBE'].map((term, index) => (
-                      <button
-                        key={index}
-                        className="inline-flex items-center px-3 py-1 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors cursor-pointer"
-                        onClick={() => {
-                          const searchInput = document.getElementById('main-search') as HTMLInputElement;
-                          if (searchInput) {
-                            searchInput.value = term;
-                            searchInput.focus();
-                          }
-                        }}
-                      >
-                        #{term}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-        </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-50 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-gray-600 mb-4">
-              <span>{getText('accessCountry')}: {userCountry}</span>
-              <span className="text-gray-400">|</span>
-              <a href="https://www.ylia.io" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900">{getText('ylia')}</a>
-              <span className="text-gray-400">|</span>
-              <Link href="/terms" className="hover:text-gray-900">{getText('termsOfService')}</Link>
-              <span className="text-gray-400">|</span>
-              <Link href="/privacy" className="hover:text-gray-900 font-bold">{getText('privacyPolicy')}</Link>
-              <span className="text-gray-400">|</span>
-              <Link href="/contact" className="hover:text-gray-900">{getText('partnershipInquiry')}</Link>
-              <span className="text-gray-400">|</span>
-              <a href="https://www.suppliers.kr" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900">{getText('supplier')}</a>
-            </div>
-            <p className="text-sm text-gray-600">
-              {getText('copyright')}
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }

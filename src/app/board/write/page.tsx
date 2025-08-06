@@ -1,0 +1,497 @@
+'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { ArrowLeft, Upload, X, Bold, Italic, Underline, List, ListOrdered, Link2 } from 'lucide-react';
+
+type PostCategory = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
+
+export default function BoardWritePage() {
+  const router = useRouter();
+
+  // Language and UI states
+  const [currentLanguage, setCurrentLanguage] = useState('ko');
+  const [userCountry, setUserCountry] = useState('KR');
+  const [isBannerVisible, setIsBannerVisible] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Form states
+  const [selectedCategory, setSelectedCategory] = useState<PostCategory>('daily');
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [attachments, setAttachments] = useState<Array<{name: string, size: string, file?: File}>>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Editor states
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Fetch user country
+  useEffect(() => {
+    const fetchUserCountry = async () => {
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        setUserCountry(data.country_name || 'Unknown');
+      } catch (error) {
+        console.error('Failed to fetch user country:', error);
+        setUserCountry('Unknown');
+      }
+    };
+
+    fetchUserCountry();
+  }, []);
+
+  // Translations
+  const getText = (key: string) => {
+    const translations = {
+      ko: {
+        writePost: '글쓰기',
+        backToList: '목록으로',
+        category: '구분',
+        title: '제목',
+        content: '내용',
+        attachments: '첨부파일',
+        cancel: '취소',
+        register: '등록',
+        registering: '등록 중...',
+        titlePlaceholder: '제목을 입력하세요',
+        contentPlaceholder: '내용을 입력하세요',
+        fileUploadText: '파일을 드래그하거나 클릭하여 업로드하세요',
+        categoryDaily: '일상글',
+        categoryCurious: '궁금해요',
+        categoryTogether: '함께해요',
+        categoryInform: '알려드려요',
+        categoryShare: '나눔해요',
+        categoryTell: '들려줘요',
+      },
+      en: {
+        writePost: 'Write Post',
+        backToList: 'Back to List',
+        category: 'Category',
+        title: 'Title',
+        content: 'Content',
+        attachments: 'Attachments',
+        cancel: 'Cancel',
+        register: 'Register',
+        registering: 'Registering...',
+        titlePlaceholder: 'Enter title',
+        contentPlaceholder: 'Enter content',
+        fileUploadText: 'Drag files here or click to upload',
+        categoryDaily: 'Daily',
+        categoryCurious: 'Curious',
+        categoryTogether: 'Together',
+        categoryInform: 'Inform',
+        categoryShare: 'Share',
+        categoryTell: 'Tell',
+      },
+      ja: {
+        writePost: '投稿作成',
+        backToList: 'リストに戻る',
+        category: 'カテゴリー',
+        title: 'タイトル',
+        content: '内容',
+        attachments: '添付ファイル',
+        cancel: 'キャンセル',
+        register: '登録',
+        registering: '登録中...',
+        titlePlaceholder: 'タイトルを入力してください',
+        contentPlaceholder: '内容を入力してください',
+        fileUploadText: 'ファイルをドラッグするかクリックしてアップロード',
+        categoryDaily: '日常',
+        categoryCurious: '質問',
+        categoryTogether: '一緒に',
+        categoryInform: 'お知らせ',
+        categoryShare: 'シェア',
+        categoryTell: '教えて',
+      },
+      zh: {
+        writePost: '写帖子',
+        backToList: '返回列表',
+        category: '分类',
+        title: '标题',
+        content: '内容',
+        attachments: '附件',
+        cancel: '取消',
+        register: '注册',
+        registering: '注册中...',
+        titlePlaceholder: '请输入标题',
+        contentPlaceholder: '请输入内容',
+        fileUploadText: '拖拽文件或点击上传',
+        categoryDaily: '日常',
+        categoryCurious: '疑问',
+        categoryTogether: '一起',
+        categoryInform: '通知',
+        categoryShare: '分享',
+        categoryTell: '告诉',
+      }
+    };
+
+    return translations[currentLanguage as keyof typeof translations]?.[key as keyof typeof translations.ko] || key;
+  };
+
+  // Handle file upload
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    
+    files.forEach(file => {
+      const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
+      const newAttachment = {
+        name: file.name,
+        size: `${sizeInMB}MB`,
+        file: file
+      };
+      
+      setAttachments(prev => [...prev, newAttachment]);
+    });
+    
+    // Reset input
+    e.target.value = '';
+  };
+
+  // Handle file drag and drop
+  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    
+    if (files.length > 0) {
+      files.forEach(file => {
+        const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
+        const newAttachment = {
+          name: file.name,
+          size: `${sizeInMB}MB`,
+          file: file
+        };
+        
+        setAttachments(prev => [...prev, newAttachment]);
+      });
+    }
+  };
+
+  // Handle file remove
+  const handleFileRemove = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Editor functions
+  const executeCommand = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    editorRef.current?.focus();
+  };
+
+  const handleEditorInput = () => {
+    if (editorRef.current) {
+      setContent(editorRef.current.innerHTML);
+    }
+  };
+
+  const handleEditorFocus = () => {
+    setIsEditorFocused(true);
+  };
+
+  const handleEditorBlur = () => {
+    setIsEditorFocused(false);
+  };
+
+  // Initialize editor content
+  useEffect(() => {
+    if (editorRef.current && content) {
+      editorRef.current.innerHTML = content;
+    }
+  }, []);
+
+  // Update editor when content changes externally
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== content) {
+      editorRef.current.innerHTML = content;
+    }
+  }, [content]);
+
+  // Handle cancel
+  const handleCancel = () => {
+    router.push('/board');
+  };
+
+  // Handle register
+  const handleRegister = async () => {
+    // Get plain text content for validation
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = content;
+    const plainTextContent = tempDiv.textContent || tempDiv.innerText || '';
+    
+    if (!title.trim() || !plainTextContent.trim()) {
+      alert('제목과 내용을 입력해주세요.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // In real app, this would be an API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('New post data:', {
+        category: selectedCategory,
+        title,
+        content,
+        attachments: attachments.map(a => a.name)
+      });
+      
+      alert('글이 등록되었습니다.');
+      router.push('/board');
+    } catch (error) {
+      console.error('Failed to register post:', error);
+      alert('글 등록에 실패했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      <Header 
+        isBannerVisible={isBannerVisible}
+        setIsBannerVisible={setIsBannerVisible}
+        currentLanguage={currentLanguage} 
+        setCurrentLanguage={setCurrentLanguage}
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
+      />
+      <main className="flex-1" style={{ paddingTop: isBannerVisible ? '120px' : '80px' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
+          {/* Back Button */}
+          <div className="mb-6">
+            <button
+              onClick={() => router.push('/board')}
+              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {getText('backToList')}
+            </button>
+          </div>
+
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">{getText('writePost')}</h1>
+
+          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+            <div className="space-y-6">
+              {/* Category */}
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                  {getText('category')}
+                </label>
+                <select
+                  id="category"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value as PostCategory)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                >
+                  <option value="daily">{getText('categoryDaily')}</option>
+                  <option value="curious">{getText('categoryCurious')}</option>
+                  <option value="together">{getText('categoryTogether')}</option>
+                  <option value="inform">{getText('categoryInform')}</option>
+                  <option value="share">{getText('categoryShare')}</option>
+                  <option value="tell">{getText('categoryTell')}</option>
+                </select>
+              </div>
+
+              {/* Title */}
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                  {getText('title')}
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder={getText('titlePlaceholder')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Content */}
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {getText('content')}
+                </label>
+                
+                {/* Editor Toolbar */}
+                <div className="border border-gray-300 rounded-t-lg bg-gray-50 p-2 flex flex-wrap gap-1">
+                  <button
+                    type="button"
+                    onClick={() => executeCommand('bold')}
+                    className="p-2 hover:bg-gray-200 rounded transition-colors"
+                    title="굵게"
+                  >
+                    <Bold className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => executeCommand('italic')}
+                    className="p-2 hover:bg-gray-200 rounded transition-colors"
+                    title="기울임"
+                  >
+                    <Italic className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => executeCommand('underline')}
+                    className="p-2 hover:bg-gray-200 rounded transition-colors"
+                    title="밑줄"
+                  >
+                    <Underline className="h-4 w-4" />
+                  </button>
+                  <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                  <button
+                    type="button"
+                    onClick={() => executeCommand('insertUnorderedList')}
+                    className="p-2 hover:bg-gray-200 rounded transition-colors"
+                    title="글머리 기호"
+                  >
+                    <List className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => executeCommand('insertOrderedList')}
+                    className="p-2 hover:bg-gray-200 rounded transition-colors"
+                    title="번호 매기기"
+                  >
+                    <ListOrdered className="h-4 w-4" />
+                  </button>
+                  <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const url = prompt('링크 URL을 입력하세요:');
+                      if (url) executeCommand('createLink', url);
+                    }}
+                    className="p-2 hover:bg-gray-200 rounded transition-colors"
+                    title="링크"
+                  >
+                    <Link2 className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Editor Content */}
+                <div
+                  ref={editorRef}
+                  contentEditable
+                  onInput={handleEditorInput}
+                  onFocus={handleEditorFocus}
+                  onBlur={handleEditorBlur}
+                  className={`w-full min-h-[300px] px-3 py-2 border-x border-b border-gray-300 rounded-b-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                    isEditorFocused ? 'ring-2 ring-blue-500 border-transparent' : ''
+                  }`}
+                  style={{ 
+                    maxHeight: '500px', 
+                    overflowY: 'auto',
+                    lineHeight: '1.5'
+                  }}
+                  suppressContentEditableWarning={true}
+                />
+                
+                {/* Placeholder */}
+                {!content && (
+                  <div 
+                    className="absolute text-gray-500 pointer-events-none"
+                    style={{ 
+                      top: '74px', 
+                      left: '12px',
+                      fontSize: '14px'
+                    }}
+                  >
+                    {getText('contentPlaceholder')}
+                  </div>
+                )}
+              </div>
+
+              {/* Attachments */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {getText('attachments')}
+                </label>
+                
+                {/* Existing attachments */}
+                {attachments.length > 0 && (
+                  <div className="space-y-2 mb-4">
+                    {attachments.map((attachment, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Upload className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm text-gray-700">{attachment.name}</span>
+                          <span className="text-xs text-gray-500">({attachment.size})</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleFileRemove(index)}
+                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* File upload area */}
+                <div
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center text-gray-500 cursor-pointer hover:border-blue-500 transition-colors"
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={handleFileDrop}
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                >
+                  <input
+                    type="file"
+                    id="file-upload"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                  <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm">{getText('fileUploadText')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2 justify-center">
+            <button
+              onClick={handleCancel}
+              disabled={isSubmitting}
+              className="px-6 py-2 text-sm text-gray-600 hover:text-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+            >
+              {getText('cancel')}
+            </button>
+            <button
+              onClick={handleRegister}
+              disabled={isSubmitting || !title.trim() || (() => {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = content;
+                const plainTextContent = tempDiv.textContent || tempDiv.innerText || '';
+                return !plainTextContent.trim();
+              })()}
+              className="flex items-center gap-2 px-6 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+              {isSubmitting ? getText('registering') : getText('register')}
+            </button>
+          </div>
+        </div>
+      </main>
+      <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
+    </div>
+  );
+}
