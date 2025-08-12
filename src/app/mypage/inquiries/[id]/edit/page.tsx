@@ -8,7 +8,7 @@ import { Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
 
 type InquiryCategoryKey = 'service' | 'supplier' | 'certification' | 'payment' | 'bug' | 'etc';
 
-type AttachmentItem = { name: string; file?: File };
+type AttachmentItem = { name: string; size?: string; file?: File };
 
 export default function InquiryEditPage() {
   const router = useRouter();
@@ -60,8 +60,8 @@ export default function InquiryEditPage() {
         titleLabel: '제목',
         contentLabel: '내용',
         attachmentsLabel: '첨부파일',
-        fileUploadText: '파일을 선택하거나 여기로 드래그하세요',
-        fileUploadNote: '최대 10MB, PDF, DOC, DOCX, JPG, PNG',
+        addFile: '파일 추가',
+        dragHint: '또는 파일을 드래그하여 업로드',
         selectedFiles: '선택된 파일',
         removeFile: '파일 삭제',
         cancel: '취소',
@@ -84,8 +84,8 @@ export default function InquiryEditPage() {
         titleLabel: 'Title',
         contentLabel: 'Content',
         attachmentsLabel: 'Attachments',
-        fileUploadText: 'Select files or drag them here',
-        fileUploadNote: 'Max 10MB, PDF, DOC, DOCX, JPG, PNG',
+        addFile: 'Add File',
+        dragHint: 'or drag files to upload',
         selectedFiles: 'Selected Files',
         removeFile: 'Remove',
         cancel: 'Cancel',
@@ -108,8 +108,8 @@ export default function InquiryEditPage() {
         titleLabel: 'タイトル',
         contentLabel: '内容',
         attachmentsLabel: '添付ファイル',
-        fileUploadText: 'ファイルを選択するかここにドラッグしてください',
-        fileUploadNote: '最大10MB, PDF, DOC, DOCX, JPG, PNG',
+        addFile: 'ファイル追加',
+        dragHint: 'またはファイルをドラッグしてアップロード',
         selectedFiles: '選択されたファイル',
         removeFile: '削除',
         cancel: 'キャンセル',
@@ -132,8 +132,8 @@ export default function InquiryEditPage() {
         titleLabel: '标题',
         contentLabel: '内容',
         attachmentsLabel: '附件',
-        fileUploadText: '选择文件或拖拽到此处',
-        fileUploadNote: '最大10MB, PDF, DOC, DOCX, JPG, PNG',
+        addFile: '添加文件',
+        dragHint: '或拖拽文件以上传',
         selectedFiles: '已选文件',
         removeFile: '删除',
         cancel: '取消',
@@ -206,7 +206,7 @@ export default function InquiryEditPage() {
         newErrors.push(`${file.name}: 형식 불가`);
         return;
       }
-      validFiles.push({ name: file.name, file });
+      validFiles.push({ name: file.name, size: `${(file.size / 1024 / 1024).toFixed(1)}MB`, file });
     });
 
     if (newErrors.length > 0) {
@@ -338,12 +338,35 @@ export default function InquiryEditPage() {
                 {errors.content && <p className="mt-1 text-sm text-red-600">{errors.content}</p>}
               </div>
 
-              {/* Attachments */}
+              {/* Attachments (match Board edit UI) */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {getText('attachmentsLabel')}
                 </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                {/* Existing attachments */}
+                {formData.attachments.length > 0 && (
+                  <div className="space-y-2 mb-4">
+                    {formData.attachments.map((att, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <Upload className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm text-gray-700">{att.name}</span>
+                          {att.size && <span className="text-xs text-gray-500">({att.size})</span>}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeAttachment(index)}
+                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Upload area */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
                   <input
                     type="file"
                     id="fileUpload"
@@ -352,35 +375,14 @@ export default function InquiryEditPage() {
                     onChange={handleFileUpload}
                     className="hidden"
                   />
-                  <label htmlFor="fileUpload" className="cursor-pointer">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600 mb-1">{getText('fileUploadText')}</p>
-                    <p className="text-xs text-gray-500">{getText('fileUploadNote')}</p>
+                  <label htmlFor="fileUpload" className="flex flex-col items-center justify-center cursor-pointer">
+                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-600">{getText('addFile')}</span>
+                    <span className="text-xs text-gray-500 mt-1">{getText('dragHint')}</span>
                   </label>
                 </div>
                 {errors.files && (
                   <p className="mt-1 text-sm text-red-600">{errors.files}</p>
-                )}
-
-                {formData.attachments.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">{getText('selectedFiles')}</p>
-                    <div className="space-y-2">
-                      {formData.attachments.map((att, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
-                          <span className="text-sm text-gray-700 truncate flex-1">{att.name}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeAttachment(index)}
-                            className="ml-2 p-1 text-red-500 hover:text-red-700 transition-colors"
-                            title={getText('removeFile')}
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 )}
               </div>
 
