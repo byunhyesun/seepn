@@ -213,7 +213,7 @@ export default function InquiryDetailPage() {
   };
   const handleReInquiry = () => router.push('/mypage/inquiries/write');
   const handleNewInquiry = () => router.push('/mypage/inquiries/write');
-  const handleEdit = () => router.push('/mypage/inquiries/write');
+  const handleEdit = () => router.push(`/mypage/inquiries/${id}/edit`);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
