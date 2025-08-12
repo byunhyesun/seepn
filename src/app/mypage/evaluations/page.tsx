@@ -3,7 +3,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { MapPin, Star, ExternalLink } from 'lucide-react';
+import { MapPin, Star, ExternalLink, Calendar } from 'lucide-react';
 
 type EvalStatus = 'all' | 'in_progress' | 'completed' | 'scheduled';
 
@@ -38,6 +38,7 @@ export default function MyEvaluationsPage() {
         tabScheduled: '평가 예정',
         evaluate: '평가하기',
         noData: '표시할 공급사가 없습니다.',
+        period: '평가 기간',
       },
       en: {
         pageTitle: 'Evaluated Suppliers',
@@ -47,6 +48,7 @@ export default function MyEvaluationsPage() {
         tabScheduled: 'Scheduled',
         evaluate: 'Evaluate',
         noData: 'No suppliers to display.',
+        period: 'Evaluation Period',
       },
       ja: {
         pageTitle: '評価サプライヤー',
@@ -56,6 +58,7 @@ export default function MyEvaluationsPage() {
         tabScheduled: '評価予定',
         evaluate: '評価する',
         noData: '表示するサプライヤーがありません。',
+        period: '評価期間',
       },
       zh: {
         pageTitle: '评价供应商',
@@ -65,6 +68,7 @@ export default function MyEvaluationsPage() {
         tabScheduled: '预定',
         evaluate: '去评价',
         noData: '没有可显示的供应商。',
+        period: '评价期间',
       },
     } as const;
     return (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key];
@@ -82,6 +86,8 @@ export default function MyEvaluationsPage() {
         tags: ['소프트웨어', 'IT컨설팅'],
         website: 'https://www.globaltech.co.kr',
         status: 'in_progress' as EvalStatus,
+        startDate: '2025-01-10',
+        endDate: '2025-01-20',
       },
       {
         id: 2,
@@ -93,6 +99,8 @@ export default function MyEvaluationsPage() {
         tags: ['정밀부품', '품질관리'],
         website: 'https://www.premiummfg.co.kr',
         status: 'completed' as EvalStatus,
+        startDate: '2024-12-01',
+        endDate: '2024-12-10',
       },
       {
         id: 3,
@@ -103,6 +111,8 @@ export default function MyEvaluationsPage() {
         rating: 4.6,
         tags: ['브랜딩', 'SNS마케팅'],
         status: 'scheduled' as EvalStatus,
+        startDate: '2025-02-01',
+        endDate: '2025-02-15',
       },
       {
         id: 4,
@@ -113,6 +123,8 @@ export default function MyEvaluationsPage() {
         rating: 4.5,
         tags: ['물류', '배송'],
         status: 'in_progress' as EvalStatus,
+        startDate: '2025-01-05',
+        endDate: '2025-01-25',
       },
     ]
   );
@@ -213,7 +225,12 @@ export default function MyEvaluationsPage() {
                           </div>
                           <button
                             onClick={() => handleEvaluate(s.id)}
-                            className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            disabled={s.status === 'completed' || s.status === 'scheduled'}
+                            className={`px-3 py-2 text-sm rounded-lg transition-colors ${
+                              s.status === 'completed' || s.status === 'scheduled'
+                                ? 'bg-gray-300 text-white cursor-not-allowed'
+                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                            }`}
                           >
                             {getText('evaluate')}
                           </button>
@@ -225,6 +242,11 @@ export default function MyEvaluationsPage() {
                           <MapPin className="h-4 w-4 mr-2" />
                           {s.location}
                         </div>
+                      </div>
+                      {/* Evaluation Period */}
+                      <div className="flex items-center text-sm text-gray-600 mb-2">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        <span>{getText('period')}: {s.startDate} ~ {s.endDate}</span>
                       </div>
                       <div className="flex flex-wrap gap-1">
                         {s.tags.map((tag: string, idx: number) => (
