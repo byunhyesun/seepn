@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Paperclip, Star } from 'lucide-react';
+import { Paperclip, Star, ChevronLeft } from 'lucide-react';
 
 type InquiryCategoryKey = 'service' | 'supplier' | 'certification' | 'payment' | 'bug' | 'etc';
 
@@ -69,6 +69,7 @@ export default function InquiryDetailPage() {
         newInquiry: '신규문의하기',
         edit: '수정하기',
         backToList: '목록으로',
+        downloadFile: '파일 다운로드',
         service: '서비스 이용 문의',
         supplier: '공급사 등록 문의',
         certification: '인증마크 발급 문의',
@@ -97,6 +98,7 @@ export default function InquiryDetailPage() {
         newInquiry: 'New Inquiry',
         edit: 'Edit',
         backToList: 'Back to List',
+        downloadFile: 'Download File',
         service: 'Service',
         supplier: 'Supplier Registration',
         certification: 'Certification Mark',
@@ -125,6 +127,7 @@ export default function InquiryDetailPage() {
         newInquiry: '新規問い合わせ',
         edit: '修正',
         backToList: '一覧へ',
+        downloadFile: 'ファイルダウンロード',
         service: 'サービス利用',
         supplier: 'サプライヤー登録',
         certification: '認証マーク発給',
@@ -153,6 +156,7 @@ export default function InquiryDetailPage() {
         newInquiry: '新咨询',
         edit: '修改',
         backToList: '返回列表',
+        downloadFile: '下载文件',
         service: '服务使用',
         supplier: '供应商注册',
         certification: '认证标记发放',
@@ -223,15 +227,20 @@ export default function InquiryDetailPage() {
       />
 
       <main className="flex-1" style={{ paddingTop: isBannerVisible ? '112px' : '64px' }}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">{getText('pageTitle')}</h1>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Back Button (notice style) */}
+          <div className="mb-6">
             <button
               onClick={() => router.push('/mypage/inquiries')}
-              className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+              className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
             >
+              <ChevronLeft className="h-5 w-5 mr-1" />
               {getText('backToList')}
             </button>
+          </div>
+
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">{getText('pageTitle')}</h1>
           </div>
 
           {/* Inquiry Section */}
@@ -251,20 +260,25 @@ export default function InquiryDetailPage() {
               <div className="text-sm text-gray-500 mb-1">{getText('title')}</div>
               <div className="text-gray-900 font-medium">{detail.title}</div>
             </div>
-            <div className="mb-4">
-              <div className="text-sm text-gray-500 mb-1">{getText('attachments')}</div>
-              {detail.attachments && detail.attachments.length > 0 ? (
-                <div className="flex flex-wrap gap-3">
+            {/* Attachments (notice-like UI) */}
+            {detail.attachments && detail.attachments.length > 0 && (
+              <div className="mb-4">
+                <div className="text-sm text-gray-500 mb-2">{getText('attachments')}</div>
+                <div className="space-y-2">
                   {detail.attachments.map((name, idx) => (
-                    <a key={idx} href="#" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm">
-                      <Paperclip className="h-4 w-4" /> {name}
-                    </a>
+                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded border">
+                      <div className="flex items-center">
+                        <Paperclip className="h-5 w-5 text-gray-400 mr-2" />
+                        <span className="text-sm text-gray-700">{name}</span>
+                      </div>
+                      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
+                        {getText('downloadFile')}
+                      </button>
+                    </div>
                   ))}
                 </div>
-              ) : (
-                <div className="text-sm text-gray-400">-</div>
-              )}
-            </div>
+              </div>
+            )}
             <div className="mb-4">
               <div className="text-sm text-gray-500 mb-1">{getText('content')}</div>
               <div className="text-gray-900 whitespace-pre-line">{detail.content}</div>
@@ -295,38 +309,49 @@ export default function InquiryDetailPage() {
                   </div>
                 </div>
               </div>
-              <div className="mb-4">
-                <div className="text-sm text-gray-500 mb-1">{getText('answerAttachments')}</div>
-                {detail.answerAttachments && detail.answerAttachments.length > 0 ? (
-                  <div className="flex flex-wrap gap-3">
+              {/* Answer Attachments (notice-like) */}
+              {detail.answerAttachments && detail.answerAttachments.length > 0 && (
+                <div className="mb-4">
+                  <div className="text-sm text-gray-500 mb-2">{getText('answerAttachments')}</div>
+                  <div className="space-y-2">
                     {detail.answerAttachments.map((name, idx) => (
-                      <a key={idx} href="#" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm">
-                        <Paperclip className="h-4 w-4" /> {name}
-                      </a>
+                      <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded border">
+                        <div className="flex items-center">
+                          <Paperclip className="h-5 w-5 text-gray-400 mr-2" />
+                          <span className="text-sm text-gray-700">{name}</span>
+                        </div>
+                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
+                          {getText('downloadFile')}
+                        </button>
+                      </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="text-sm text-gray-400">-</div>
-                )}
-              </div>
+                </div>
+              )}
               <div className="mb-6">
                 <div className="text-sm text-gray-500 mb-1">{getText('answerContent')}</div>
                 <div className="text-gray-900 whitespace-pre-line">{detail.answerContent || '-'}</div>
               </div>
-              <div className="flex flex-wrap gap-2 justify-end">
-                <button onClick={handleDelete} className="px-4 py-2 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100">{getText('delete')}</button>
-                <button onClick={handleReInquiry} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">{getText('reInquiry')}</button>
-                <button onClick={handleNewInquiry} className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700">{getText('newInquiry')}</button>
-              </div>
+              {/* Actions moved to global bottom */}
             </div>
           ) : (
             <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8">
-              <div className="flex flex-wrap gap-2 justify-end">
-                <button onClick={handleDelete} className="px-4 py-2 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100">{getText('delete')}</button>
-                <button onClick={handleEdit} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">{getText('edit')}</button>
-              </div>
+              {/* Pending: no local buttons */}
             </div>
           )}
+
+          {/* Global bottom actions */}
+          <div className="mt-8 flex justify-center gap-2">
+            <button onClick={handleDelete} className="px-4 py-2 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100">{getText('delete')}</button>
+            {detail.answered ? (
+              <>
+                <button onClick={handleReInquiry} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">{getText('reInquiry')}</button>
+                <button onClick={handleNewInquiry} className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700">{getText('newInquiry')}</button>
+              </>
+            ) : (
+              <button onClick={handleEdit} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">{getText('edit')}</button>
+            )}
+          </div>
         </div>
       </main>
 
