@@ -20,6 +20,7 @@ export default function MyEvaluationsPage() {
   const [ratings, setRatings] = React.useState<[number, number, number, number, number]>([0, 0, 0, 0, 0]);
   const [comment, setComment] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const evalTarget = React.useMemo(() => suppliers.find((s) => s.id === evalTargetId) || null, [evalTargetId, suppliers]);
 
   React.useEffect(() => {
     const getUserCountry = async () => {
@@ -46,6 +47,8 @@ export default function MyEvaluationsPage() {
         noData: '표시할 공급사가 없습니다.',
         period: '평가 기간',
         evalTitle: '공급사 평가',
+        supplier: '공급사',
+        category: '카테고리',
         purchaseItemLabel: '구매한 품목',
         ratingGuide: '평가항목 (별점 선택)',
         q1: '견적 요청, 문의 등에 대한 답변 응답은 적절한가?',
@@ -68,6 +71,8 @@ export default function MyEvaluationsPage() {
         noData: 'No suppliers to display.',
         period: 'Evaluation Period',
         evalTitle: 'Supplier Evaluation',
+        supplier: 'Supplier',
+        category: 'Category',
         purchaseItemLabel: 'Purchased Item',
         ratingGuide: 'Rating Items (stars)',
         q1: 'Was the response to inquiries/quotes appropriate?',
@@ -90,6 +95,8 @@ export default function MyEvaluationsPage() {
         noData: '表示するサプライヤーがありません。',
         period: '評価期間',
         evalTitle: 'サプライヤー評価',
+        supplier: 'サプライヤー',
+        category: 'カテゴリ',
         purchaseItemLabel: '購入品目',
         ratingGuide: '評価項目（星）',
         q1: '見積依頼・問い合わせへの回答は適切か？',
@@ -112,6 +119,8 @@ export default function MyEvaluationsPage() {
         noData: '没有可显示的供应商。',
         period: '评价期间',
         evalTitle: '供应商评价',
+        supplier: '供应商',
+        category: '品类',
         purchaseItemLabel: '购买项目',
         ratingGuide: '评价项目（星）',
         q1: '对报价/咨询的回复是否得当？',
@@ -359,6 +368,14 @@ export default function MyEvaluationsPage() {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4">
               <div className="space-y-6">
+                {/* Supplier Summary */}
+                {evalTarget && (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="text-sm text-gray-700"><span className="font-medium">{getText('supplier')}:</span> {evalTarget.name}</div>
+                    <div className="text-sm text-gray-700 mt-1"><span className="font-medium">{getText('category')}:</span> {evalTarget.categoryDepth3}</div>
+                  </div>
+                )}
+
                 {/* Purchased Item */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{getText('purchaseItemLabel')}</label>
