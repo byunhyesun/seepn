@@ -68,7 +68,7 @@ export default function MyPageProfileEdit() {
         phone: '휴대폰 번호',
         agreements: '약관 동의여부',
         agreeTerms: '이용약관 동의',
-        agreePrivacy: '개인정보처리방침 동의',
+        agreePrivacy: '개인정보 수집 및 이용 동의',
         marketing: '마케팅 활용 동의',
         channels: '수신 채널',
         emailChannel: '이메일',
