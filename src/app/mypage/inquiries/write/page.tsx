@@ -65,7 +65,7 @@ export default function InquiryWritePage() {
         fileUploadNote: '최대 10MB, PDF, DOC, DOCX, JPG, PNG',
         selectedFiles: '선택된 파일',
         removeFile: '파일 삭제',
-        resetButton: '초기화',
+        resetButton: '취소',
         submitButton: '문의하기',
         submittingButton: '전송 중...',
         successMessage: '문의가 성공적으로 등록되었습니다.',
@@ -90,7 +90,7 @@ export default function InquiryWritePage() {
         fileUploadNote: 'Max 10MB, PDF, DOC, DOCX, JPG, PNG',
         selectedFiles: 'Selected Files',
         removeFile: 'Remove File',
-        resetButton: 'Reset',
+        resetButton: 'Cancel',
         submitButton: 'Submit',
         submittingButton: 'Submitting...',
         successMessage: 'Inquiry submitted successfully.',
@@ -115,7 +115,7 @@ export default function InquiryWritePage() {
         fileUploadNote: '最大10MB, PDF, DOC, DOCX, JPG, PNG',
         selectedFiles: '選択されたファイル',
         removeFile: '削除',
-        resetButton: 'リセット',
+        resetButton: 'キャンセル',
         submitButton: 'お問い合わせ',
         submittingButton: '送信中...',
         successMessage: 'お問い合わせが正常に送信されました。',
@@ -140,7 +140,7 @@ export default function InquiryWritePage() {
         fileUploadNote: '最大10MB, PDF, DOC, DOCX, JPG, PNG',
         selectedFiles: '已选文件',
         removeFile: '删除',
-        resetButton: '重置',
+        resetButton: '取消',
         submitButton: '提交咨询',
         submittingButton: '提交中...',
         successMessage: '咨询已成功提交。',
@@ -207,9 +207,7 @@ export default function InquiryWritePage() {
   };
 
   const handleReset = () => {
-    setFormData({ category: '', title: '', content: '', files: [] });
-    setErrors({});
-    setSubmitStatus('idle');
+    router.push('/mypage/inquiries');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
