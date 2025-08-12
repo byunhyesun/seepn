@@ -223,17 +223,6 @@ export default function MyEvaluationsPage() {
                             <Star className="h-4 w-4 fill-current" />
                             <span className="text-sm text-gray-600 ml-1">{s.rating}</span>
                           </div>
-                          <button
-                            onClick={() => handleEvaluate(s.id)}
-                            disabled={s.status === 'completed' || s.status === 'scheduled'}
-                            className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                              s.status === 'completed' || s.status === 'scheduled'
-                                ? 'bg-gray-300 text-white cursor-not-allowed'
-                                : 'bg-blue-600 text-white hover:bg-blue-700'
-                            }`}
-                          >
-                            {getText('evaluate')}
-                          </button>
                         </div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
@@ -248,12 +237,19 @@ export default function MyEvaluationsPage() {
                         <Calendar className="h-4 w-4 mr-2" />
                         <span>{getText('period')}: {s.startDate} ~ {s.endDate}</span>
                       </div>
-                      <div className="flex flex-wrap gap-1">
-                        {s.tags.map((tag: string, idx: number) => (
-                          <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                            {tag}
-                          </span>
-                        ))}
+                      {/* Actions */}
+                      <div className="mt-3 flex justify-end">
+                        <button
+                          onClick={() => handleEvaluate(s.id)}
+                          disabled={s.status === 'completed' || s.status === 'scheduled'}
+                          className={`px-4 py-2 text-sm rounded-lg transition-colors ${
+                            s.status === 'completed' || s.status === 'scheduled'
+                              ? 'bg-gray-300 text-white cursor-not-allowed'
+                              : 'bg-blue-600 text-white hover:bg-blue-700'
+                          }`}
+                        >
+                          {getText('evaluate')}
+                        </button>
                       </div>
                     </div>
                   </div>
