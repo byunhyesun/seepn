@@ -330,12 +330,12 @@ export default function MyPageProfileEdit() {
               <div className="mt-8">
                 <h3 className="text-base font-semibold text-gray-900 mb-3">{getText('agreements')}</h3>
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-gray-700">
-                    <input type="checkbox" className="h-4 w-4" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} />
+                  <label className="flex items-center gap-2 text-gray-700 opacity-70 cursor-not-allowed" title="변경 불가">
+                    <input type="checkbox" className="h-4 w-4" checked={agreeTerms} readOnly disabled />
                     {getText('agreeTerms')}
                   </label>
-                  <label className="flex items-center gap-2 text-gray-700">
-                    <input type="checkbox" className="h-4 w-4" checked={agreePrivacy} onChange={(e) => setAgreePrivacy(e.target.checked)} />
+                  <label className="flex items-center gap-2 text-gray-700 opacity-70 cursor-not-allowed" title="변경 불가">
+                    <input type="checkbox" className="h-4 w-4" checked={agreePrivacy} readOnly disabled />
                     {getText('agreePrivacy')}
                   </label>
                 </div>
