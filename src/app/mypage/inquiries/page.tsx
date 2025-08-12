@@ -394,8 +394,8 @@ export default function MyInquiriesPage() {
               filteredInquiries.map((inq) => (
                 <div key={inq.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-gray-300 transition-all">
                   {/* Header: category + registration date */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${getCategoryInfo(inq.category).color}`}>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border w-auto max-w-max shrink-0 ${getCategoryInfo(inq.category).color}`}>
                       {getCategoryInfo(inq.category).label}
                     </span>
                     <div className="text-sm text-gray-500">{getText('registrationDate')}: {formatDate(inq.registrationDate)}</div>
