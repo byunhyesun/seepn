@@ -4,6 +4,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
+import { Heart, MessageCircle, Eye } from 'lucide-react';
 
 type PostCategoryKey = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
 
@@ -115,12 +116,12 @@ export default function MyPostsPage() {
 
   // Sample posts (subset from board with authors)
   const allPosts = React.useMemo(() => ([
-    { id: 1, category: 'curious' as PostCategoryKey, title: '새로운 공급사를 찾고 있어요', author: '기술탐험가7', registrationDate: '2025-01-12T14:30:00' },
-    { id: 2, category: 'curious' as PostCategoryKey, title: '공급사 평가 기준이 궁금합니다', author: 'NewbieMom2', registrationDate: '2025-01-12T11:20:00' },
-    { id: 3, category: 'together' as PostCategoryKey, title: '함께 전시회 가실 분 계신가요?', author: '전시회러버', registrationDate: '2025-01-11T16:45:00' },
-    { id: 4, category: 'inform' as PostCategoryKey, title: '새로운 결제 시스템 안내', author: 'Admin2025', registrationDate: '2025-01-11T09:15:00' },
-    { id: 5, category: 'share' as PostCategoryKey, title: '무료 샘플 나눔합니다', author: '나눔왕1', registrationDate: '2025-01-10T13:30:00' },
-    { id: 6, category: 'tell' as PostCategoryKey, title: '성공적인 거래 후기', author: 'StoryTell9', registrationDate: '2025-01-10T10:20:00' },
+    { id: 1, category: 'curious' as PostCategoryKey, title: '새로운 공급사를 찾고 있어요', author: '기술탐험가7', registrationDate: '2025-01-12T14:30:00', likes: 12, comments: 5, views: 156 },
+    { id: 2, category: 'curious' as PostCategoryKey, title: '공급사 평가 기준이 궁금합니다', author: 'NewbieMom2', registrationDate: '2025-01-12T11:20:00', likes: 8, comments: 3, views: 89 },
+    { id: 3, category: 'together' as PostCategoryKey, title: '함께 전시회 가실 분 계신가요?', author: '전시회러버', registrationDate: '2025-01-11T16:45:00', likes: 15, comments: 7, views: 203 },
+    { id: 4, category: 'inform' as PostCategoryKey, title: '새로운 결제 시스템 안내', author: 'Admin2025', registrationDate: '2025-01-11T09:15:00', likes: 25, comments: 12, views: 445 },
+    { id: 5, category: 'share' as PostCategoryKey, title: '무료 샘플 나눔합니다', author: '나눔왕1', registrationDate: '2025-01-10T13:30:00', likes: 18, comments: 9, views: 267 },
+    { id: 6, category: 'tell' as PostCategoryKey, title: '성공적인 거래 후기', author: 'StoryTell9', registrationDate: '2025-01-10T10:20:00', likes: 22, comments: 14, views: 321 },
   ]), []);
 
   const myPosts = React.useMemo(() => allPosts.filter(p => p.author === currentUserNickname), [allPosts]);
@@ -220,6 +221,21 @@ export default function MyPostsPage() {
                       }}>
                     <Link href={`/board/${post.id}`}>{post.title}</Link>
                   </h3>
+                  {/* Stats below title */}
+                  <div className="mt-2 flex items-center gap-6 text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Heart className="h-4 w-4" />
+                      <span>{(post as any).likes ?? 0}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MessageCircle className="h-4 w-4" />
+                      <span>{(post as any).comments ?? 0}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="h-4 w-4" />
+                      <span>{(post as any).views ?? 0}</span>
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (
