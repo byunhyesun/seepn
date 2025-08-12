@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getL1Categories, getL2Categories, getL3Categories } from '@/utils/categories';
 import { getL1Areas, getL2Areas } from '@/utils/areas';
-import { Grid3X3, List, MapPin, Star, Heart, ExternalLink, Filter, Trash2, CheckSquare } from 'lucide-react';
+import { Grid3X3, List, MapPin, Star, Heart, ExternalLink, Filter, Trash2, CheckSquare, X } from 'lucide-react';
 
 type PostCategory = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
 
@@ -571,6 +571,153 @@ export default function MyFavoriteSuppliersPage() {
           </div>
         </div>
       </main>
+
+      {/* Mobile Floating Search Button */}
+      {isMobile && (
+        <button
+          onClick={() => setIsSearchModalOpen(true)}
+          className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-colors z-40"
+          aria-label={getText('leftTitle')}
+        >
+          <Filter className="h-6 w-6" />
+        </button>
+      )}
+
+      {/* Mobile Search Modal */}
+      {isSearchModalOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsSearchModalOpen(false)}
+          />
+
+          {/* Modal */}
+          <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">{getText('leftTitle')}</h2>
+              <button
+                onClick={() => setIsSearchModalOpen(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Modal Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="space-y-4">
+                {/* Keyword */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{getText('searchKeyword')}</label>
+                  <input
+                    type="text"
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    placeholder={getText('searchPlaceholder')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Category */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
+                  <select
+                    value={selectedL1Category}
+                    onChange={(e) => handleL1CategoryChange(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                  >
+                    <option value="">{getText('allCategories')}</option>
+                    {l1Categories.map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+
+                  {selectedL1Category && (
+                    <select
+                      value={selectedL2Category}
+                      onChange={(e) => handleL2CategoryChange(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                    >
+                      <option value="all">{getText('allCategories')}</option>
+                      {l2Categories.map((c) => (
+                        <option key={c.value} value={c.value}>{c.label}</option>
+                      ))}
+                    </select>
+                  )}
+
+                  {selectedL2Category && selectedL2Category !== 'all' && (
+                    <select
+                      value={selectedL3Category}
+                      onChange={(e) => handleL3CategoryChange(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="all">{getText('allCategories')}</option>
+                      {l3Categories.map((c) => (
+                        <option key={c.value} value={c.value}>{c.label}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+
+                {/* Region */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{getText('region')}</label>
+                  <select
+                    value={selectedL1Area}
+                    onChange={(e) => handleL1AreaChange(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                  >
+                    <option value="">{getText('allRegions')}</option>
+                    {l1Areas.map((a) => (
+                      <option key={a.value} value={a.value}>{a.label}</option>
+                    ))}
+                  </select>
+
+                  {selectedL1Area && (
+                    <select
+                      value={selectedL2Area}
+                      onChange={(e) => handleL2AreaChange(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="all">{getText('allRegions')}</option>
+                      {l2Areas.map((a) => (
+                        <option key={a.value} value={a.value}>{a.label}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-gray-200">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setSearchKeyword('');
+                    setSelectedL1Category('');
+                    setSelectedL2Category('all');
+                    setSelectedL3Category('all');
+                    setSelectedL1Area('');
+                    setSelectedL2Area('all');
+                  }}
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors"
+                >
+                  {getText('resetButton')}
+                </button>
+                <button
+                  onClick={() => setIsSearchModalOpen(false)}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                >
+                  {getText('searchButton')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
