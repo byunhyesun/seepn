@@ -12,6 +12,8 @@ export default function MyPostsPage() {
   const [currentLanguage, setCurrentLanguage] = React.useState<'ko' | 'en' | 'ja' | 'zh'>('ko');
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [userCountry, setUserCountry] = React.useState('대한민국');
+  const [selectedYear, setSelectedYear] = React.useState<string>('');
+  const [selectedMonth, setSelectedMonth] = React.useState<string>('');
 
   // Assume current user nickname (align with board examples)
   const currentUserNickname = '기술탐험가7';
@@ -123,6 +125,26 @@ export default function MyPostsPage() {
 
   const myPosts = React.useMemo(() => allPosts.filter(p => p.author === currentUserNickname), [allPosts]);
 
+  // Year options (전체 + years in DESC order)
+  const yearOptions = React.useMemo(() => {
+    const years = Array.from(new Set(myPosts.map(p => new Date(p.registrationDate).getFullYear()))).sort((a, b) => b - a);
+    return years.map(String);
+  }, [myPosts]);
+
+  // Month options (전체 + 1..12 with 1 first)
+  const monthOptions = React.useMemo(() => Array.from({ length: 12 }, (_, i) => String(i + 1)), []);
+
+  const filteredPosts = React.useMemo(() => {
+    return myPosts.filter(p => {
+      const d = new Date(p.registrationDate);
+      const y = String(d.getFullYear());
+      const m = String(d.getMonth() + 1);
+      if (selectedYear && y !== selectedYear) return false;
+      if (selectedMonth && m !== selectedMonth) return false;
+      return true;
+    });
+  }, [myPosts, selectedYear, selectedMonth]);
+
   const formatDate = (iso: string) => {
     const date = new Date(iso);
     return date.toLocaleDateString(
@@ -147,10 +169,38 @@ export default function MyPostsPage() {
             <h1 className="text-3xl font-bold text-gray-900">{getText('pageTitle')}</h1>
           </div>
 
+          {/* Filters */}
+          <div className="mb-4 flex items-center gap-2">
+            <div>
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
+              >
+                <option value="">전체</option>
+                {yearOptions.map((y) => (
+                  <option key={y} value={y}>{y}년</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm"
+              >
+                <option value="">전체</option>
+                {monthOptions.map((m) => (
+                  <option key={m} value={m}>{m}월</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           {/* List (board-like UI) */}
           <div className="space-y-4">
-            {myPosts.length > 0 ? (
-              myPosts.map((post) => (
+            {filteredPosts.length > 0 ? (
+              filteredPosts.map((post) => (
                 <div key={post.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-gray-300 transition-all">
                   {/* Category and date */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
