@@ -191,6 +191,15 @@ export default function InquiryDetailPage() {
       content: '필요한 서류와 심사 기간을 알고 싶습니다.',
       answered: false,
     },
+    {
+      id: 107,
+      category: 'etc',
+      title: '첨부파일 포함 문의 (미답변)',
+      registrationDate: '2025-01-12T18:25:00',
+      attachments: ['reference.pdf', 'capture.jpg'],
+      content: '참고용 파일을 첨부했습니다. 확인 부탁드립니다.',
+      answered: false
+    },
   ];
 
   const detail = React.useMemo(() => sample.find((s) => s.id === id) || sample[0], [id]);

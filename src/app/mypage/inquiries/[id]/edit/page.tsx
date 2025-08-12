@@ -151,19 +151,29 @@ export default function InquiryEditPage() {
   // Mock fetch existing inquiry
   React.useEffect(() => {
     // Simulate existing data load by id
-    const existing = id === 102
-      ? {
-          category: 'supplier' as InquiryCategoryKey,
-          title: '공급사 등록 절차가 궁금합니다',
-          content: '필요한 서류와 심사 기간을 알고 싶습니다.',
-          attachments: [] as AttachmentItem[],
-        }
-      : {
-          category: 'service' as InquiryCategoryKey,
-          title: '로그인 후 마이페이지 접근이 되지 않습니다',
-          content: '로그인은 되는데 마이페이지 이동 시 에러가 발생합니다. 스크린샷을 첨부합니다.',
-          attachments: [{ name: 'screenshot_1.png' }],
-        };
+    let existing: { category: InquiryCategoryKey; title: string; content: string; attachments: AttachmentItem[] };
+    if (id === 102) {
+      existing = {
+        category: 'supplier',
+        title: '공급사 등록 절차가 궁금합니다',
+        content: '필요한 서류와 심사 기간을 알고 싶습니다.',
+        attachments: []
+      };
+    } else if (id === 107) {
+      existing = {
+        category: 'etc',
+        title: '첨부파일 포함 문의 (미답변)',
+        content: '참고용 파일을 첨부했습니다. 확인 부탁드립니다.',
+        attachments: [{ name: 'reference.pdf' }, { name: 'capture.jpg' }]
+      };
+    } else {
+      existing = {
+        category: 'service',
+        title: '로그인 후 마이페이지 접근이 되지 않습니다',
+        content: '로그인은 되는데 마이페이지 이동 시 에러가 발생합니다. 스크린샷을 첨부합니다.',
+        attachments: [{ name: 'screenshot_1.png' }]
+      };
+    }
     setFormData(existing);
   }, [id]);
 

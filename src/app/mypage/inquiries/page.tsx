@@ -226,6 +226,14 @@ export default function MyInquiriesPage() {
       registrationDate: '2025-01-07T16:10:00',
       answered: false,
       content: '기타 사항에 대한 문의입니다.'
+    },
+    {
+      id: 107,
+      category: 'etc',
+      title: '첨부파일 포함 문의 (미답변)',
+      registrationDate: '2025-01-12T18:25:00',
+      answered: false,
+      content: '참고용 파일을 첨부했습니다. 확인 부탁드립니다.'
     }
   ], [currentLanguage]);
 
