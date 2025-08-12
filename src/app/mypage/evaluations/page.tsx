@@ -20,7 +20,6 @@ export default function MyEvaluationsPage() {
   const [ratings, setRatings] = React.useState<[number, number, number, number, number]>([0, 0, 0, 0, 0]);
   const [comment, setComment] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const evalTarget = React.useMemo(() => suppliers.find((s) => s.id === evalTargetId) || null, [evalTargetId, suppliers]);
 
   React.useEffect(() => {
     const getUserCountry = async () => {
@@ -191,6 +190,8 @@ export default function MyEvaluationsPage() {
       },
     ]
   );
+
+  const evalTarget = React.useMemo(() => suppliers.find((s) => s.id === evalTargetId) || null, [evalTargetId, suppliers]);
 
   const filtered = React.useMemo(() => {
     if (activeTab === 'all') return suppliers;
