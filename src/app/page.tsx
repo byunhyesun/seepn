@@ -650,14 +650,14 @@ export default function Home() {
           <nav className="flex-1 p-6">
             <ul className="space-y-2">
               <li>
-                <a 
-                  href="#" 
+                <Link 
+                  href="/mypage" 
                   className="flex items-center p-3 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                   onClick={() => setIsMyPageOpen(false)}
                 >
                   <span className="text-lg mr-3">👤</span>
                   {getText('mypage')}
-                </a>
+                </Link>
               </li>
               <li>
                 <a 
@@ -670,14 +670,14 @@ export default function Home() {
                 </a>
               </li>
               <li>
-                <a 
-                  href="#" 
+                <Link 
+                  href="/mypage/change-password"
                   className="flex items-center p-3 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                   onClick={() => setIsMyPageOpen(false)}
                 >
                   <span className="text-lg mr-3">🔒</span>
                   {getText('changePassword')}
-                </a>
+                </Link>
               </li>
               <li>
                 <a 
