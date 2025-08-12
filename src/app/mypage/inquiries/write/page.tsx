@@ -260,7 +260,7 @@ export default function InquiryWritePage() {
             </div>
           )}
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 max-w-4xl mx-auto">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Category */}
               <div>
