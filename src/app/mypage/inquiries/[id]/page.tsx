@@ -239,9 +239,7 @@ export default function InquiryDetailPage() {
             </button>
           </div>
 
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">{getText('pageTitle')}</h1>
-          </div>
+          {/* Removed page title per request */}
 
           {/* Inquiry Section */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 mb-6">
@@ -336,7 +334,8 @@ export default function InquiryDetailPage() {
             </div>
           ) : (
             <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8">
-              {/* Pending: no local buttons */}
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">{getText('answerSection')}</h2>
+              <div className="text-gray-700">빠르고 정확한 답변을 위해 검토 중이며, 곧 답변드리겠습니다.</div>
             </div>
           )}
 
