@@ -272,8 +272,7 @@ export default function MyInquiriesPage() {
   };
 
   const handleWrite = () => {
-    // 실제 문의 등록 화면이 아직 없으므로 임시 처리
-    alert('문의 등록 화면은 추후 제공될 예정입니다.');
+    window.location.href = '/mypage/inquiries/write';
   };
 
   return (
