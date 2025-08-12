@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Search, CheckCircle2, Clock } from 'lucide-react';
+import { Search, CheckCircle2, Clock, Edit } from 'lucide-react';
 
 type InquiryCategoryKey =
   | 'service'
@@ -294,8 +294,8 @@ export default function MyInquiriesPage() {
             <h1 className="text-3xl font-bold text-gray-900">{getText('pageTitle')}</h1>
           </div>
 
-          {/* Search Section */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+          {/* Search Section (hidden on mobile) */}
+          <div className="hidden sm:block bg-white border border-gray-200 rounded-lg p-6 mb-8">
             <div className="flex flex-col md:flex-row gap-3 md:items-center">
               {/* Inquiry Category */}
               <select
@@ -365,7 +365,7 @@ export default function MyInquiriesPage() {
             </div>
             <button
               onClick={handleWrite}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+              className="hidden sm:flex px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
             >
               {getText('writeButton')}
             </button>
@@ -424,6 +424,15 @@ export default function MyInquiriesPage() {
           </div>
         </div>
       </main>
+
+      {/* Mobile Floating Write Button */}
+      <button
+        onClick={handleWrite}
+        className="sm:hidden fixed bottom-6 right-6 w-14 h-14 bg-green-600 text-white rounded-full shadow-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all flex items-center justify-center z-50"
+        aria-label={getText('writeButton')}
+      >
+        <Edit className="h-6 w-6" />
+      </button>
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
