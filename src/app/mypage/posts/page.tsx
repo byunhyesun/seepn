@@ -3,6 +3,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 type PostCategoryKey = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
 
@@ -98,6 +99,18 @@ export default function MyPostsPage() {
     return map[key];
   };
 
+  // Category badge styles (align with board UI)
+  const getCategoryInfo = (category: PostCategoryKey) => {
+    return {
+      daily: { label: getText('categoryDaily'), color: 'bg-gray-100 text-gray-800 border-gray-200' },
+      curious: { label: getText('categoryCurious'), color: 'bg-blue-100 text-blue-800 border-blue-200' },
+      together: { label: getText('categoryTogether'), color: 'bg-green-100 text-green-800 border-green-200' },
+      inform: { label: getText('categoryInform'), color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+      share: { label: getText('categoryShare'), color: 'bg-purple-100 text-purple-800 border-purple-200' },
+      tell: { label: getText('categoryTell'), color: 'bg-pink-100 text-pink-800 border-pink-200' },
+    }[category];
+  };
+
   // Sample posts (subset from board with authors)
   const allPosts = React.useMemo(() => ([
     { id: 1, category: 'curious' as PostCategoryKey, title: '새로운 공급사를 찾고 있어요', author: '기술탐험가7', registrationDate: '2025-01-12T14:30:00' },
@@ -134,34 +147,33 @@ export default function MyPostsPage() {
             <h1 className="text-3xl font-bold text-gray-900">{getText('pageTitle')}</h1>
           </div>
 
-          {/* Table (responsive) */}
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b border-gray-200 text-sm font-medium text-gray-700">
-              <div className="col-span-2">{getText('colCategory')}</div>
-              <div className="col-span-7">{getText('colTitle')}</div>
-              <div className="col-span-3">{getText('colDate')}</div>
-            </div>
+          {/* List (board-like UI) */}
+          <div className="space-y-4">
             {myPosts.length > 0 ? (
-              <div className="divide-y divide-gray-200">
-                {myPosts.map((post) => (
-                  <div key={post.id} className="px-6 py-4">
-                    {/* Desktop row */}
-                    <div className="hidden md:grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-2 text-gray-700">{categoryLabel(post.category)}</div>
-                      <div className="col-span-7 text-gray-900 truncate">{post.title}</div>
-                      <div className="col-span-3 text-gray-600">{formatDate(post.registrationDate)}</div>
-                    </div>
-                    {/* Mobile row */}
-                    <div className="md:hidden">
-                      <div className="text-sm text-gray-500 mb-1">{categoryLabel(post.category)}</div>
-                      <div className="text-gray-900 mb-1">{post.title}</div>
-                      <div className="text-sm text-gray-600">{formatDate(post.registrationDate)}</div>
-                    </div>
+              myPosts.map((post) => (
+                <div key={post.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-gray-300 transition-all">
+                  {/* Category and date */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${getCategoryInfo(post.category).color}`}>
+                      {getCategoryInfo(post.category).label}
+                    </span>
+                    <div className="text-sm text-gray-500">{formatDate(post.registrationDate)}</div>
                   </div>
-                ))}
-              </div>
+
+                  {/* Title */}
+                  <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors mb-1"
+                      style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}>
+                    <Link href={`/board/${post.id}`}>{post.title}</Link>
+                  </h3>
+                </div>
+              ))
             ) : (
-              <div className="px-6 py-12 text-center text-gray-500">{getText('empty')}</div>
+              <div className="bg-white border border-gray-200 rounded-lg p-8 text-center text-gray-500">{getText('empty')}</div>
             )}
           </div>
         </div>
