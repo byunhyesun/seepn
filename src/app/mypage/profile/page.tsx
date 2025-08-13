@@ -16,7 +16,8 @@ export default function MyPageProfileEdit() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   // Sample user data (placeholder)
-  const [email] = useState('user@example.com');
+  const [email, setEmail] = useState('user@example.com');
+  const [isEmailEditing, setIsEmailEditing] = useState(false);
   const [name] = useState('홍길동');
   const [nickname, setNickname] = useState('홍길동');
   const [phone, setPhone] = useState('010-1234-5678');
@@ -251,10 +252,6 @@ export default function MyPageProfileEdit() {
                   </label>
                 </div>
                 <div className="space-x-2">
-                  <label className="inline-flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200 text-sm">
-                    {getText('uploadPhoto')}
-                    <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-                  </label>
                   {avatarUrl && (
                     <button type="button" onClick={handleAvatarRemove} className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 text-sm">
                       {getText('removePhoto')}
@@ -295,8 +292,18 @@ export default function MyPageProfileEdit() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{getText('email')}</label>
                   <div className="flex gap-2">
-                    <input type="text" value={email} readOnly className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600" />
-                    <button type="button" className="px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      readOnly={!isEmailEditing}
+                      className={`flex-1 px-3 py-2 border rounded-lg ${isEmailEditing ? 'border-blue-300 bg-white' : 'border-gray-300 bg-gray-50 text-gray-600'}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsEmailEditing((v) => !v)}
+                      className="px-3 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+                    >
                       {getText('changeEmail')}
                     </button>
                   </div>
@@ -367,7 +374,7 @@ export default function MyPageProfileEdit() {
                   type="button"
                   onClick={handleCancel}
                   disabled={isSubmitting}
-                  className="px-6 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+                  className="text-sm text-gray-600 underline underline-offset-2 hover:text-gray-800 disabled:opacity-50"
                 >
                   {getText('cancel')}
                 </button>
