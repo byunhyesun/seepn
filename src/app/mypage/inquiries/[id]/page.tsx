@@ -390,7 +390,7 @@ export default function InquiryDetailPage() {
                   </div>
                 </div>
               </div>
-              {/* Answer Attachments (notice-like) */
+              {/* Answer Attachments (notice-like) */}
               {detail.answerAttachments && detail.answerAttachments.length > 0 && (
                 <div className="mb-4">
                   <div className="text-sm text-gray-500 mb-2">{getText('answerAttachments')}</div>
