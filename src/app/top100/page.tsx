@@ -707,7 +707,7 @@ export default function Top100Page() {
                           <X className="h-5 w-5" />
                         </button>
                       </div>
-                      <div className="flex-1 overflow-y-auto">
+                      <div className="flex-1 overflow-y-auto p-2 space-y-2">
                         {([
                           { key: 'all', label: getText('tabAll') },
                           { key: 'likes', label: getText('tabLikes') },
@@ -722,7 +722,7 @@ export default function Top100Page() {
                               setActiveTab(tab.key as typeof activeTab);
                               setIsTabModalOpen(false);
                             }}
-                            className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${
+                            className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${
                               activeTab === tab.key ? 'text-blue-600 font-medium' : 'text-gray-700'
                             }`}
                           >
