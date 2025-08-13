@@ -298,24 +298,6 @@ export default function InquiryDetailPage() {
               <div className="text-sm text-gray-500 mb-1">{getText('content')}</div>
               <div className="text-gray-900 whitespace-pre-line">{detail.content}</div>
             </div>
-            {/* Previous Inquiry collapsible inside Inquiry section for re-inquiries */}
-            {detail.reCount && detail.reCount > 0 && detail.previousContent && (
-              <div className="mt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowPrev(!showPrev)}
-                  className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50"
-                >
-                  <span className="text-sm font-medium text-gray-900">이전 문의</span>
-                  {showPrev ? <ChevronUp className="h-4 w-4 text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-500" />}
-                </button>
-                {showPrev && (
-                  <div className="bg-white border border-t-0 border-gray-200 rounded-b-lg p-4">
-                    <div className="text-sm text-gray-700 whitespace-pre-line">{detail.previousContent}</div>
-                  </div>
-                )}
-              </div>
-            )}
             <div>
               <div className="text-sm text-gray-500 mb-1">{getText('answered')}</div>
               <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${detail.answered ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-700 border-gray-200'}`}>
@@ -323,6 +305,26 @@ export default function InquiryDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Previous Inquiry Section (between inquiry and answer) */}
+          {detail.answered && detail.previousContent && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xl font-semibold text-gray-900">이전 문의</h2>
+                <button
+                  type="button"
+                  onClick={() => setShowPrev(!showPrev)}
+                  className="text-gray-600 hover:text-gray-800"
+                  aria-label="toggle previous inquiry"
+                >
+                  {showPrev ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                </button>
+              </div>
+              {showPrev && (
+                <div className="text-sm text-gray-700 whitespace-pre-line">{detail.previousContent}</div>
+              )}
+            </div>
+          )}
 
           {/* Answer Section or Pending Actions */}
           {detail.answered ? (
