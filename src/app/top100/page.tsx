@@ -5,7 +5,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { getL1Categories } from '../../utils/categories';
 import { getL1Areas } from '../../utils/areas';
-import { Search, RotateCcw, Filter, X, Star, Heart, ExternalLink, MapPin } from 'lucide-react';
+import { Search, RotateCcw, Filter, X, Star, Heart, ExternalLink, MapPin, ThumbsUp } from 'lucide-react';
 
 export default function Top100Page() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
@@ -689,25 +689,7 @@ export default function Top100Page() {
                                   </a>
                                 )}
                               </div>
-                              <div className="flex items-center gap-2 ml-4">
-                                <div className="flex items-center text-yellow-500">
-                                  <Star className="h-4 w-4 fill-current" />
-                                  <span className="text-sm text-gray-600 ml-1">{supplier.rating}</span>
-                                </div>
-                                <button
-                                  onClick={() => toggleFavorite(supplier.id)}
-                                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                  title={favoriteSuppliers.has(supplier.id) ? "관심 공급사에서 제거" : "관심 공급사에 추가"}
-                                >
-                                  <Heart 
-                                    className={`h-4 w-4 transition-colors ${
-                                      favoriteSuppliers.has(supplier.id) 
-                                        ? 'fill-red-500 text-red-500' 
-                                        : 'text-gray-400 hover:text-red-400'
-                                    }`} 
-                                  />
-                                </button>
-                              </div>
+                            <div className="flex items-center gap-2 ml-4" />
                             </div>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
@@ -724,13 +706,29 @@ export default function Top100Page() {
                               {supplier.description}
                             </p>
                             
-                            {/* Tags */}
+                            {/* Tags (match suppliers page position) */}
                             <div className="flex flex-wrap gap-1 mb-3">
-                              {supplier.tags.slice(0, 3).map((tag, index) => (
+                              {supplier.tags.map((tag, index) => (
                                 <span key={index} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
                                   {tag}
                                 </span>
                               ))}
+                            </div>
+
+                            {/* Stats above detail button: rating, favorites, likes */}
+                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                              <div className="flex items-center gap-1 text-yellow-600">
+                                <Star className="h-4 w-4 fill-current" />
+                                <span>{supplier.rating}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Heart className="h-4 w-4 text-red-500" />
+                                <span>{(supplier.id % 50) + 5}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <ThumbsUp className="h-4 w-4 text-blue-500" />
+                                <span>{supplier.likes}</span>
+                              </div>
                             </div>
                             
                             {/* Detail Button */}
