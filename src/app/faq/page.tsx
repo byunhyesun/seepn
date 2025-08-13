@@ -444,9 +444,7 @@ export default function FAQPage() {
                                   <span className="text-sm text-gray-700">{file.name}</span>
                                   <span className="text-xs text-gray-500 ml-2">({file.size})</span>
                                 </div>
-                                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
-                                  {getText('downloadFile')}
-                                </button>
+                                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors" aria-label="download" />
                               </div>
                             ))}
                           </div>
@@ -481,7 +479,7 @@ export default function FAQPage() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
               {([
                 { key: 'title', label: getText('searchTypeTitle') },
                 { key: 'content', label: getText('searchTypeContent') },
@@ -489,7 +487,7 @@ export default function FAQPage() {
                 <button
                   key={opt.key}
                   onClick={() => { setSearchType(opt.key); setIsSearchTypeModalOpen(false); }}
-                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${searchType === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${searchType === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
                 >
                   {opt.label}
                 </button>
@@ -510,7 +508,7 @@ export default function FAQPage() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
               {([
                 { key: 'all', label: getText('tabAll') },
                 { key: 'service', label: getText('tabService') },
@@ -523,7 +521,7 @@ export default function FAQPage() {
                 <button
                   key={opt.key}
                   onClick={() => { setActiveTab(opt.key); setIsTabModalOpen(false); }}
-                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${activeTab === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${activeTab === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
                 >
                   {opt.label}
                 </button>
