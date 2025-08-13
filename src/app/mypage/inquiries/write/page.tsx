@@ -399,12 +399,12 @@ export default function InquiryWritePage() {
               </div>
 
               {/* Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center items-center">
                 <button
                   type="button"
                   onClick={handleReset}
                   disabled={isSubmitting}
-                  className="sm:px-8 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="text-sm text-gray-600 hover:text-gray-800 transition-colors no-underline disabled:opacity-50 bg-transparent p-0"
                 >
                   {getText('resetButton')}
                 </button>
