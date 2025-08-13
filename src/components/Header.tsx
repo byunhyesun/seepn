@@ -72,7 +72,7 @@ export default function Header({
         home: '홈',
         suppliers: '공급사',
         top100: 'TOP100',
-        board: '게시판',
+        board: '자유 토론방',
         // 메뉴 관련
         menu: '메뉴',
         notice: '공지사항',

@@ -272,7 +272,7 @@ export default function Top100Page() {
         home: '홈',
         suppliers: '공급사',
         top100: 'TOP100',
-        board: '게시판',
+        board: '자유 토론방',
         banner: '배너',
         notice: '공지사항',
         faq: 'FAQ',

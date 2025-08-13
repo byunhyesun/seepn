@@ -129,7 +129,7 @@ export default function Home() {
         home: '홈',
         suppliers: '공급사',
         top100: 'TOP100',
-        board: '게시판',
+        board: '자유 토론방',
         heroTitle: '최적의 공급사를 찾아보세요',
         heroSubtitle: '다양한 산업 분야의 신뢰할 수 있는 공급사들을 검색하고 비교해보세요. 품질과 가격을 모두 만족하는 최적의 파트너를 찾을 수 있습니다.',
         searchTitle: '공급사 검색',
