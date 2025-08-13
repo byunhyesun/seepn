@@ -1049,64 +1049,64 @@ export default function SuppliersPage() {
                 </div>
               )}
               {modalStep === 'catL1' && (
-                <div className="p-4 space-y-3">
+                <div className="p-4 space-y-2">
                   <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('selectCategory')}</h3>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(''); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  <button className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(''); setModalStep('root'); }}>{getText('allCategories')}</button>
                   {l1Categories.map((c) => (
-                    <button key={c.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(c.value); setModalStep('catL2'); }}>
+                    <button key={c.value} className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(c.value); setModalStep('catL2'); }}>
                       {c.label}
                     </button>
                   ))}
                 </div>
               )}
               {modalStep === 'catL2' && (
-                <div className="p-4 space-y-3">
+                <div className="p-4 space-y-2">
                   <h4 className="text-sm font-medium text-gray-700">{getText('selectSubCategory')}</h4>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  <button className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
                   {l2Categories.map((c2) => (
-                    <button key={c2.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange(c2.value); setModalStep('catL3'); }}>
+                    <button key={c2.value} className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange(c2.value); setModalStep('catL3'); }}>
                       {c2.label}
                     </button>
                   ))}
                 </div>
               )}
               {modalStep === 'catL3' && (
-                <div className="p-4 space-y-3">
+                <div className="p-4 space-y-2">
                   <h4 className="text-sm font-medium text-gray-700">{getText('selectDetailCategory')}</h4>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  <button className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
                   {l3Categories.map((c3) => (
-                    <button key={c3.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange(c3.value); setModalStep('root'); }}>
+                    <button key={c3.value} className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange(c3.value); setModalStep('root'); }}>
                       {c3.label}
                     </button>
                   ))}
                 </div>
               )}
               {modalStep === 'areaL1' && (
-                <div className="p-4 space-y-3">
+                <div className="p-4 space-y-2">
                   <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('selectRegion')}</h3>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(''); setModalStep('root'); }}>{getText('allRegions')}</button>
+                  <button className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(''); setModalStep('root'); }}>{getText('allRegions')}</button>
                   {l1Areas.map((a) => (
-                    <button key={a.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(a.value); setModalStep('areaL2'); }}>{a.label}</button>
+                    <button key={a.value} className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(a.value); setModalStep('areaL2'); }}>{a.label}</button>
                   ))}
                 </div>
               )}
               {modalStep === 'areaL2' && (
-                <div className="p-4 space-y-3">
+                <div className="p-4 space-y-2">
                   <h4 className="text-sm font-medium text-gray-700">{getText('selectSubRegion')}</h4>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
+                  <button className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
                   {l2Areas.map((a2) => (
-                    <button key={a2.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange(a2.value); setModalStep('root'); }}>{a2.label}</button>
+                    <button key={a2.value} className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange(a2.value); setModalStep('root'); }}>{a2.label}</button>
                   ))}
                 </div>
               )}
               {modalStep === 'size' && (
-                <div className="p-4 space-y-1">
+                <div className="p-4 space-y-2">
                   <h3 className="text-sm font-medium text-gray-700 mb-2">{getText('companySize')}</h3>
                   {['', 'large', 'medium', 'small', 'startup'].map((key) => (
                     <button
                       key={key || 'all'}
                       onClick={() => { setCompanySize(key); setModalStep('root'); }}
-                      className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${companySize === key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                      className={`w-full text-left px-3 py-2 hover:bg-gray-100 rounded-lg ${companySize === key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
                     >
                       {key === '' ? getText('allSizes') : key === 'large' ? getText('largeCorp') : key === 'medium' ? getText('mediumCorp') : key === 'small' ? getText('smallCorp') : getText('startup')}
                     </button>
