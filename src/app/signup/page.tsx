@@ -54,6 +54,7 @@ export default function SignupPage() {
         guide2: '- 영문 대/소문자, 숫자, 특수문자 사용',
         guide3: '- 연속된 숫자 및 문자는 안됨',
         submit: '가입하기',
+        cancel: '취소',
         required: '모든 항목을 입력해주세요.',
         invalidEmail: '올바른 이메일을 입력해주세요.',
         mismatch: '비밀번호가 일치하지 않습니다.',
@@ -78,6 +79,7 @@ export default function SignupPage() {
         guide2: '- Use upper/lower letters, numbers, special chars',
         guide3: '- No sequential letters or digits',
         submit: 'Create Account',
+        cancel: 'Cancel',
         required: 'Please fill out all fields.',
         invalidEmail: 'Please enter a valid email.',
         mismatch: 'Passwords do not match.',
@@ -274,14 +276,23 @@ export default function SignupPage() {
               {error && <div className="text-sm text-red-600">{error}</div>}
               {message && <div className="text-sm text-green-600">{message}</div>}
 
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={!canSubmit}
-                className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? '...' : getText('submit')}
-              </button>
+              {/* Actions */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => { window.location.href = '/'; }}
+                  className="w-full py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  {getText('cancel')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? '...' : getText('submit')}
+                </button>
+              </div>
             </form>
           </div>
         </div>
