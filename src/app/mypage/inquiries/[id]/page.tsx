@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Paperclip, Star, ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react';
+import { Paperclip, Star, ChevronDown, ChevronUp } from 'lucide-react';
 
 type InquiryCategoryKey = 'service' | 'supplier' | 'certification' | 'payment' | 'bug' | 'etc';
 
@@ -234,9 +234,13 @@ export default function InquiryDetailPage() {
   const formatDateTime = (iso?: string) => {
     if (!iso) return '-';
     const d = new Date(iso);
-    return d.toLocaleString(
-      currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN'
-    );
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
+    return `${y}-${m}-${day} ${hh}:${mm}:${ss}`;
   };
 
   const categoryLabel = (c: InquiryCategoryKey) => getText(c);
@@ -271,8 +275,7 @@ export default function InquiryDetailPage() {
               onClick={() => router.push('/mypage/inquiries')}
               className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
             >
-              <ChevronLeft className="h-5 w-5 mr-1" />
-              {getText('backToList')}
+              {'<- 목록으로'}
             </button>
           </div>
 
@@ -295,7 +298,7 @@ export default function InquiryDetailPage() {
               <div className="text-sm text-gray-500 mb-1">{getText('title')}</div>
               <div className="text-gray-900 font-medium">{detail.title}</div>
             </div>
-            {/* Attachments (notice-like UI) */}
+            {/* Attachments (notice-like UI) */
             {detail.attachments && detail.attachments.length > 0 && (
               <div className="mb-4">
                 <div className="text-sm text-gray-500 mb-2">{getText('attachments')}</div>
@@ -306,9 +309,7 @@ export default function InquiryDetailPage() {
                         <Paperclip className="h-5 w-5 text-gray-400 mr-2" />
                         <span className="text-sm text-gray-700">{name}</span>
                       </div>
-                      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
-                        {getText('downloadFile')}
-                      </button>
+                      {/* Download text removed as requested */}
                     </div>
                   ))}
                 </div>
@@ -346,7 +347,7 @@ export default function InquiryDetailPage() {
                     <details key={idx} className="border border-gray-200 rounded">
                       <summary className="cursor-pointer list-none px-3 py-2 flex items-center justify-between">
                         <span className="text-sm font-medium text-gray-900">{p.title || `이전 문의 ${idx + 1}`}</span>
-                        <span className="text-xs text-gray-500">{p.registrationDate ? new Date(p.registrationDate).toLocaleString(currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN') : ''}</span>
+                        <span className="text-xs text-gray-500">{p.registrationDate ? formatDateTime(p.registrationDate) : ''}</span>
                       </summary>
                       <div className="px-3 pb-3 text-sm text-gray-700 whitespace-pre-line">
                         {p.attachments && p.attachments.length > 0 && (
@@ -357,7 +358,7 @@ export default function InquiryDetailPage() {
                                   <Paperclip className="h-4 w-4 text-gray-400 mr-2" />
                                   <span className="text-xs text-gray-700">{name}</span>
                                 </div>
-                                <button className="text-blue-600 hover:text-blue-700 text-xs font-medium transition-colors">{getText('downloadFile')}</button>
+                                {/* Download text removed as requested */}
                               </div>
                             ))}
                           </div>
@@ -389,7 +390,7 @@ export default function InquiryDetailPage() {
                   </div>
                 </div>
               </div>
-              {/* Answer Attachments (notice-like) */}
+              {/* Answer Attachments (notice-like) */
               {detail.answerAttachments && detail.answerAttachments.length > 0 && (
                 <div className="mb-4">
                   <div className="text-sm text-gray-500 mb-2">{getText('answerAttachments')}</div>
@@ -400,9 +401,7 @@ export default function InquiryDetailPage() {
                           <Paperclip className="h-5 w-5 text-gray-400 mr-2" />
                           <span className="text-sm text-gray-700">{name}</span>
                         </div>
-                        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
-                          {getText('downloadFile')}
-                        </button>
+                        {/* Download text removed as requested */}
                       </div>
                     ))}
                   </div>
