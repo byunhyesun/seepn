@@ -362,46 +362,47 @@ export default function InquiryRePage() {
             </form>
           </div>
 
-          {/* Previous summary (collapsible with per-item toggles) */}
+          {/* Previous summary (match detail UI: section with header + toggle + per-item entries) */}
           {prevList && prevList.length > 0 && (
-            <div className="mt-6">
-              <button
-                type="button"
-                onClick={() => setShowPrev(!showPrev)}
-                className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50"
-              >
-                <span className="text-sm font-medium text-gray-900">{getText('prevInquiry')}</span>
-                {showPrev ? <ChevronUp className="h-4 w-4 text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-500" />}
-              </button>
+            <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 mt-6">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xl font-semibold text-gray-900">{getText('prevInquiry')}</h2>
+                <button
+                  type="button"
+                  onClick={() => setShowPrev(!showPrev)}
+                  className="text-gray-600 hover:text-gray-800"
+                  aria-label="toggle previous inquiry"
+                >
+                  {showPrev ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                </button>
+              </div>
               {showPrev && (
-                <div className="bg-white border border-t-0 border-gray-200 rounded-b-lg p-6 md:p-8">
-                  <div className="space-y-3">
-                    {prevList.map((item, idx) => (
-                      <details key={idx} className="border border-gray-200 rounded">
-                        <summary className="cursor-pointer list-none px-3 py-2 flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-900">{item.title || `이전 문의 ${idx + 1}`}</span>
-                          <span className="text-xs text-gray-500">{item.registrationDate ? new Date(item.registrationDate).toLocaleString(currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN') : ''}</span>
-                        </summary>
-                        <div className="px-3 pb-3 text-sm text-gray-700 whitespace-pre-line">
-                          {item.attachments && item.attachments.length > 0 && (
-                            <div className="mb-2 space-y-1">
-                              {item.attachments.map((a, i) => (
-                                <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
-                                  <div className="flex items-center">
-                                    <Paperclip className="h-4 w-4 text-gray-400 mr-2" />
-                                    <span className="text-xs text-gray-700">{a.name}</span>
-                                    {a.size && <span className="text-xs text-gray-500 ml-2">({a.size})</span>}
-                                  </div>
-                                  <button className="text-blue-600 hover:text-blue-700 text-xs font-medium transition-colors">{getText('downloadFile')}</button>
+                <div className="space-y-3">
+                  {prevList.map((item, idx) => (
+                    <details key={idx} className="border border-gray-200 rounded">
+                      <summary className="cursor-pointer list-none px-3 py-2 flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-900">{item.title || `이전 문의 ${idx + 1}`}</span>
+                        <span className="text-xs text-gray-500">{item.registrationDate ? new Date(item.registrationDate).toLocaleString(currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN') : ''}</span>
+                      </summary>
+                      <div className="px-3 pb-3 text-sm text-gray-700 whitespace-pre-line">
+                        {item.attachments && item.attachments.length > 0 && (
+                          <div className="mb-2 space-y-1">
+                            {item.attachments.map((a, i) => (
+                              <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                                <div className="flex items-center">
+                                  <Paperclip className="h-4 w-4 text-gray-400 mr-2" />
+                                  <span className="text-xs text-gray-700">{a.name}</span>
+                                  {a.size && <span className="text-xs text-gray-500 ml-2">({a.size})</span>}
                                 </div>
-                              ))}
-                            </div>
-                          )}
-                          {item.content}
-                        </div>
-                      </details>
-                    ))}
-                  </div>
+                                <button className="text-blue-600 hover:text-blue-700 text-xs font-medium transition-colors">{getText('downloadFile')}</button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {item.content}
+                      </div>
+                    </details>
+                  ))}
                 </div>
               )}
             </div>
