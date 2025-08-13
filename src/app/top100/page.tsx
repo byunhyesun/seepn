@@ -303,6 +303,33 @@ export default function Top100Page() {
     }
   ];
 
+  // Resolve selected labels for filtering
+  const selectedCategoryLabel = React.useMemo(() => {
+    if (!selectedCategory) return '';
+    return l1Categories.find(c => c.value === selectedCategory)?.label || '';
+  }, [selectedCategory, l1Categories]);
+  const selectedAreaLabel = React.useMemo(() => {
+    if (!selectedArea) return '';
+    return l1Areas.find(a => a.value === selectedArea)?.label || '';
+  }, [selectedArea, l1Areas]);
+
+  // Apply search filters (category L1 and area L1)
+  const filteredSuppliers = React.useMemo(() => {
+    return sampleTop100Suppliers.filter((s) => {
+      // Category filter
+      if (selectedCategoryLabel) {
+        const catMatch = s.category === selectedCategoryLabel || s.categoryDepth3?.toLowerCase().includes(selectedCategoryLabel.toLowerCase());
+        if (!catMatch) return false;
+      }
+      // Area filter
+      if (selectedAreaLabel) {
+        const areaMatch = s.location?.toLowerCase().includes(selectedAreaLabel.toLowerCase());
+        if (!areaMatch) return false;
+      }
+      return true;
+    });
+  }, [sampleTop100Suppliers, selectedCategoryLabel, selectedAreaLabel]);
+
   // Helpers for scoring (mock where data is unavailable)
   const getFavoritesCount = (s: { id: number }) => (s.id % 50) + 5;
   const getRecentLikes = (s: { likes: number }) => s.likes; // No date data; using likes as recent proxy
@@ -573,9 +600,9 @@ export default function Top100Page() {
     return translations[currentLanguage]?.[key] || key;
   };
 
-  // Sort suppliers based on active tab
+  // Sort suppliers based on active tab (after filtering)
   const sortedSuppliers = React.useMemo(() => {
-    const suppliers = [...sampleTop100Suppliers];
+    const suppliers = [...filteredSuppliers];
     
     switch (activeTab) {
       case 'likes':
@@ -604,7 +631,7 @@ export default function Top100Page() {
         // 종합 TOP100: (별점×0.4) + (리뷰수×0.25) + (좋아요수×0.2) + (관심수×0.15)
         return suppliers.sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a));
     }
-  }, [activeTab]);
+  }, [activeTab, filteredSuppliers]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -887,7 +914,7 @@ export default function Top100Page() {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p className="text-gray-500 text-lg">{getText('noResults')}</p>
+                    <p className="text-gray-500 text-lg">검색한 공급사가 없습니다.</p>
                   </div>
                 )}
               </div>
