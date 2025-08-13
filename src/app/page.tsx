@@ -847,22 +847,7 @@ export default function Home() {
                       <Search className="h-5 w-5" />
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 whitespace-nowrap"
-                    onClick={() => {
-                      const el = document.getElementById('main-search') as HTMLInputElement | null;
-                      const keyword = (el?.value || '').trim();
-                      const params = new URLSearchParams();
-                      if (keyword) params.set('q', keyword);
-                      if (selectedCategory) params.set('c', selectedCategory);
-                      if (selectedArea) params.set('a', selectedArea);
-                      const qs = params.toString();
-                      router.push(`/suppliers${qs ? `?${qs}` : ''}`);
-                    }}
-                  >
-                    {getText('searchButton')}
-                  </button>
+                  {/* Removed separate submit button as per spec; use Enter key or icon */}
                 </div>
                 
                 {/* Popular Search Terms */}
