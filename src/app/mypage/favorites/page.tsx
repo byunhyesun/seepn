@@ -602,12 +602,24 @@ export default function MyFavoriteSuppliersPage() {
 
           {/* Modal */}
           <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
-            {/* Modal Header */}
+            {/* Modal Header (match suppliers modal) */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">{getText('leftTitle')}</h2>
+              {modalStep !== 'root' ? (
+                <button
+                  onClick={() => setModalStep('root')}
+                  className="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
+                  aria-label="back"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+              ) : (
+                <div className="w-9" />
+              )}
+              <h2 className="text-lg font-semibold text-gray-900 flex-1 text-center">{getText('leftTitle')}</h2>
               <button
                 onClick={() => setIsSearchModalOpen(false)}
                 className="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
+                aria-label="close"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -632,18 +644,18 @@ export default function MyFavoriteSuppliersPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
                     <div className="grid grid-cols-1 gap-2">
-                      <button type="button" onClick={() => setModalStep('catL1')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                      <button type="button" onClick={() => setModalStep('catL1')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
                         <span className="truncate">{getL1Label() || getText('allCategories')}</span>
                         <ChevronDown className="h-4 w-4 text-gray-400" />
                       </button>
                       {selectedL1Category !== '' && (
-                        <button type="button" onClick={() => setModalStep('catL2')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                        <button type="button" onClick={() => setModalStep('catL2')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
                           <span className="truncate">{getL2Label() || getText('allCategories')}</span>
                           <ChevronDown className="h-4 w-4 text-gray-400" />
                         </button>
                       )}
                       {selectedL1Category !== '' && selectedL2Category !== 'all' && (
-                        <button type="button" onClick={() => setModalStep('catL3')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                        <button type="button" onClick={() => setModalStep('catL3')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
                           <span className="truncate">{getL3Label() || getText('allCategories')}</span>
                           <ChevronDown className="h-4 w-4 text-gray-400" />
                         </button>
@@ -654,12 +666,12 @@ export default function MyFavoriteSuppliersPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{getText('region')}</label>
                     <div className="grid grid-cols-1 gap-2">
-                      <button type="button" onClick={() => setModalStep('areaL1')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                      <button type="button" onClick={() => setModalStep('areaL1')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
                         <span className="truncate">{getAreaL1Label() || getText('allRegions')}</span>
                         <ChevronDown className="h-4 w-4 text-gray-400" />
                       </button>
                       {selectedL1Area !== '' && (
-                        <button type="button" onClick={() => setModalStep('areaL2')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                        <button type="button" onClick={() => setModalStep('areaL2')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
                           <span className="truncate">{getAreaL2Label() || getText('allRegions')}</span>
                           <ChevronDown className="h-4 w-4 text-gray-400" />
                         </button>
@@ -670,48 +682,43 @@ export default function MyFavoriteSuppliersPage() {
               )}
               {/* Category steps */}
               {modalStep === 'catL1' && (
-                <div className="p-4 space-y-3">
-                  <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('category')}</h3>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(''); setModalStep('root'); }}>{getText('allCategories')}</button>
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(''); setModalStep('root'); }}>{getText('allCategories')}</button>
                   {l1Categories.map((c) => (
-                    <button key={c.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(c.value); setModalStep('catL2'); }}>{c.label}</button>
+                    <button key={c.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(c.value); setModalStep('catL2'); }}>{c.label}</button>
                   ))}
                 </div>
               )}
               {modalStep === 'catL2' && (
-                <div className="p-4 space-y-3">
-                  <h4 className="text-sm font-medium text-gray-700">{getText('category')}</h4>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
                   {l2Categories.map((c2) => (
-                    <button key={c2.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange(c2.value); setModalStep('catL3'); }}>{c2.label}</button>
+                    <button key={c2.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange(c2.value); setModalStep('catL3'); }}>{c2.label}</button>
                   ))}
                 </div>
               )}
               {modalStep === 'catL3' && (
-                <div className="p-4 space-y-3">
-                  <h4 className="text-sm font-medium text-gray-700">{getText('category')}</h4>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
                   {l3Categories.map((c3) => (
-                    <button key={c3.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange(c3.value); setModalStep('root'); }}>{c3.label}</button>
+                    <button key={c3.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange(c3.value); setModalStep('root'); }}>{c3.label}</button>
                   ))}
                 </div>
               )}
               {/* Area steps */}
               {modalStep === 'areaL1' && (
-                <div className="p-4 space-y-3">
-                  <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('region')}</h3>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(''); setModalStep('root'); }}>{getText('allRegions')}</button>
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(''); setModalStep('root'); }}>{getText('allRegions')}</button>
                   {l1Areas.map((a) => (
-                    <button key={a.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(a.value); setModalStep('areaL2'); }}>{a.label}</button>
+                    <button key={a.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(a.value); setModalStep('areaL2'); }}>{a.label}</button>
                   ))}
                 </div>
               )}
               {modalStep === 'areaL2' && (
-                <div className="p-4 space-y-3">
-                  <h4 className="text-sm font-medium text-gray-700">{getText('region')}</h4>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
                   {l2Areas.map((a2) => (
-                    <button key={a2.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange(a2.value); setModalStep('root'); }}>{a2.label}</button>
+                    <button key={a2.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange(a2.value); setModalStep('root'); }}>{a2.label}</button>
                   ))}
                 </div>
               )}
