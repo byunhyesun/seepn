@@ -748,42 +748,23 @@ export default function SuppliersPage() {
                             </div>
                             
                             {/* Supplier Info */}
-                            <div className="p-4">
-                              <div className="flex items-start justify-between mb-2">
-                                <div className="flex items-center gap-2 flex-1">
-                                  <h3 className="font-semibold text-gray-900 text-lg">{supplier.name}</h3>
-                                  {supplier.website && (
-                                    <a
-                                      href={supplier.website}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-blue-600 hover:text-blue-800 transition-colors"
-                                      title="홈페이지 방문"
-                                    >
-                                      <ExternalLink className="h-4 w-4" />
-                                    </a>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="flex items-center text-yellow-500">
-                                    <Star className="h-4 w-4 fill-current" />
-                                    <span className="text-sm text-gray-600 ml-1">{supplier.rating}</span>
+                              <div className="p-4">
+                                <div className="flex items-start justify-between mb-2">
+                                  <div className="flex items-center gap-2 flex-1">
+                                    <h3 className="font-semibold text-gray-900 text-lg">{supplier.name}</h3>
+                                    {supplier.website && (
+                                      <a
+                                        href={supplier.website}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                                        title="홈페이지 방문"
+                                      >
+                                        <ExternalLink className="h-4 w-4" />
+                                      </a>
+                                    )}
                                   </div>
-                                  <button
-                                    onClick={() => toggleFavorite(supplier.id)}
-                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                    title={favoriteSuppliers.has(supplier.id) ? "관심 공급사에서 제거" : "관심 공급사에 추가"}
-                                  >
-                                    <Heart 
-                                      className={`h-4 w-4 transition-colors ${
-                                        favoriteSuppliers.has(supplier.id) 
-                                          ? 'fill-red-500 text-red-500' 
-                                          : 'text-gray-400 hover:text-red-400'
-                                      }`} 
-                                    />
-                                  </button>
                                 </div>
-                              </div>
                               
                               <div className="space-y-2 mb-4">
                                 <div className="flex items-center text-sm text-gray-600">
@@ -794,17 +775,29 @@ export default function SuppliersPage() {
                                   {supplier.location}
                                 </div>
                               </div>
-                               {/* Stats above detail button */}
-                               <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                                 <div className="flex items-center gap-1">
-                                   <Heart className="h-4 w-4 text-red-500" />
-                                   <span>{getFavoritesCount(supplier)}</span>
-                                 </div>
-                                 <div className="flex items-center gap-1">
-                                   <ThumbsUp className="h-4 w-4 text-blue-500" />
-                                   <span>{getLikesCount(supplier)}</span>
-                                 </div>
-                               </div>
+                                {/* Tags */}
+                                <div className="flex flex-wrap gap-1 mb-3">
+                                  {supplier.tags.map((tag, index) => (
+                                    <span key={index} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                                {/* Stats above detail button: rating, favorites, likes */}
+                                <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                                  <div className="flex items-center gap-1 text-yellow-600">
+                                    <Star className="h-4 w-4 fill-current" />
+                                    <span>{supplier.rating}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Heart className="h-4 w-4 text-red-500" />
+                                    <span>{getFavoritesCount(supplier)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <ThumbsUp className="h-4 w-4 text-blue-500" />
+                                    <span>{getLikesCount(supplier)}</span>
+                                  </div>
+                                </div>
                               
                               <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium">
                                 {getText('viewDetail')}
@@ -847,25 +840,7 @@ export default function SuppliersPage() {
                                       </a>
                                     )}
                                   </div>
-                                  <div className="flex items-center gap-2 ml-4">
-                                    <div className="flex items-center text-yellow-500">
-                                      <Star className="h-4 w-4 fill-current" />
-                                      <span className="text-sm text-gray-600 ml-1">{supplier.rating}</span>
-                                    </div>
-                                    <button
-                                      onClick={() => toggleFavorite(supplier.id)}
-                                      className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                      title={favoriteSuppliers.has(supplier.id) ? "관심 공급사에서 제거" : "관심 공급사에 추가"}
-                                    >
-                                      <Heart 
-                                        className={`h-4 w-4 transition-colors ${
-                                          favoriteSuppliers.has(supplier.id) 
-                                            ? 'fill-red-500 text-red-500' 
-                                            : 'text-gray-400 hover:text-red-400'
-                                        }`} 
-                                      />
-                                    </button>
-                                  </div>
+                                  <div className="flex items-center gap-2 ml-4" />
                                 </div>
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
@@ -877,8 +852,12 @@ export default function SuppliersPage() {
                                     {supplier.location}
                                   </div>
                                 </div>
-                                 {/* Stats above detail button */}
+                                 {/* Stats above detail button: rating, favorites, likes */}
                                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                                   <div className="flex items-center gap-1 text-yellow-600">
+                                     <Star className="h-4 w-4 fill-current" />
+                                     <span>{supplier.rating}</span>
+                                   </div>
                                    <div className="flex items-center gap-1">
                                      <Heart className="h-4 w-4 text-red-500" />
                                      <span>{getFavoritesCount(supplier)}</span>
