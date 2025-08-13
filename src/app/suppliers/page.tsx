@@ -775,6 +775,9 @@ export default function SuppliersPage() {
                                   {supplier.location}
                                 </div>
                               </div>
+                              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                                {supplier.description}
+                              </p>
                                 {/* Tags */}
                                 <div className="flex flex-wrap gap-1 mb-3">
                                   {supplier.tags.map((tag, index) => (
@@ -851,6 +854,17 @@ export default function SuppliersPage() {
                                     <MapPin className="h-4 w-4 mr-2" />
                                     {supplier.location}
                                   </div>
+                                </div>
+                                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                                  {supplier.description}
+                                </p>
+                                {/* Tags */}
+                                <div className="flex flex-wrap gap-1 mb-3">
+                                  {supplier.tags.map((tag, index) => (
+                                    <span key={index} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                                      {tag}
+                                    </span>
+                                  ))}
                                 </div>
                                  {/* Stats above detail button: rating, favorites, likes */}
                                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
