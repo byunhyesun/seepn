@@ -476,6 +476,17 @@ export default function MyFavoriteSuppliersPage() {
                                     </a>
                                   )}
                                 </div>
+                                <button
+                                  onClick={() => {
+                                    if (confirm('관심 공급사에서 삭제하시겠습니까?')) {
+                                      toggleFavorite(supplier.id);
+                                    }
+                                  }}
+                                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                  title="관심 해제"
+                                >
+                                  <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                                </button>
                               </div>
                               <div className="space-y-2 mb-3">
                                 <div className="text-sm text-gray-600">{supplier.categoryDepth3}</div>
@@ -548,6 +559,17 @@ export default function MyFavoriteSuppliersPage() {
                                       </a>
                                     )}
                                   </div>
+                                  <button
+                                    onClick={() => {
+                                      if (confirm('관심 공급사에서 삭제하시겠습니까?')) {
+                                        toggleFavorite(supplier.id);
+                                      }
+                                    }}
+                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                    title="관심 해제"
+                                  >
+                                    <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                                  </button>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
                                   <div className="text-sm text-gray-600">{supplier.categoryDepth3}</div>
