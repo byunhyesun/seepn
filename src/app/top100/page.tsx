@@ -3,9 +3,9 @@
 import React from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import { getL1Categories } from '../../utils/categories';
-import { getL1Areas } from '../../utils/areas';
-import { Search, RotateCcw, Filter, X, Star, Heart, ExternalLink, MapPin, ThumbsUp, ChevronDown } from 'lucide-react';
+import { getL1Categories, getL2Categories, getL3Categories } from '../../utils/categories';
+import { getL1Areas, getL2Areas } from '../../utils/areas';
+import { Search, RotateCcw, Filter, X, Star, Heart, ExternalLink, MapPin, ThumbsUp, ChevronDown, ChevronLeft } from 'lucide-react';
 
 export default function Top100Page() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
@@ -20,6 +20,7 @@ export default function Top100Page() {
   const [selectedArea, setSelectedArea] = React.useState('');
   const [isMobile, setIsMobile] = React.useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
+  const [modalStep, setModalStep] = React.useState<'root' | 'catL1' | 'catL2' | 'catL3' | 'areaL1' | 'areaL2'>('root');
   // Removed viewMode state - TOP100 only uses list view
   const [favoriteSuppliers, setFavoriteSuppliers] = React.useState<Set<number>>(new Set());
   const [activeTab, setActiveTab] = React.useState<'all' | 'likes' | 'rating' | 'reviews' | 'md' | 'ai'>('all');
@@ -53,6 +54,27 @@ export default function Top100Page() {
     }
   }, [currentLanguage]);
 
+  // Category depths (MO modal)
+  const [selectedL1Category, setSelectedL1Category] = React.useState('');
+  const [selectedL2Category, setSelectedL2Category] = React.useState('all');
+  const [selectedL3Category, setSelectedL3Category] = React.useState('all');
+  const l2Categories = React.useMemo(
+    () => (selectedL1Category ? getL2Categories(selectedL1Category, currentLanguage) : []),
+    [selectedL1Category, currentLanguage]
+  );
+  const l3Categories = React.useMemo(
+    () => (selectedL2Category && selectedL2Category !== 'all' ? getL3Categories(selectedL1Category, selectedL2Category, currentLanguage) : []),
+    [selectedL1Category, selectedL2Category, currentLanguage]
+  );
+
+  // Area depths (MO modal)
+  const [selectedL1Area, setSelectedL1Area] = React.useState('');
+  const [selectedL2Area, setSelectedL2Area] = React.useState('all');
+  const l2Areas = React.useMemo(
+    () => (selectedL1Area ? getL2Areas(selectedL1Area, currentLanguage) : []),
+    [selectedL1Area, currentLanguage]
+  );
+
   // Get user's country based on IP
   React.useEffect(() => {
     const getUserCountry = async () => {
@@ -84,6 +106,9 @@ export default function Top100Page() {
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     try {
       setSelectedCategory(e.target.value || '');
+      setSelectedL1Category(e.target.value || '');
+      setSelectedL2Category('all');
+      setSelectedL3Category('all');
     } catch (error) {
       console.error('Error changing category:', error);
     }
@@ -92,6 +117,8 @@ export default function Top100Page() {
   const handleAreaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     try {
       setSelectedArea(e.target.value || '');
+      setSelectedL1Area(e.target.value || '');
+      setSelectedL2Area('all');
     } catch (error) {
       console.error('Error changing area:', error);
     }
@@ -101,6 +128,11 @@ export default function Top100Page() {
     try {
       setSelectedCategory('');
       setSelectedArea('');
+      setSelectedL1Category('');
+      setSelectedL2Category('all');
+      setSelectedL3Category('all');
+      setSelectedL1Area('');
+      setSelectedL2Area('all');
     } catch (error) {
       console.error('Error resetting filters:', error);
     }
@@ -259,7 +291,7 @@ export default function Top100Page() {
         resetButton: '초기화',
         searchButton: '검색',
         // Mobile search modal
-        searchFilter: '검색 필터',
+        searchFilter: '검색',
         closeFilter: '필터 닫기',
         // Results display
         resultsTitle: 'TOP 100 공급사',
@@ -847,77 +879,118 @@ export default function Top100Page() {
           
           {/* Modal */}
           <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
-            {/* Modal Header */}
+            {/* Modal Header (with back on steps) */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">{getText('searchFilter')}</h2>
-              <button
-                onClick={() => setIsSearchModalOpen(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
-              >
+              {modalStep !== 'root' ? (
+                <button onClick={() => setModalStep('root')} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" aria-label="back">
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+              ) : (
+                <div className="w-9" />
+              )}
+              <h2 className="text-lg font-semibold text-gray-900 flex-1 text-center">{getText('searchFilter')}</h2>
+              <button onClick={() => { setIsSearchModalOpen(false); setModalStep('root'); }} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" aria-label="close">
                 <X className="h-5 w-5" />
               </button>
             </div>
             
             {/* Modal Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-4">
-                {/* Category Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {getText('category')}
-                  </label>
-                  <select
-                    value={selectedCategory}
-                    onChange={handleCategoryChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">{getText('allCategories')}</option>
-                    {l1Categories.map((category) => (
-                      <option key={category.value} value={category.value}>
-                        {category.label}
-                      </option>
-                    ))}
-                  </select>
+            <div className="flex-1 overflow-y-auto">
+              {modalStep === 'root' && (
+                <div className="p-4 space-y-4">
+                  {/* Category triggers */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
+                    <div className="grid grid-cols-1 gap-2">
+                      <button type="button" onClick={() => setModalStep('catL1')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
+                        <span className="truncate">{getL1Label() || getText('allCategories')}</span>
+                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                      </button>
+                      {selectedL1Category !== '' && (
+                        <button type="button" onClick={() => setModalStep('catL2')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
+                          <span className="truncate">{getL2Label() || getText('allCategories')}</span>
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        </button>
+                      )}
+                      {selectedL1Category !== '' && selectedL2Category !== 'all' && (
+                        <button type="button" onClick={() => setModalStep('catL3')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
+                          <span className="truncate">{getL3Label() || getText('allCategories')}</span>
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {/* Region triggers */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{getText('region')}</label>
+                    <div className="grid grid-cols-1 gap-2">
+                      <button type="button" onClick={() => setModalStep('areaL1')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
+                        <span className="truncate">{getAreaL1Label() || getText('allRegions')}</span>
+                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                      </button>
+                      {selectedL1Area !== '' && (
+                        <button type="button" onClick={() => setModalStep('areaL2')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
+                          <span className="truncate">{getAreaL2Label() || getText('allRegions')}</span>
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
-
-                {/* Region Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {getText('region')}
-                  </label>
-                  <select
-                    value={selectedArea}
-                    onChange={handleAreaChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">{getText('allRegions')}</option>
-                    {l1Areas.map((area) => (
-                      <option key={area.value} value={area.value}>
-                        {area.label}
-                      </option>
-                    ))}
-                  </select>
+              )}
+              {/* Category steps */}
+              {modalStep === 'catL1' && (
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Category(''); setSelectedCategory(''); setSelectedL2Category('all'); setSelectedL3Category('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  {l1Categories.map((c) => (
+                    <button key={c.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Category(c.value); setSelectedCategory(c.value); setSelectedL2Category('all'); setSelectedL3Category('all'); setModalStep('catL2'); }}>{c.label}</button>
+                  ))}
                 </div>
-              </div>
+              )}
+              {modalStep === 'catL2' && (
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL2Category('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  {l2Categories.map((c2) => (
+                    <button key={c2.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL2Category(c2.value); setModalStep('catL3'); }}>{c2.label}</button>
+                  ))}
+                </div>
+              )}
+              {modalStep === 'catL3' && (
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL3Category('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  {l3Categories.map((c3) => (
+                    <button key={c3.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL3Category(c3.value); setModalStep('root'); }}>{c3.label}</button>
+                  ))}
+                </div>
+              )}
+              {/* Area steps */}
+              {modalStep === 'areaL1' && (
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Area(''); setSelectedArea(''); setSelectedL2Area('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
+                  {l1Areas.map((a) => (
+                    <button key={a.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Area(a.value); setSelectedArea(a.value); setSelectedL2Area('all'); setModalStep('areaL2'); }}>{a.label}</button>
+                  ))}
+                </div>
+              )}
+              {modalStep === 'areaL2' && (
+                <div className="p-4 space-y-2">
+                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL2Area('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
+                  {l2Areas.map((a2) => (
+                    <button key={a2.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL2Area(a2.value); setModalStep('root'); }}>{a2.label}</button>
+                  ))}
+                </div>
+              )}
             </div>
             
-            {/* Modal Footer */}
-            <div className="p-4 border-t border-gray-200">
-              <div className="flex gap-2">
-                <button 
-                  onClick={handleReset}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  {getText('resetButton')}
-                </button>
-                <button 
-                  onClick={() => setIsSearchModalOpen(false)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  {getText('searchButton')}
-                </button>
+            {/* Modal Footer (root only) */}
+            {modalStep === 'root' && (
+              <div className="p-4 border-t border-gray-200">
+                <div className="flex gap-2">
+                  <button onClick={handleReset} className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors">{getText('resetButton')}</button>
+                  <button onClick={() => setIsSearchModalOpen(false)} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors">{getText('searchButton')}</button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </>
       )}
