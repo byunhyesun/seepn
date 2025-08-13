@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Search, ChevronDown, ChevronUp, Paperclip } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, Paperclip, X } from 'lucide-react';
 
 export default function FAQPage() {
   const [currentLanguage, setCurrentLanguage] = useState('ko');
@@ -13,6 +13,8 @@ export default function FAQPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [searchType, setSearchType] = useState('title');
+  const [isSearchTypeModalOpen, setIsSearchTypeModalOpen] = useState(false);
+  const [isTabModalOpen, setIsTabModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
 
@@ -316,14 +318,24 @@ export default function FAQPage() {
           {/* Search Section */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
             <div className="flex flex-col sm:flex-row gap-4">
+              {/* PC select */}
               <select
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                className="hidden md:block px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
               >
                 <option value="title">{getText('searchTypeTitle')}</option>
                 <option value="content">{getText('searchTypeContent')}</option>
               </select>
+              {/* MO trigger */}
+              <button
+                type="button"
+                onClick={() => setIsSearchTypeModalOpen(true)}
+                className="md:hidden w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
+              >
+                <span>{searchType === 'content' ? getText('searchTypeContent') : getText('searchTypeTitle')}</span>
+                <ChevronDown className="h-4 w-4 text-gray-400" />
+              </button>
               
               <div className="flex-1 flex gap-2">
                 <input
@@ -374,21 +386,26 @@ export default function FAQPage() {
               </nav>
             </div>
 
-            {/* Mobile Select Menu */}
+            {/* Mobile Tab trigger */}
             <div className="block md:hidden">
-              <select
-                value={activeTab}
-                onChange={(e) => setActiveTab(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              <button
+                type="button"
+                onClick={() => setIsTabModalOpen(true)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
               >
-                <option value="all">{getText('tabAll')}</option>
-                <option value="service">{getText('tabService')}</option>
-                <option value="supplier">{getText('tabSupplier')}</option>
-                <option value="advertising">{getText('tabAdvertising')}</option>
-                <option value="payment">{getText('tabPayment')}</option>
-                <option value="member">{getText('tabMember')}</option>
-                <option value="other">{getText('tabOther')}</option>
-              </select>
+                <span>
+                  {([
+                    { key: 'all', label: getText('tabAll') },
+                    { key: 'service', label: getText('tabService') },
+                    { key: 'supplier', label: getText('tabSupplier') },
+                    { key: 'advertising', label: getText('tabAdvertising') },
+                    { key: 'payment', label: getText('tabPayment') },
+                    { key: 'member', label: getText('tabMember') },
+                    { key: 'other', label: getText('tabOther') }
+                  ] as const).find(t => t.key === activeTab)?.label}
+                </span>
+                <ChevronDown className="h-4 w-4 text-gray-400" />
+              </button>
             </div>
           </div>
 
@@ -452,6 +469,69 @@ export default function FAQPage() {
           </div>
         </div>
       </main>
+
+      {/* MO Search Type Modal */}
+      {isMobile && isSearchTypeModalOpen && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsSearchTypeModalOpen(false)} />
+          <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">{getText('searchButton')}</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" onClick={() => setIsSearchTypeModalOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {([
+                { key: 'title', label: getText('searchTypeTitle') },
+                { key: 'content', label: getText('searchTypeContent') },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.key}
+                  onClick={() => { setSearchType(opt.key); setIsSearchTypeModalOpen(false); }}
+                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${searchType === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* MO Tab Modal */}
+      {isMobile && isTabModalOpen && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsTabModalOpen(false)} />
+          <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">{getText('pageTitle')}</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" onClick={() => setIsTabModalOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {([
+                { key: 'all', label: getText('tabAll') },
+                { key: 'service', label: getText('tabService') },
+                { key: 'supplier', label: getText('tabSupplier') },
+                { key: 'advertising', label: getText('tabAdvertising') },
+                { key: 'payment', label: getText('tabPayment') },
+                { key: 'member', label: getText('tabMember') },
+                { key: 'other', label: getText('tabOther') }
+              ] as const).map((opt) => (
+                <button
+                  key={opt.key}
+                  onClick={() => { setActiveTab(opt.key); setIsTabModalOpen(false); }}
+                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${activeTab === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
