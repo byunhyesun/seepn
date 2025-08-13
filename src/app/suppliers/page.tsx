@@ -29,7 +29,7 @@ export default function SuppliersPage() {
   
   // 모바일 검색 모달 상태
   const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
-  const [modalStep, setModalStep] = React.useState<'root' | 'category' | 'region' | 'size'>('root');
+  const [modalStep, setModalStep] = React.useState<'root' | 'catL1' | 'catL2' | 'catL3' | 'region' | 'size'>('root');
   const [companySize, setCompanySize] = React.useState('');
   
   // 검색어 상태
@@ -525,6 +525,25 @@ export default function SuppliersPage() {
     return texts[currentLanguage as keyof typeof texts]?.[key as keyof typeof texts.ko] || texts.ko[key as keyof typeof texts.ko];
   };
 
+  // Helpers to display selected category path in root
+  const getL1Label = React.useCallback(() => {
+    if (!selectedL1Category) return '';
+    return l1Categories.find(c => c.value === selectedL1Category)?.label || '';
+  }, [selectedL1Category, l1Categories]);
+  const getL2Label = React.useCallback(() => {
+    if (!selectedL1Category || selectedL2Category === 'all') return '';
+    return l2Categories.find(c => c.value === selectedL2Category)?.label || '';
+  }, [selectedL1Category, selectedL2Category, l2Categories]);
+  const getL3Label = React.useCallback(() => {
+    if (!selectedL1Category || !selectedL2Category || selectedL2Category === 'all' || selectedL3Category === 'all') return '';
+    return l3Categories.find(c => c.value === selectedL3Category)?.label || '';
+  }, [selectedL1Category, selectedL2Category, selectedL3Category, l3Categories]);
+  const getCategoryPathLabel = React.useCallback(() => {
+    const parts = [getL1Label(), getL2Label(), getL3Label()].filter(Boolean);
+    if (parts.length === 0) return getText('allCategories');
+    return parts.join(' / ');
+  }, [getL1Label, getL2Label, getL3Label, getText]);
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header
@@ -967,13 +986,11 @@ export default function SuppliersPage() {
                   />
                 </div>
 
-                  {/* Category trigger */}
+                  {/* Category trigger with selected path */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
-                    <button type="button" onClick={() => setModalStep('category')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
-                      <span>
-                        {selectedL1Category ? (l1Categories.find(c => c.value === selectedL1Category)?.label || getText('allCategories')) : getText('allCategories')}
-                      </span>
+                    <button type="button" onClick={() => setModalStep('catL1')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                      <span className="truncate">{getCategoryPathLabel()}</span>
                       <ChevronDown className="h-4 w-4 text-gray-400" />
                     </button>
                   </div>
@@ -1001,31 +1018,37 @@ export default function SuppliersPage() {
                   </div>
                 </div>
               )}
-              {modalStep === 'category' && (
+              {modalStep === 'catL1' && (
                 <div className="p-4 space-y-3">
                   <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('selectCategory')}</h3>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL1CategoryChange('')}>{getText('allCategories')}</button>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(''); setModalStep('root'); }}>{getText('allCategories')}</button>
                   {l1Categories.map((c) => (
-                    <button key={c.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL1CategoryChange(c.value)}>{c.label}</button>
+                    <button key={c.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(c.value); setModalStep('catL2'); }}>
+                      {c.label}
+                    </button>
                   ))}
-                  {selectedL1Category && (
-                    <>
-                      <h4 className="mt-3 text-sm font-medium text-gray-700">{getText('selectSubCategory')}</h4>
-                      <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL2CategoryChange('all')}>{getText('allCategories')}</button>
-                      {l2Categories.map((c2) => (
-                        <button key={c2.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL2CategoryChange(c2.value)}>{c2.label}</button>
-                      ))}
-                    </>
-                  )}
-                  {selectedL2Category && selectedL2Category !== 'all' && (
-                    <>
-                      <h4 className="mt-3 text-sm font-medium text-gray-700">{getText('selectDetailCategory')}</h4>
-                      <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL3CategoryChange('all')}>{getText('allCategories')}</button>
-                      {l3Categories.map((c3) => (
-                        <button key={c3.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL3CategoryChange(c3.value)}>{c3.label}</button>
-                      ))}
-                    </>
-                  )}
+                </div>
+              )}
+              {modalStep === 'catL2' && (
+                <div className="p-4 space-y-3">
+                  <h4 className="text-sm font-medium text-gray-700">{getText('selectSubCategory')}</h4>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  {l2Categories.map((c2) => (
+                    <button key={c2.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange(c2.value); setModalStep('catL3'); }}>
+                      {c2.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {modalStep === 'catL3' && (
+                <div className="p-4 space-y-3">
+                  <h4 className="text-sm font-medium text-gray-700">{getText('selectDetailCategory')}</h4>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  {l3Categories.map((c3) => (
+                    <button key={c3.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange(c3.value); setModalStep('root'); }}>
+                      {c3.label}
+                    </button>
+                  ))}
                 </div>
               )}
               {modalStep === 'region' && (
