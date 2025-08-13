@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -25,7 +26,9 @@ export default function MyInquiriesPage() {
   const [selectedCategory, setSelectedCategory] = React.useState<'' | InquiryCategoryKey>('');
   const [searchType, setSearchType] = React.useState<'all' | 'title' | 'content'>('all');
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [activeTab, setActiveTab] = React.useState<InquiryStatus>('all');
+  const searchParams = useSearchParams();
+  const initialTab = (searchParams?.get('tab') as InquiryStatus) || 'all';
+  const [activeTab, setActiveTab] = React.useState<InquiryStatus>(initialTab);
 
   React.useEffect(() => {
     const getUserCountry = async () => {

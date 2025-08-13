@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Heart, Star, MessageSquare, ClipboardList, User as UserIcon, CalendarDays } from 'lucide-react';
@@ -10,11 +11,13 @@ export default function MyPageDashboard() {
   const [userCountry, setUserCountry] = useState('대한민국');
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const router = useRouter();
 
   // Sample user info (placeholder)
   const [visitCount, setVisitCount] = useState(1);
   const user = useMemo(() => ({
     nickname: '홍길동',
+    email: 'hong@example.com',
     joinedAt: '2024-06-01', // ISO date
     avatarText: '홍',
   }), []);
@@ -22,7 +25,7 @@ export default function MyPageDashboard() {
   // Sample activity data (placeholder)
   const [activity, setActivity] = useState({
     favoriteSuppliers: 7,
-    evaluated: { done: 3, pending: 2 },
+    evaluated: { done: 3, inProgress: 1, scheduled: 1 },
     recentPosts: 4,
     inquiries: { total: 6, answered: 4, pending: 2 },
   });
@@ -64,7 +67,8 @@ export default function MyPageDashboard() {
         favorites: '관심 공급사 수',
         evaluated: '평가 공급사',
         evaluatedDone: '평가완료',
-        evaluatedPending: '평가예정',
+        evaluatedInProgress: '평가진행',
+        evaluatedScheduled: '평가예정',
         recentPosts: '최근 등록글 수',
         inquiry: '1:1 문의',
         inquiryTotal: '총 문의 수',
@@ -81,7 +85,8 @@ export default function MyPageDashboard() {
         favorites: 'Favorite suppliers',
         evaluated: 'Evaluated suppliers',
         evaluatedDone: 'Completed',
-        evaluatedPending: 'Pending',
+        evaluatedInProgress: 'In Progress',
+        evaluatedScheduled: 'Scheduled',
         recentPosts: 'Recent posts',
         inquiry: '1:1 Inquiry',
         inquiryTotal: 'Total',
@@ -98,7 +103,8 @@ export default function MyPageDashboard() {
         favorites: 'お気に入りサプライヤー数',
         evaluated: '評価サプライヤー',
         evaluatedDone: '評価完了',
-        evaluatedPending: '評価予定',
+        evaluatedInProgress: '評価進行',
+        evaluatedScheduled: '評価予定',
         recentPosts: '最近の投稿数',
         inquiry: '1:1 お問い合わせ',
         inquiryTotal: '合計',
@@ -115,7 +121,8 @@ export default function MyPageDashboard() {
         favorites: '关注的供应商数',
         evaluated: '评价的供应商',
         evaluatedDone: '已完成',
-        evaluatedPending: '待完成',
+        evaluatedInProgress: '进行中',
+        evaluatedScheduled: '预定',
         recentPosts: '最近发布数',
         inquiry: '1:1 咨询',
         inquiryTotal: '总数',
@@ -128,9 +135,10 @@ export default function MyPageDashboard() {
 
   const formatDate = (iso: string) => {
     const date = new Date(iso);
-    return date.toLocaleDateString(
-      currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN'
-    );
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   };
 
   const numberFormat = (n: number) => n.toLocaleString();
@@ -159,7 +167,10 @@ export default function MyPageDashboard() {
                   {user.avatarText}
                 </div>
                 <div>
-                  <div className="text-gray-900 font-semibold text-lg">{user.nickname}</div>
+                  <div className="text-gray-900 font-semibold text-lg flex items-center gap-2">
+                    <span>{user.nickname}</span>
+                    <span className="text-sm text-gray-500">{user.email}</span>
+                  </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
                     <CalendarDays className="h-4 w-4" />
                     <span>{getText('joinedAt')}: {formatDate(user.joinedAt)}</span>
@@ -182,7 +193,14 @@ export default function MyPageDashboard() {
                     <span className="text-gray-700 font-medium">{getText('favorites')}</span>
                     <Heart className="h-4 w-4 text-pink-500" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">{numberFormat(activity.favoriteSuppliers)}</div>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/mypage/favorites')}
+                    className="text-2xl font-bold text-gray-900 hover:text-blue-600"
+                    aria-label={getText('favorites')}
+                  >
+                    {numberFormat(activity.favoriteSuppliers)}
+                  </button>
                 </div>
 
                 {/* Evaluated suppliers */}
@@ -191,14 +209,24 @@ export default function MyPageDashboard() {
                     <span className="text-gray-700 font-medium">{getText('evaluated')}</span>
                     <Star className="h-4 w-4 text-yellow-500" />
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
                       <div className="text-xs text-gray-500 mb-1">{getText('evaluatedDone')}</div>
-                      <div className="text-xl font-semibold text-gray-900">{numberFormat(activity.evaluated.done)}</div>
+                      <button type="button" onClick={() => router.push('/mypage/evaluations?tab=completed')} className="text-xl font-semibold text-gray-900 hover:text-blue-600">
+                        {numberFormat(activity.evaluated.done)}
+                      </button>
                     </div>
-                    <div className="flex-1">
-                      <div className="text-xs text-gray-500 mb-1">{getText('evaluatedPending')}</div>
-                      <div className="text-xl font-semibold text-gray-900">{numberFormat(activity.evaluated.pending)}</div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-500 mb-1">{getText('evaluatedInProgress')}</div>
+                      <button type="button" onClick={() => router.push('/mypage/evaluations?tab=in_progress')} className="text-xl font-semibold text-gray-900 hover:text-blue-600">
+                        {numberFormat(activity.evaluated.inProgress)}
+                      </button>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-500 mb-1">{getText('evaluatedScheduled')}</div>
+                      <button type="button" onClick={() => router.push('/mypage/evaluations?tab=scheduled')} className="text-xl font-semibold text-gray-900 hover:text-blue-600">
+                        {numberFormat(activity.evaluated.scheduled)}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -209,7 +237,9 @@ export default function MyPageDashboard() {
                     <span className="text-gray-700 font-medium">{getText('recentPosts')}</span>
                     <ClipboardList className="h-4 w-4 text-blue-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-900">{numberFormat(activity.recentPosts)}</div>
+                  <button type="button" onClick={() => router.push('/mypage/posts')} className="text-2xl font-bold text-gray-900 hover:text-blue-600">
+                    {numberFormat(activity.recentPosts)}
+                  </button>
                 </div>
 
                 {/* 1:1 Inquiry */}
@@ -219,17 +249,23 @@ export default function MyPageDashboard() {
                     <MessageSquare className="h-4 w-4 text-green-600" />
                   </div>
                   <div className="grid grid-cols-3 gap-4">
-                    <div>
+                    <div className="text-center">
                       <div className="text-xs text-gray-500 mb-1">{getText('inquiryTotal')}</div>
-                      <div className="text-xl font-semibold text-gray-900">{numberFormat(activity.inquiries.total)}</div>
+                      <button type="button" onClick={() => router.push('/mypage/inquiries?tab=all')} className="text-xl font-semibold text-gray-900 hover:text-blue-600">
+                        {numberFormat(activity.inquiries.total)}
+                      </button>
                     </div>
-                    <div>
+                    <div className="text-center">
                       <div className="text-xs text-gray-500 mb-1">{getText('inquiryAnswered')}</div>
-                      <div className="text-xl font-semibold text-gray-900">{numberFormat(activity.inquiries.answered)}</div>
+                      <button type="button" onClick={() => router.push('/mypage/inquiries?tab=answered')} className="text-xl font-semibold text-gray-900 hover:text-blue-600">
+                        {numberFormat(activity.inquiries.answered)}
+                      </button>
                     </div>
-                    <div>
+                    <div className="text-center">
                       <div className="text-xs text-gray-500 mb-1">{getText('inquiryPending')}</div>
-                      <div className="text-xl font-semibold text-gray-900">{numberFormat(activity.inquiries.pending)}</div>
+                      <button type="button" onClick={() => router.push('/mypage/inquiries?tab=pending')} className="text-xl font-semibold text-gray-900 hover:text-blue-600">
+                        {numberFormat(activity.inquiries.pending)}
+                      </button>
                     </div>
                   </div>
                 </div>

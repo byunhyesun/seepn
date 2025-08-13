@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { MapPin, Star, ExternalLink, Calendar, X } from 'lucide-react';
@@ -13,7 +14,9 @@ export default function MyEvaluationsPage() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [userCountry, setUserCountry] = React.useState('대한민국');
 
-  const [activeTab, setActiveTab] = React.useState<EvalStatus>('all');
+  const searchParams = useSearchParams();
+  const initialTab = (searchParams?.get('tab') as EvalStatus) || 'all';
+  const [activeTab, setActiveTab] = React.useState<EvalStatus>(initialTab);
   const [isEvalOpen, setIsEvalOpen] = React.useState(false);
   const [evalTargetId, setEvalTargetId] = React.useState<number | null>(null);
   const [purchaseItem, setPurchaseItem] = React.useState('');
