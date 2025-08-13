@@ -4,7 +4,7 @@ import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { MapPin, Star, ExternalLink, Calendar, X } from 'lucide-react';
+import { MapPin, Star, ExternalLink, Calendar, X, Heart, ThumbsUp } from 'lucide-react';
 
 type EvalStatus = 'all' | 'in_progress' | 'completed' | 'scheduled';
 
@@ -201,6 +201,10 @@ export default function MyEvaluationsPage() {
     return suppliers.filter((s) => s.status === activeTab);
   }, [suppliers, activeTab]);
 
+  // Mock counters for likes and favorites
+  const getLikesCount = (supplier: { id: number }) => (supplier.id % 100) + 10;
+  const getFavoritesCount = (supplier: { id: number }) => (supplier.id % 50) + 5;
+
   const handleEvaluate = (id: number) => {
     setEvalTargetId(id);
     setIsEvalOpen(true);
@@ -302,12 +306,6 @@ export default function MyEvaluationsPage() {
                             </a>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          <div className="flex items-center text-yellow-500">
-                            <Star className="h-4 w-4 fill-current" />
-                            <span className="text-sm text-gray-600 ml-1">{s.rating}</span>
-                          </div>
-                        </div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
                         <div className="text-sm text-gray-600">{s.categoryDepth3}</div>
@@ -316,10 +314,29 @@ export default function MyEvaluationsPage() {
                           {s.location}
                         </div>
                       </div>
+                      {/* Description above evaluation period */}
+                      {s.description && (
+                        <div className="text-sm text-gray-700 mb-2">{s.description}</div>
+                      )}
                       {/* Evaluation Period */}
                       <div className="flex items-center text-sm text-gray-600 mb-2">
                         <Calendar className="h-4 w-4 mr-2" />
                         <span>{getText('period')}: {s.startDate} ~ {s.endDate}</span>
+                      </div>
+                      {/* Stats below period: rating, favorites, likes */}
+                      <div className="flex items-center gap-4 text-sm text-gray-700 mt-2">
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 text-yellow-500 mr-1 fill-current" />
+                          <span>{s.rating.toFixed(1)}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Heart className="h-4 w-4 text-red-500 mr-1" />
+                          <span>{getFavoritesCount(s)} </span>
+                        </div>
+                        <div className="flex items-center">
+                          <ThumbsUp className="h-4 w-4 text-blue-500 mr-1" />
+                          <span>{getLikesCount(s)}</span>
+                        </div>
                       </div>
                       {/* Actions */}
                       <div className="mt-3 flex justify-end">
