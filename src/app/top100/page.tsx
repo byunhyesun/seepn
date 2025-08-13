@@ -87,6 +87,32 @@ export default function Top100Page() {
     }
   }, [selectedL1Area, currentLanguage]);
 
+  // Helpers for displaying selected labels in MO modal root
+  const getL1Label = React.useCallback(() => {
+    if (!selectedL1Category) return '';
+    return l1Categories.find((c) => c.value === selectedL1Category)?.label || '';
+  }, [selectedL1Category, l1Categories]);
+
+  const getL2Label = React.useCallback(() => {
+    if (!selectedL1Category || selectedL2Category === 'all') return '';
+    return l2Categories.find((c) => c.value === selectedL2Category)?.label || '';
+  }, [selectedL1Category, selectedL2Category, l2Categories]);
+
+  const getL3Label = React.useCallback(() => {
+    if (!selectedL1Category || selectedL2Category === 'all' || selectedL3Category === 'all') return '';
+    return l3Categories.find((c) => c.value === selectedL3Category)?.label || '';
+  }, [selectedL1Category, selectedL2Category, selectedL3Category, l3Categories]);
+
+  const getAreaL1Label = React.useCallback(() => {
+    if (!selectedL1Area) return '';
+    return l1Areas.find((a) => a.value === selectedL1Area)?.label || '';
+  }, [selectedL1Area, l1Areas]);
+
+  const getAreaL2Label = React.useCallback(() => {
+    if (!selectedL1Area || selectedL2Area === 'all') return '';
+    return l2Areas.find((a) => a.value === selectedL2Area)?.label || '';
+  }, [selectedL1Area, selectedL2Area, l2Areas]);
+
   // Get user's country based on IP
   React.useEffect(() => {
     const getUserCountry = async () => {
@@ -873,7 +899,7 @@ export default function Top100Page() {
       {/* Mobile Floating Search Button */}
       {isMobile && (
         <button
-          onClick={() => setIsSearchModalOpen(true)}
+          onClick={() => { setModalStep('root'); setIsSearchModalOpen(true); }}
           className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-colors z-40"
         >
           <Filter className="h-6 w-6" />
@@ -886,7 +912,7 @@ export default function Top100Page() {
           {/* Backdrop */}
           <div 
             className="fixed inset-0 bg-black bg-opacity-50 z-50"
-            onClick={() => setIsSearchModalOpen(false)}
+            onClick={() => { setIsSearchModalOpen(false); setModalStep('root'); }}
           />
           
           {/* Modal */}
