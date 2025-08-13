@@ -4,7 +4,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import { Heart, MessageCircle, Eye, Paperclip } from 'lucide-react';
+import { Heart, MessageCircle, Eye, Paperclip, ChevronDown, X } from 'lucide-react';
 
 type PostCategoryKey = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
 
@@ -15,6 +15,9 @@ export default function MyPostsPage() {
   const [userCountry, setUserCountry] = React.useState('대한민국');
   const [selectedYear, setSelectedYear] = React.useState<string>('');
   const [selectedMonth, setSelectedMonth] = React.useState<string>('');
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [isYearModalOpen, setIsYearModalOpen] = React.useState(false);
+  const [isMonthModalOpen, setIsMonthModalOpen] = React.useState(false);
 
   // Assume current user nickname (align with board examples)
   const currentUserNickname = '기술탐험가7';
@@ -30,6 +33,13 @@ export default function MyPostsPage() {
       }
     };
     getUserCountry();
+  }, []);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const getText = (key: string) => {
@@ -173,7 +183,8 @@ export default function MyPostsPage() {
 
           {/* Filters */}
           <div className="mb-4 flex items-center gap-2">
-            <div>
+            {/* Desktop selects */}
+            <div className="hidden md:block">
               <select
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(e.target.value)}
@@ -185,7 +196,7 @@ export default function MyPostsPage() {
                 ))}
               </select>
             </div>
-            <div>
+            <div className="hidden md:block">
               <select
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
@@ -197,6 +208,27 @@ export default function MyPostsPage() {
                 ))}
               </select>
             </div>
+            {/* Mobile triggers */}
+            <div className="block md:hidden flex-1">
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsYearModalOpen(true)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between text-sm"
+                >
+                  <span>{selectedYear ? `${selectedYear}년` : '전체'}</span>
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsMonthModalOpen(true)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between text-sm"
+                >
+                  <span>{selectedMonth ? `${selectedMonth}월` : '전체'}</span>
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* List (board-like UI) */}
@@ -206,7 +238,7 @@ export default function MyPostsPage() {
                 <div key={post.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-gray-300 transition-all">
                   {/* Category */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${getCategoryInfo(post.category).color}`}>
+                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border w-auto max-w-max shrink-0 ${getCategoryInfo(post.category).color}`}>
                       {getCategoryInfo(post.category).label}
                     </span>
                   </div>
@@ -247,6 +279,76 @@ export default function MyPostsPage() {
           </div>
         </div>
       </main>
+
+      {/* Mobile Year Modal */}
+      {isMobile && isYearModalOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsYearModalOpen(false)}
+          />
+          <div className="fixed inset-x-4 top-28 bottom-28 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">연도 선택</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" onClick={() => setIsYearModalOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              <button
+                className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedYear === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                onClick={() => { setSelectedYear(''); setIsYearModalOpen(false); }}
+              >
+                전체
+              </button>
+              {yearOptions.map((y) => (
+                <button
+                  key={y}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedYear === y ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  onClick={() => { setSelectedYear(y); setIsYearModalOpen(false); }}
+                >
+                  {y}년
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Mobile Month Modal */}
+      {isMobile && isMonthModalOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsMonthModalOpen(false)}
+          />
+          <div className="fixed inset-x-4 top-28 bottom-28 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">월 선택</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" onClick={() => setIsMonthModalOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              <button
+                className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedMonth === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                onClick={() => { setSelectedMonth(''); setIsMonthModalOpen(false); }}
+              >
+                전체
+              </button>
+              {monthOptions.map((m) => (
+                <button
+                  key={m}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedMonth === m ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  onClick={() => { setSelectedMonth(m); setIsMonthModalOpen(false); }}
+                >
+                  {m}월
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
