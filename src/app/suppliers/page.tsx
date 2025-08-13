@@ -6,7 +6,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { getL1Categories, getL2Categories, getL3Categories } from '../../utils/categories';
 import { getL1Areas, getL2Areas } from '../../utils/areas';
-import { Search, Grid3X3, List, MapPin, Star, Filter, X, Heart, ExternalLink, ThumbsUp } from 'lucide-react';
+import { Search, Grid3X3, List, MapPin, Star, Filter, X, Heart, ExternalLink, ThumbsUp, ChevronDown, ChevronLeft } from 'lucide-react';
 
 export default function SuppliersPage() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
@@ -29,6 +29,8 @@ export default function SuppliersPage() {
   
   // 모바일 검색 모달 상태
   const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
+  const [modalStep, setModalStep] = React.useState<'root' | 'category' | 'region' | 'size'>('root');
+  const [companySize, setCompanySize] = React.useState('');
   
   // 검색어 상태
   const searchParams = useSearchParams();
@@ -933,9 +935,14 @@ export default function SuppliersPage() {
           <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              {modalStep !== 'root' ? (
+                <button onClick={() => setModalStep('root')} className="p-2 text-gray-600 hover:text-gray-800">
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+              ) : <div />}
               <h2 className="text-lg font-semibold text-gray-900">{getText('searchFilter')}</h2>
               <button
-                onClick={() => setIsSearchModalOpen(false)}
+                onClick={() => { setIsSearchModalOpen(false); setModalStep('root'); }}
                 className="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
               >
                 <X className="h-5 w-5" />
@@ -943,8 +950,9 @@ export default function SuppliersPage() {
             </div>
             
             {/* Modal Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-4">
+            <div className="flex-1 overflow-y-auto">
+              {modalStep === 'root' && (
+                <div className="p-4 space-y-4">
                 {/* Search Input */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -959,110 +967,99 @@ export default function SuppliersPage() {
                   />
                 </div>
 
-                {/* Category Filter - 3 Depth */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {getText('category')}
-                  </label>
-                  
-                  {/* L1 Category */}
-                  <select 
-                    value={selectedL1Category}
-                    onChange={(e) => handleL1CategoryChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
-                  >
-                    <option value="">{getText('allCategories')}</option>
-                    {l1Categories.map((category) => (
-                      <option key={category.value} value={category.value}>
-                        {category.label}
-                      </option>
-                    ))}
-                  </select>
+                  {/* Category trigger */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
+                    <button type="button" onClick={() => setModalStep('category')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                      <span>
+                        {selectedL1Category ? (l1Categories.find(c => c.value === selectedL1Category)?.label || getText('allCategories')) : getText('allCategories')}
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                    </button>
+                  </div>
 
-                  {/* L2 Category */}
-                  {selectedL1Category && selectedL1Category !== '' && (
-                    <select 
-                      value={selectedL2Category}
-                      onChange={(e) => handleL2CategoryChange(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
-                    >
-                      <option value="all">{getText('allCategories')}</option>
-                      {l2Categories.map((category) => (
-                        <option key={category.value} value={category.value}>
-                          {category.label}
-                        </option>
+                  {/* Region trigger */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{getText('region')}</label>
+                    <button type="button" onClick={() => setModalStep('region')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                      <span>
+                        {selectedL1Area ? (l1Areas.find(a => a.value === selectedL1Area)?.label || getText('allRegions')) : getText('allRegions')}
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                    </button>
+                  </div>
+
+                  {/* Size trigger */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{getText('companySize')}</label>
+                    <button type="button" onClick={() => setModalStep('size')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                      <span>
+                        {companySize === 'large' ? getText('largeCorp') : companySize === 'medium' ? getText('mediumCorp') : companySize === 'small' ? getText('smallCorp') : companySize === 'startup' ? getText('startup') : getText('allSizes')}
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+              )}
+              {modalStep === 'category' && (
+                <div className="p-4 space-y-3">
+                  <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('selectCategory')}</h3>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL1CategoryChange('')}>{getText('allCategories')}</button>
+                  {l1Categories.map((c) => (
+                    <button key={c.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL1CategoryChange(c.value)}>{c.label}</button>
+                  ))}
+                  {selectedL1Category && (
+                    <>
+                      <h4 className="mt-3 text-sm font-medium text-gray-700">{getText('selectSubCategory')}</h4>
+                      <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL2CategoryChange('all')}>{getText('allCategories')}</button>
+                      {l2Categories.map((c2) => (
+                        <button key={c2.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL2CategoryChange(c2.value)}>{c2.label}</button>
                       ))}
-                    </select>
+                    </>
                   )}
-
-                  {/* L3 Category */}
                   {selectedL2Category && selectedL2Category !== 'all' && (
-                    <select 
-                      value={selectedL3Category}
-                      onChange={(e) => handleL3CategoryChange(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="all">{getText('allCategories')}</option>
-                      {l3Categories.map((category) => (
-                        <option key={category.value} value={category.value}>
-                          {category.label}
-                        </option>
+                    <>
+                      <h4 className="mt-3 text-sm font-medium text-gray-700">{getText('selectDetailCategory')}</h4>
+                      <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL3CategoryChange('all')}>{getText('allCategories')}</button>
+                      {l3Categories.map((c3) => (
+                        <button key={c3.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL3CategoryChange(c3.value)}>{c3.label}</button>
                       ))}
-                    </select>
+                    </>
                   )}
                 </div>
-
-                {/* Region Filter - 2 Depth */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {getText('region')}
-                  </label>
-                  
-                  {/* L1 Area */}
-                  <select 
-                    value={selectedL1Area}
-                    onChange={(e) => handleL1AreaChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
-                  >
-                    <option value="">{getText('allRegions')}</option>
-                    {l1Areas.map((area) => (
-                      <option key={area.value} value={area.value}>
-                        {area.label}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* L2 Area */}
+              )}
+              {modalStep === 'region' && (
+                <div className="p-4 space-y-3">
+                  <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('selectRegion')}</h3>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL1AreaChange('')}>{getText('allRegions')}</button>
+                  {l1Areas.map((a) => (
+                    <button key={a.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL1AreaChange(a.value)}>{a.label}</button>
+                  ))}
                   {selectedL1Area && (
-                    <select 
-                      value={selectedL2Area}
-                      onChange={(e) => handleL2AreaChange(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="all">{getText('allRegions')}</option>
-                      {l2Areas.map((area) => (
-                        <option key={area.value} value={area.value}>
-                          {area.label}
-                        </option>
+                    <>
+                      <h4 className="mt-3 text-sm font-medium text-gray-700">{getText('selectSubRegion')}</h4>
+                      <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL2AreaChange('all')}>{getText('allRegions')}</button>
+                      {l2Areas.map((a2) => (
+                        <button key={a2.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL2AreaChange(a2.value)}>{a2.label}</button>
                       ))}
-                    </select>
+                    </>
                   )}
                 </div>
-
-                {/* Company Size Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {getText('companySize')}
-                  </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="">{getText('allSizes')}</option>
-                    <option value="large">{getText('largeCorp')}</option>
-                    <option value="medium">{getText('mediumCorp')}</option>
-                    <option value="small">{getText('smallCorp')}</option>
-                    <option value="startup">{getText('startup')}</option>
-                  </select>
+              )}
+              {modalStep === 'size' && (
+                <div className="p-4 space-y-1">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">{getText('companySize')}</h3>
+                  {['', 'large', 'medium', 'small', 'startup'].map((key) => (
+                    <button
+                      key={key || 'all'}
+                      onClick={() => { setCompanySize(key); setModalStep('root'); }}
+                      className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${companySize === key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                    >
+                      {key === '' ? getText('allSizes') : key === 'large' ? getText('largeCorp') : key === 'medium' ? getText('mediumCorp') : key === 'small' ? getText('smallCorp') : getText('startup')}
+                    </button>
+                  ))}
                 </div>
-              </div>
+              )}
             </div>
             
             {/* Modal Footer */}
