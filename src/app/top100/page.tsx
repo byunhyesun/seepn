@@ -32,6 +32,7 @@ export default function Top100Page() {
   ];
   const [currentBannerIndex, setCurrentBannerIndex] = React.useState(0);
   const [isBannerPaused, setIsBannerPaused] = React.useState(false);
+  const [isTabModalOpen, setIsTabModalOpen] = React.useState(false);
 
   // Get category and area data
   const l1Categories = React.useMemo(() => {
@@ -666,22 +667,69 @@ export default function Top100Page() {
                     </nav>
                   </div>
                   
-                  {/* Mobile Select Menu */}
+                  {/* Mobile Tab Menu as layer popup trigger */}
                   <div className="block md:hidden">
-                    <select
-                      value={activeTab}
-                      onChange={(e) => setActiveTab(e.target.value as typeof activeTab)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    <button
+                      type="button"
+                      onClick={() => setIsTabModalOpen(true)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-left"
                     >
-                      <option value="all">{getText('tabAll')}</option>
-                      <option value="likes">{getText('tabLikes')}</option>
-                      <option value="rating">{getText('tabRating')}</option>
-                      <option value="reviews">{getText('tabReviews')}</option>
-                      <option value="md">{getText('tabMD')}</option>
-                      <option value="ai">{getText('tabAI')}</option>
-                    </select>
+                      {(
+                        [
+                          { key: 'all', label: getText('tabAll') },
+                          { key: 'likes', label: getText('tabLikes') },
+                          { key: 'rating', label: getText('tabRating') },
+                          { key: 'reviews', label: getText('tabReviews') },
+                          { key: 'md', label: getText('tabMD') },
+                          { key: 'ai', label: getText('tabAI') }
+                        ] as const
+                      ).find(t => t.key === activeTab)?.label}
+                    </button>
                   </div>
                 </div>
+                {/* Mobile Tab Selection Modal */}
+                {isMobile && isTabModalOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 bg-black bg-opacity-50 z-50"
+                      onClick={() => setIsTabModalOpen(false)}
+                    />
+                    <div className="fixed inset-x-4 top-28 bottom-28 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+                      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900">정렬 기준</h3>
+                        <button
+                          className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+                          onClick={() => setIsTabModalOpen(false)}
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      </div>
+                      <div className="flex-1 overflow-y-auto">
+                        {([
+                          { key: 'all', label: getText('tabAll') },
+                          { key: 'likes', label: getText('tabLikes') },
+                          { key: 'rating', label: getText('tabRating') },
+                          { key: 'reviews', label: getText('tabReviews') },
+                          { key: 'md', label: getText('tabMD') },
+                          { key: 'ai', label: getText('tabAI') }
+                        ] as const).map((tab) => (
+                          <button
+                            key={tab.key}
+                            onClick={() => {
+                              setActiveTab(tab.key as typeof activeTab);
+                              setIsTabModalOpen(false);
+                            }}
+                            className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${
+                              activeTab === tab.key ? 'text-blue-600 font-medium' : 'text-gray-700'
+                            }`}
+                          >
+                            {tab.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Results Content - List View Only */}
                 {sortedSuppliers.length > 0 ? (
