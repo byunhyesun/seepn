@@ -31,6 +31,7 @@ export default function InquiryRePage() {
   });
 
   const [prev, setPrev] = React.useState<{ category: InquiryCategoryKey; title: string; content: string; attachments?: AttachmentItem[] } | null>(null);
+  const [prevList, setPrevList] = React.useState<Array<{ title?: string; registrationDate?: string; attachments?: AttachmentItem[]; content: string }>>([]);
   const [showPrev, setShowPrev] = React.useState(true);
   const [errors, setErrors] = React.useState<{ [k: string]: string }>({});
 
@@ -143,6 +144,10 @@ export default function InquiryRePage() {
         content: '로그인은 되는데 마이페이지 이동 시 에러가 발생합니다. 스크린샷을 첨부합니다.',
         attachments: [{ name: 'screenshot_1.png', size: '820KB' }]
       };
+      setPrevList([
+        { title: '이전 문의 1', registrationDate: '2025-01-05T10:00:00', attachments: [{ name: 'log.txt', size: '12KB' }], content: '동일 이슈가 있어 로그 파일을 전달드립니다.' },
+        { title: '이전 문의 2', registrationDate: '2025-01-08T11:20:00', attachments: [], content: '추가 현상: 특정 브라우저에서만 발생합니다.' },
+      ]);
     } else if (id === 107) {
       existing = {
         category: 'etc',
@@ -150,6 +155,9 @@ export default function InquiryRePage() {
         content: '참고용 파일을 첨부했습니다. 확인 부탁드립니다.',
         attachments: [{ name: 'reference.pdf', size: '245KB' }, { name: 'capture.jpg', size: '1.1MB' }]
       };
+      setPrevList([
+        { title: '이전 문의 1', registrationDate: '2025-01-10T09:00:00', attachments: [{ name: 'ref_v1.pdf', size: '200KB' }], content: '첫 문의 내용입니다.' },
+      ]);
     } else {
       existing = {
         category: 'supplier',
@@ -157,6 +165,7 @@ export default function InquiryRePage() {
         content: '필요한 서류와 심사 기간을 알고 싶습니다.',
         attachments: []
       };
+      setPrevList([]);
     }
     setPrev(existing);
     setFormData({ category: existing.category, title: existing.title, content: '', attachments: [] });
@@ -353,8 +362,8 @@ export default function InquiryRePage() {
             </form>
           </div>
 
-          {/* Previous summary (collapsible) */}
-          {prev && (
+          {/* Previous summary (collapsible with per-item toggles) */}
+          {prevList && prevList.length > 0 && (
             <div className="mt-6">
               <button
                 type="button"
@@ -366,38 +375,32 @@ export default function InquiryRePage() {
               </button>
               {showPrev && (
                 <div className="bg-white border border-t-0 border-gray-200 rounded-b-lg p-6 md:p-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <div className="text-sm text-gray-500 mb-1">{getText('categoryLabel')}</div>
-                      <div className="text-gray-900">{mapCategory(prev.category, currentLanguage)}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-500 mb-1">{getText('titleLabel')}</div>
-                      <div className="text-gray-900">{prev.title}</div>
-                    </div>
-                  </div>
-                  {prev.attachments && prev.attachments.length > 0 && (
-                    <div className="mb-4">
-                      <div className="text-sm text-gray-500 mb-2">{getText('prevAttachments')}</div>
-                      <div className="space-y-2">
-                        {prev.attachments.map((a, i) => (
-                          <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded border">
-                            <div className="flex items-center">
-                              <Paperclip className="h-5 w-5 text-gray-400 mr-2" />
-                              <span className="text-sm text-gray-700">{a.name}</span>
-                              {a.size && <span className="text-xs text-gray-500 ml-2">({a.size})</span>}
+                  <div className="space-y-3">
+                    {prevList.map((item, idx) => (
+                      <details key={idx} className="border border-gray-200 rounded">
+                        <summary className="cursor-pointer list-none px-3 py-2 flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-900">{item.title || `이전 문의 ${idx + 1}`}</span>
+                          <span className="text-xs text-gray-500">{item.registrationDate ? new Date(item.registrationDate).toLocaleString(currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN') : ''}</span>
+                        </summary>
+                        <div className="px-3 pb-3 text-sm text-gray-700 whitespace-pre-line">
+                          {item.attachments && item.attachments.length > 0 && (
+                            <div className="mb-2 space-y-1">
+                              {item.attachments.map((a, i) => (
+                                <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                                  <div className="flex items-center">
+                                    <Paperclip className="h-4 w-4 text-gray-400 mr-2" />
+                                    <span className="text-xs text-gray-700">{a.name}</span>
+                                    {a.size && <span className="text-xs text-gray-500 ml-2">({a.size})</span>}
+                                  </div>
+                                  <button className="text-blue-600 hover:text-blue-700 text-xs font-medium transition-colors">{getText('downloadFile')}</button>
+                                </div>
+                              ))}
                             </div>
-                            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
-                              {getText('downloadFile')}
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  <div>
-                    <div className="text-sm text-gray-500 mb-1">{getText('contentLabel')}</div>
-                    <div className="text-gray-900 whitespace-pre-line">{prev.content}</div>
+                          )}
+                          {item.content}
+                        </div>
+                      </details>
+                    ))}
                   </div>
                 </div>
               )}
