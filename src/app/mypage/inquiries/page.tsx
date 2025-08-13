@@ -409,7 +409,7 @@ export default function MyInquiriesPage() {
                       <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border w-auto max-w-max shrink-0 ${getCategoryInfo(inq.category).color}`}>
                         {getCategoryInfo(inq.category).label}
                       </span>
-                      {typeof inq.reCount === 'number' && inq.reCount > 0 && (
+                      {inq.answered && typeof inq.reCount === 'number' && inq.reCount > 0 && (
                         <span className="inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border bg-amber-50 text-amber-800 border-amber-200">
                           재문의({inq.reCount})
                         </span>
