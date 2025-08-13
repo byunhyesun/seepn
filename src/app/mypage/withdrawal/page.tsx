@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { ChevronDown, X } from 'lucide-react';
 
 export default function WithdrawalPage() {
   const router = useRouter();
@@ -18,6 +19,8 @@ export default function WithdrawalPage() {
   const [etcReason, setEtcReason] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitStatus, setSubmitStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [isReasonModalOpen, setIsReasonModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     const getUserCountry = async () => {
@@ -31,6 +34,21 @@ export default function WithdrawalPage() {
     };
     getUserCountry();
   }, []);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const getReasonLabel = (val: string) => {
+    if (!val) return getText('reasonPlaceholder');
+    if (val === 'r1') return getText('r1');
+    if (val === 'r2') return getText('r2');
+    if (val === 'r3') return getText('r3');
+    return getText('rEtc');
+  };
 
   const getText = (key: string) => {
     const texts = {
@@ -130,17 +148,31 @@ export default function WithdrawalPage() {
               {/* Reason select */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{getText('reasonLabel')}</label>
-                <select
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
-                >
-                  <option value="">{getText('reasonPlaceholder')}</option>
-                  <option value="r1">{getText('r1')}</option>
-                  <option value="r2">{getText('r2')}</option>
-                  <option value="r3">{getText('r3')}</option>
-                  <option value="etc">{getText('rEtc')}</option>
-                </select>
+                {/* Desktop select */}
+                <div className="hidden md:block">
+                  <select
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  >
+                    <option value="">{getText('reasonPlaceholder')}</option>
+                    <option value="r1">{getText('r1')}</option>
+                    <option value="r2">{getText('r2')}</option>
+                    <option value="r3">{getText('r3')}</option>
+                    <option value="etc">{getText('rEtc')}</option>
+                  </select>
+                </div>
+                {/* Mobile trigger */}
+                <div className="block md:hidden">
+                  <button
+                    type="button"
+                    onClick={() => setIsReasonModalOpen(true)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
+                  >
+                    <span>{getReasonLabel(reason)}</span>
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                  </button>
+                </div>
               </div>
 
               {/* Etc reason (optional) */}
@@ -158,7 +190,7 @@ export default function WithdrawalPage() {
               )}
 
               {/* Buttons */}
-              <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="pt-4 flex flex-row sm:flex-row gap-4 justify-center items-center">
                 <button
                   type="button"
                   onClick={handleCancel}
@@ -170,7 +202,7 @@ export default function WithdrawalPage() {
                 <button
                   type="submit"
                   disabled={isSubmitDisabled}
-                  className="sm:px-8 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-auto px-6 sm:px-8 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSubmitting ? getText('submitting') : getText('submit')}
                 </button>
@@ -186,6 +218,41 @@ export default function WithdrawalPage() {
           </form>
         </div>
       </main>
+
+      {/* Mobile Reason Modal */}
+      {isMobile && isReasonModalOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsReasonModalOpen(false)}
+          />
+          <div className="fixed inset-x-4 top-28 bottom-28 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">탈퇴 사유 선택</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" onClick={() => setIsReasonModalOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              {[
+                { value: '', label: getText('reasonPlaceholder') },
+                { value: 'r1', label: getText('r1') },
+                { value: 'r2', label: getText('r2') },
+                { value: 'r3', label: getText('r3') },
+                { value: 'etc', label: getText('rEtc') },
+              ].map((opt) => (
+                <button
+                  key={opt.value || 'all'}
+                  onClick={() => { setReason(opt.value); setIsReasonModalOpen(false); }}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${reason === opt.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
