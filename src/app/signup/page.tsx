@@ -175,7 +175,11 @@ export default function SignupPage() {
                     {showPwd ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-                {/* Password policy guide removed per request */}
+                 <div className="mt-2 text-xs text-gray-500 space-y-1">
+                   <p>{getText('guide1')}</p>
+                   <p>{getText('guide2')}</p>
+                   <p>{getText('guide3')}</p>
+                 </div>
               </div>
 
               {/* Confirm Password */}
