@@ -398,20 +398,20 @@ export default function InquiryWritePage() {
                 )}
               </div>
 
-              {/* Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center items-center">
-                <button
+				{/* Buttons */}
+				<div className="flex flex-row sm:flex-row gap-4 pt-6 items-center w-full justify-between sm:justify-center">
+					<button
                   type="button"
                   onClick={handleReset}
                   disabled={isSubmitting}
-                  className="text-sm text-gray-600 hover:text-gray-800 transition-colors no-underline disabled:opacity-50 bg-transparent p-0"
+						className="text-sm text-gray-600 hover:text-gray-800 transition-colors no-underline disabled:opacity-50 bg-transparent p-0"
                 >
                   {getText('resetButton')}
                 </button>
-                <button
+					<button
                   type="submit"
                   disabled={isSubmitting}
-                  className="sm:px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						className="flex-1 sm:flex-none px-4 sm:px-8 py-3 ml-4 sm:ml-0 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSubmitting ? getText('submittingButton') : getText('submitButton')}
                 </button>
