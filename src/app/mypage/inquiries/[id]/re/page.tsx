@@ -134,6 +134,19 @@ export default function InquiryRePage() {
     return (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key];
   };
 
+  // Format date: YYYY-MM-DD hh:mm:ss
+  const formatDateTime = (iso?: string) => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
+    return `${y}-${m}-${day} ${hh}:${mm}:${ss}`;
+  };
+
   // Load previous inquiry summary (mock)
   React.useEffect(() => {
     let existing: { category: InquiryCategoryKey; title: string; content: string; attachments?: AttachmentItem[] };
@@ -351,11 +364,20 @@ export default function InquiryRePage() {
               </div>
 
               {/* Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center">
-                <button type="button" onClick={handleCancel} disabled={isSubmitting} className="sm:px-8 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+              <div className="flex flex-row sm:flex-row gap-4 pt-6 justify-center items-center">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  disabled={isSubmitting}
+                  className="text-sm text-gray-600 hover:text-gray-800 transition-colors no-underline disabled:opacity-50 bg-transparent p-0"
+                >
                   {getText('cancel')}
                 </button>
-                <button type="submit" disabled={isSubmitting} className="sm:px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="sm:px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
                   {isSubmitting ? getText('submitting') : getText('submit')}
                 </button>
               </div>
@@ -382,7 +404,7 @@ export default function InquiryRePage() {
                     <details key={idx} className="border border-gray-200 rounded">
                       <summary className="cursor-pointer list-none px-3 py-2 flex items-center justify-between">
                         <span className="text-sm font-medium text-gray-900">{item.title || `이전 문의 ${idx + 1}`}</span>
-                        <span className="text-xs text-gray-500">{item.registrationDate ? new Date(item.registrationDate).toLocaleString(currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN') : ''}</span>
+                        <span className="text-xs text-gray-500">{item.registrationDate ? formatDateTime(item.registrationDate) : ''}</span>
                       </summary>
                       <div className="px-3 pb-3 text-sm text-gray-700 whitespace-pre-line">
                         {item.attachments && item.attachments.length > 0 && (
@@ -394,7 +416,7 @@ export default function InquiryRePage() {
                                   <span className="text-xs text-gray-700">{a.name}</span>
                                   {a.size && <span className="text-xs text-gray-500 ml-2">({a.size})</span>}
                                 </div>
-                                <button className="text-blue-600 hover:text-blue-700 text-xs font-medium transition-colors">{getText('downloadFile')}</button>
+                                {/* Download text removed as requested */}
                               </div>
                             ))}
                           </div>
