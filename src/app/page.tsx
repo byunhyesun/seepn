@@ -751,7 +751,7 @@ export default function Home() {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center" style={{ paddingTop: isBannerVisible ? '48px' : '0px' }}>
+      <main className="flex-1 flex items-center justify-center" style={{ paddingTop: isBannerVisible ? '112px' : '64px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
         {/* Hero Section */}
         <div className="text-center mb-16">
