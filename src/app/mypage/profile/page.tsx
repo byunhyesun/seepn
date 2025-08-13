@@ -374,7 +374,7 @@ export default function MyPageProfileEdit() {
                   type="button"
                   onClick={handleCancel}
                   disabled={isSubmitting}
-                  className="text-sm text-gray-600 underline underline-offset-2 hover:text-gray-800 disabled:opacity-50"
+                  className="text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50"
                 >
                   {getText('cancel')}
                 </button>
