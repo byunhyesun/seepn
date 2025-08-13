@@ -128,6 +128,22 @@ export default function SuppliersPage() {
     }
   ];
 
+  // Expand sample data to simulate a longer list
+  const allSuppliers = React.useMemo(() => {
+    const expanded: typeof sampleSuppliers = [] as any;
+    const repeat = 60; // 6 * 60 = 360 items total
+    for (let r = 0; r < repeat; r++) {
+      for (const s of sampleSuppliers) {
+        expanded.push({
+          ...s,
+          id: r * 1000 + s.id,
+          name: `${s.name} ${r + 1}`,
+        });
+      }
+    }
+    return expanded;
+  }, []);
+
   // Get user's country based on IP
   React.useEffect(() => {
     const getUserCountry = async () => {
@@ -248,7 +264,7 @@ export default function SuppliersPage() {
   // Filtered suppliers by keyword, category, area
   const filteredSuppliers = React.useMemo(() => {
     const kw = searchKeyword.trim().toLowerCase();
-    return sampleSuppliers
+    return allSuppliers
       .filter((s) => {
         if (!kw) return true;
         return (
@@ -270,7 +286,32 @@ export default function SuppliersPage() {
         if (!selectedL1Area) return true;
         return s.location.toLowerCase().includes(selectedL1Area.toLowerCase());
       });
-  }, [searchKeyword, selectedL1Category, selectedL1Area]);
+  }, [searchKeyword, selectedL1Category, selectedL1Area, allSuppliers]);
+
+  // Infinite scroll: show 30 initially, then +30 on intersection
+  const PAGE_SIZE = 30;
+  const [visibleCount, setVisibleCount] = React.useState(PAGE_SIZE);
+  const loaderRef = React.useRef<HTMLDivElement | null>(null);
+
+  // Reset visible count when filters or view change
+  React.useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [searchKeyword, selectedL1Category, selectedL1Area, viewMode]);
+
+  React.useEffect(() => {
+    const node = loaderRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((c) => Math.min(c + PAGE_SIZE, filteredSuppliers.length));
+        }
+      },
+      { root: null, rootMargin: '200px', threshold: 0 }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [filteredSuppliers.length]);
 
   // 카테고리 선택 핸들러
   const handleL1CategoryChange = (value: string) => {
@@ -692,7 +733,7 @@ export default function SuppliersPage() {
                     {/* Gallery View - PC Default, Hidden on Mobile */}
                     {viewMode === 'gallery' && (
                       <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {filteredSuppliers.map((supplier) => (
+                      {filteredSuppliers.slice(0, visibleCount).map((supplier) => (
                           <div key={supplier.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                             {/* Supplier Image */}
                             <div className="h-48 bg-gray-200 flex items-center justify-center">
@@ -769,13 +810,17 @@ export default function SuppliersPage() {
                             </div>
                           </div>
                         ))}
+                        {/* Loader sentinel */}
+                        {visibleCount < filteredSuppliers.length && (
+                          <div ref={loaderRef} className="py-6 text-center text-sm text-gray-500">Loading...</div>
+                        )}
                       </div>
                     )}
 
                     {/* List View - PC Optional, Mobile Default */}
                     {(viewMode === 'list' || isMobile) && (
                       <div className="space-y-4">
-                        {filteredSuppliers.map((supplier) => (
+                        {filteredSuppliers.slice(0, visibleCount).map((supplier) => (
                           <div key={supplier.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                             <div className="flex items-start gap-4">
                               {/* Company Icon - PC Only */}
@@ -853,6 +898,10 @@ export default function SuppliersPage() {
                             </div>
                           </div>
                         ))}
+                        {/* Loader sentinel */}
+                        {visibleCount < filteredSuppliers.length && (
+                          <div ref={loaderRef} className="py-6 text-center text-sm text-gray-500">Loading...</div>
+                        )}
                       </div>
                     )}
                   </>
