@@ -402,7 +402,7 @@ export default function SuppliersPage() {
         rating: '평점',
         viewDetail: '상세보기',
         // 모바일 검색
-        searchFilter: '검색 필터',
+        searchFilter: '검색',
         applyFilter: '필터 적용',
         closeFilter: '닫기'
       },
