@@ -58,7 +58,8 @@ export default function SignupPage() {
         invalidEmail: '올바른 이메일을 입력해주세요.',
         mismatch: '비밀번호가 일치하지 않습니다.',
         invalidPhone: '올바른 휴대폰 번호 형식을 입력해주세요.',
-        success: '가입이 완료되었습니다. 로그인 화면으로 이동합니다.'
+        success: '가입이 완료되었습니다. 로그인 화면으로 이동합니다.',
+        validationPolicy: '비밀번호 정책을 만족하지 않습니다.'
       },
       en: {
         pageTitle: 'Sign Up',
@@ -81,7 +82,8 @@ export default function SignupPage() {
         invalidEmail: 'Please enter a valid email.',
         mismatch: 'Passwords do not match.',
         invalidPhone: 'Please enter a valid phone number format.',
-        success: 'Sign up complete. Redirecting to login.'
+        success: 'Sign up complete. Redirecting to login.',
+        validationPolicy: 'Password does not meet the policy.'
       }
     } as const;
     return (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key];
@@ -90,8 +92,39 @@ export default function SignupPage() {
   const validateEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   const validatePhone = (value: string) => /^(010|011|016|017|018|019)-?\d{3,4}-?\d{4}$/.test(value);
 
+  // Password policy helpers
+  const containsRequiredTypes = (pwd: string): boolean => {
+    const hasLower = /[a-z]/.test(pwd);
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasDigit = /[0-9]/.test(pwd);
+    const hasSpecial = /[^A-Za-z0-9]/.test(pwd);
+    return hasLower && hasUpper && hasDigit && hasSpecial;
+  };
+  const hasSequentialRun = (pwd: string): boolean => {
+    if (pwd.length < 3) return false;
+    const toCode = (c: string) => c.charCodeAt(0);
+    for (let i = 0; i <= pwd.length - 3; i++) {
+      const a = pwd[i], b = pwd[i + 1], c = pwd[i + 2];
+      if (/^[A-Za-z]{3}$/.test(a + b + c)) {
+        const ca = toCode(a), cb = toCode(b), cc = toCode(c);
+        if (cb - ca === 1 && cc - cb === 1) return true;
+      }
+      if (/^[0-9]{3}$/.test(a + b + c)) {
+        const ca = toCode(a), cb = toCode(b), cc = toCode(c);
+        if (cb - ca === 1 && cc - cb === 1) return true;
+      }
+    }
+    return false;
+  };
+  const isValidPassword = (pwd: string) => pwd.length >= 8 && pwd.length <= 20 && containsRequiredTypes(pwd) && !hasSequentialRun(pwd);
 
-  const canSubmit = !!email && !!password && !!confirm && !!fullName && !!phone && !isSubmitting;
+  // Visual guide state
+  const ruleLengthOk = password.length >= 8 && password.length <= 20;
+  const ruleTypesOk = containsRequiredTypes(password);
+  const ruleNoSequentialOk = password.length === 0 ? false : !hasSequentialRun(password);
+  const guideClass = (ok: boolean) => (password.length === 0 ? 'text-gray-700' : ok ? 'text-green-600' : 'text-red-600');
+
+  const canSubmit = !!email && !!password && !!confirm && !!fullName && !!phone && isValidPassword(password) && !isSubmitting;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +136,10 @@ export default function SignupPage() {
     }
     if (!validateEmail(email)) {
       setError(getText('invalidEmail'));
+      return;
+    }
+    if (!isValidPassword(password)) {
+      setError(getText('validationPolicy'));
       return;
     }
     if (password !== confirm) {
@@ -175,11 +212,11 @@ export default function SignupPage() {
                     {showPwd ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-                 <div className="mt-2 text-xs text-gray-500 space-y-1">
-                   <p>{getText('guide1')}</p>
-                   <p>{getText('guide2')}</p>
-                   <p>{getText('guide3')}</p>
-                 </div>
+                 <ul className="mt-2 text-xs space-y-1">
+                   <li className={guideClass(ruleLengthOk)}>{getText('guide1')}</li>
+                   <li className={guideClass(ruleTypesOk)}>{getText('guide2')}</li>
+                   <li className={guideClass(ruleNoSequentialOk)}>{getText('guide3')}</li>
+                 </ul>
               </div>
 
               {/* Confirm Password */}
