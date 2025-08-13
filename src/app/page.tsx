@@ -733,11 +733,8 @@ export default function Home() {
                   </button>
                   <button 
                     onClick={() => {
-                      if (confirm(getText('withdrawalConfirm'))) {
-                        setIsLoggedIn(false);
-                        setIsMyPageOpen(false);
-                        alert(getText('withdrawalComplete'));
-                      }
+                      setIsMyPageOpen(false);
+                      window.location.href = '/mypage/withdrawal';
                     }}
                     className="flex items-center p-2 mt-2 text-xs text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full text-left"
                   >
