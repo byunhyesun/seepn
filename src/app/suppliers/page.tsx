@@ -544,6 +544,16 @@ export default function SuppliersPage() {
     return parts.join(' / ');
   }, [getL1Label, getL2Label, getL3Label, getText]);
 
+  // Helpers for region labels
+  const getAreaL1Label = React.useCallback(() => {
+    if (!selectedL1Area) return '';
+    return l1Areas.find(a => a.value === selectedL1Area)?.label || '';
+  }, [selectedL1Area, l1Areas]);
+  const getAreaL2Label = React.useCallback(() => {
+    if (!selectedL1Area || selectedL2Area === 'all') return '';
+    return l2Areas.find(a => a.value === selectedL2Area)?.label || '';
+  }, [selectedL1Area, selectedL2Area, l2Areas]);
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header
@@ -986,24 +996,44 @@ export default function SuppliersPage() {
                   />
                 </div>
 
-                  {/* Category trigger with selected path */}
+                  {/* Category triggers (separate like PC) */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
-                    <button type="button" onClick={() => setModalStep('catL1')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
-                      <span className="truncate">{getCategoryPathLabel()}</span>
-                      <ChevronDown className="h-4 w-4 text-gray-400" />
-                    </button>
+                    <div className="grid grid-cols-1 gap-2">
+                      <button type="button" onClick={() => setModalStep('catL1')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                        <span className="truncate">{getL1Label() || getText('allCategories')}</span>
+                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                      </button>
+                      {selectedL1Category !== '' && (
+                        <button type="button" onClick={() => setModalStep('catL2')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                          <span className="truncate">{getL2Label() || getText('allCategories')}</span>
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        </button>
+                      )}
+                      {selectedL1Category !== '' && selectedL2Category !== 'all' && (
+                        <button type="button" onClick={() => setModalStep('catL3')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                          <span className="truncate">{getL3Label() || getText('allCategories')}</span>
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        </button>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Region trigger */}
+                  {/* Region triggers (separate like PC) */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{getText('region')}</label>
-                    <button type="button" onClick={() => setModalStep('region')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
-                      <span>
-                        {selectedL1Area ? (l1Areas.find(a => a.value === selectedL1Area)?.label || getText('allRegions')) : getText('allRegions')}
-                      </span>
-                      <ChevronDown className="h-4 w-4 text-gray-400" />
-                    </button>
+                    <div className="grid grid-cols-1 gap-2">
+                      <button type="button" onClick={() => setModalStep('region')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                        <span className="truncate">{getAreaL1Label() || getText('allRegions')}</span>
+                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                      </button>
+                      {selectedL1Area !== '' && (
+                        <button type="button" onClick={() => setModalStep('region')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                          <span className="truncate">{getAreaL2Label() || getText('allRegions')}</span>
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {/* Size trigger */}
