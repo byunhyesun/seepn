@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Paperclip, Star, ChevronDown, ChevronUp } from 'lucide-react';
+import { Paperclip, Star, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
 
 type InquiryCategoryKey = 'service' | 'supplier' | 'certification' | 'payment' | 'bug' | 'etc';
 
@@ -269,13 +269,14 @@ export default function InquiryDetailPage() {
 
       <main className="flex-1" style={{ paddingTop: isBannerVisible ? '112px' : '64px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Back Button (notice style) */}
+          {/* Back Button (match board detail style) */}
           <div className="mb-6">
             <button
               onClick={() => router.push('/mypage/inquiries')}
-              className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
             >
-              {'<- 목록으로'}
+              <ArrowLeft className="h-5 w-5 mr-2" />
+              {'목록으로'}
             </button>
           </div>
 
