@@ -238,23 +238,13 @@ export default function BoardPage() {
     return categoryMap[category as keyof typeof categoryMap] || categoryMap.daily;
   };
 
-  // Format date
+  // Format date as YYYY-MM-DD for list view
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) {
-      return date.toLocaleTimeString(currentLanguage === 'ko' ? 'ko-KR' : 
-                                     currentLanguage === 'en' ? 'en-US' : 
-                                     currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN', 
-                                     { hour: '2-digit', minute: '2-digit' });
-    } else {
-      return date.toLocaleDateString(currentLanguage === 'ko' ? 'ko-KR' : 
-                                     currentLanguage === 'en' ? 'en-US' : 
-                                     currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN');
-    }
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   };
 
   // Validate nickname format

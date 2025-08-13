@@ -195,12 +195,16 @@ export default function BoardDetailPage() {
     return categoryMap[category as keyof typeof categoryMap] || categoryMap.daily;
   };
 
-  // Format date
+  // Format date: YYYY-MM-DD hh:mm:ss
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString(currentLanguage === 'ko' ? 'ko-KR' : 
-                              currentLanguage === 'en' ? 'en-US' : 
-                              currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN');
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+    return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
   };
 
   // Sample post data (in real app, this would come from API)
@@ -475,18 +479,18 @@ export default function BoardDetailPage() {
             {post.authorId === currentUserId && (
               <div className="flex gap-2 justify-center">
                 <button
-                  onClick={handleEdit}
-                  className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <Edit className="h-4 w-4" />
-                  {getText('edit')}
-                </button>
-                <button
                   onClick={handleDelete}
                   className="flex items-center gap-2 px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
                   <Trash2 className="h-4 w-4" />
                   {getText('delete')}
+                </button>
+                <button
+                  onClick={handleEdit}
+                  className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Edit className="h-4 w-4" />
+                  {getText('edit')}
                 </button>
               </div>
             )}
