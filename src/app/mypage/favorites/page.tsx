@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getL1Categories, getL2Categories, getL3Categories } from '@/utils/categories';
 import { getL1Areas, getL2Areas } from '@/utils/areas';
-import { Grid3X3, List, MapPin, Star, Heart, ExternalLink, Filter, Trash2, CheckSquare, X } from 'lucide-react';
+import { Grid3X3, List, MapPin, Star, Heart, ExternalLink, Filter, Trash2, CheckSquare, X, ChevronDown, ChevronLeft } from 'lucide-react';
 
 type PostCategory = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
 
@@ -24,6 +24,7 @@ export default function MyFavoriteSuppliersPage() {
   const [selectedL2Area, setSelectedL2Area] = React.useState('all');
   const [isMobile, setIsMobile] = React.useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
+  const [modalStep, setModalStep] = React.useState<'root' | 'catL1' | 'catL2' | 'catL3' | 'areaL1' | 'areaL2'>('root');
   const [viewMode, setViewMode] = React.useState<'gallery' | 'list'>('list');
 
   // Selection
@@ -211,6 +212,13 @@ export default function MyFavoriteSuppliersPage() {
   const handleL2AreaChange = (value: string) => {
     setSelectedL2Area(value || 'all');
   };
+
+  // Labels for triggers
+  const getL1Label = React.useCallback(() => selectedL1Category ? (l1Categories.find(c => c.value === selectedL1Category)?.label || '') : '', [selectedL1Category, l1Categories]);
+  const getL2Label = React.useCallback(() => (selectedL1Category && selectedL2Category !== 'all') ? (l2Categories.find(c => c.value === selectedL2Category)?.label || '') : '', [selectedL1Category, selectedL2Category, l2Categories]);
+  const getL3Label = React.useCallback(() => (selectedL1Category && selectedL2Category !== 'all' && selectedL3Category !== 'all') ? (l3Categories.find(c => c.value === selectedL3Category)?.label || '') : '', [selectedL1Category, selectedL2Category, selectedL3Category, l3Categories]);
+  const getAreaL1Label = React.useCallback(() => selectedL1Area ? (l1Areas.find(a => a.value === selectedL1Area)?.label || '') : '', [selectedL1Area, l1Areas]);
+  const getAreaL2Label = React.useCallback(() => (selectedL1Area && selectedL2Area !== 'all') ? (l2Areas.find(a => a.value === selectedL2Area)?.label || '') : '', [selectedL1Area, selectedL2Area, l2Areas]);
 
   const toggleSelectAll = () => {
     if (selectedIds.size === filteredFavorites.length) {
@@ -606,115 +614,135 @@ export default function MyFavoriteSuppliersPage() {
             </div>
 
             {/* Modal Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-4">
-                {/* Keyword */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{getText('searchKeyword')}</label>
-                  <input
-                    type="text"
-                    value={searchKeyword}
-                    onChange={(e) => setSearchKeyword(e.target.value)}
-                    placeholder={getText('searchPlaceholder')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                {/* Category */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
-                  <select
-                    value={selectedL1Category}
-                    onChange={(e) => handleL1CategoryChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
-                  >
-                    <option value="">{getText('allCategories')}</option>
-                    {l1Categories.map((c) => (
-                      <option key={c.value} value={c.value}>{c.label}</option>
-                    ))}
-                  </select>
-
-                  {selectedL1Category && (
-                    <select
-                      value={selectedL2Category}
-                      onChange={(e) => handleL2CategoryChange(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
-                    >
-                      <option value="all">{getText('allCategories')}</option>
-                      {l2Categories.map((c) => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
-                      ))}
-                    </select>
-                  )}
-
-                  {selectedL2Category && selectedL2Category !== 'all' && (
-                    <select
-                      value={selectedL3Category}
-                      onChange={(e) => handleL3CategoryChange(e.target.value)}
+            <div className="flex-1 overflow-y-auto">
+              {modalStep === 'root' && (
+                <div className="p-4 space-y-4">
+                  {/* Keyword */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{getText('searchKeyword')}</label>
+                    <input
+                      type="text"
+                      value={searchKeyword}
+                      onChange={(e) => setSearchKeyword(e.target.value)}
+                      placeholder={getText('searchPlaceholder')}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="all">{getText('allCategories')}</option>
-                      {l3Categories.map((c) => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
-                      ))}
-                    </select>
-                  )}
+                    />
+                  </div>
+                  {/* Category triggers */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
+                    <div className="grid grid-cols-1 gap-2">
+                      <button type="button" onClick={() => setModalStep('catL1')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                        <span className="truncate">{getL1Label() || getText('allCategories')}</span>
+                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                      </button>
+                      {selectedL1Category !== '' && (
+                        <button type="button" onClick={() => setModalStep('catL2')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                          <span className="truncate">{getL2Label() || getText('allCategories')}</span>
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        </button>
+                      )}
+                      {selectedL1Category !== '' && selectedL2Category !== 'all' && (
+                        <button type="button" onClick={() => setModalStep('catL3')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                          <span className="truncate">{getL3Label() || getText('allCategories')}</span>
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  {/* Region triggers */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{getText('region')}</label>
+                    <div className="grid grid-cols-1 gap-2">
+                      <button type="button" onClick={() => setModalStep('areaL1')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                        <span className="truncate">{getAreaL1Label() || getText('allRegions')}</span>
+                        <ChevronDown className="h-4 w-4 text-gray-400" />
+                      </button>
+                      {selectedL1Area !== '' && (
+                        <button type="button" onClick={() => setModalStep('areaL2')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                          <span className="truncate">{getAreaL2Label() || getText('allRegions')}</span>
+                          <ChevronDown className="h-4 w-4 text-gray-400" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
-
-                {/* Region */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{getText('region')}</label>
-                  <select
-                    value={selectedL1Area}
-                    onChange={(e) => handleL1AreaChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
-                  >
-                    <option value="">{getText('allRegions')}</option>
-                    {l1Areas.map((a) => (
-                      <option key={a.value} value={a.value}>{a.label}</option>
-                    ))}
-                  </select>
-
-                  {selectedL1Area && (
-                    <select
-                      value={selectedL2Area}
-                      onChange={(e) => handleL2AreaChange(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="all">{getText('allRegions')}</option>
-                      {l2Areas.map((a) => (
-                        <option key={a.value} value={a.value}>{a.label}</option>
-                      ))}
-                    </select>
-                  )}
+              )}
+              {/* Category steps */}
+              {modalStep === 'catL1' && (
+                <div className="p-4 space-y-3">
+                  <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('category')}</h3>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(''); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  {l1Categories.map((c) => (
+                    <button key={c.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1CategoryChange(c.value); setModalStep('catL2'); }}>{c.label}</button>
+                  ))}
                 </div>
-              </div>
+              )}
+              {modalStep === 'catL2' && (
+                <div className="p-4 space-y-3">
+                  <h4 className="text-sm font-medium text-gray-700">{getText('category')}</h4>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  {l2Categories.map((c2) => (
+                    <button key={c2.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2CategoryChange(c2.value); setModalStep('catL3'); }}>{c2.label}</button>
+                  ))}
+                </div>
+              )}
+              {modalStep === 'catL3' && (
+                <div className="p-4 space-y-3">
+                  <h4 className="text-sm font-medium text-gray-700">{getText('category')}</h4>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
+                  {l3Categories.map((c3) => (
+                    <button key={c3.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL3CategoryChange(c3.value); setModalStep('root'); }}>{c3.label}</button>
+                  ))}
+                </div>
+              )}
+              {/* Area steps */}
+              {modalStep === 'areaL1' && (
+                <div className="p-4 space-y-3">
+                  <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('region')}</h3>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(''); setModalStep('root'); }}>{getText('allRegions')}</button>
+                  {l1Areas.map((a) => (
+                    <button key={a.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(a.value); setModalStep('areaL2'); }}>{a.label}</button>
+                  ))}
+                </div>
+              )}
+              {modalStep === 'areaL2' && (
+                <div className="p-4 space-y-3">
+                  <h4 className="text-sm font-medium text-gray-700">{getText('region')}</h4>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
+                  {l2Areas.map((a2) => (
+                    <button key={a2.value} className={`w/full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange(a2.value); setModalStep('root'); }}>{a2.label}</button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Modal Footer */}
-            <div className="p-4 border-t border-gray-200">
-              <div className="flex gap-2">
-                <button
-                  onClick={() => {
-                    setSearchKeyword('');
-                    setSelectedL1Category('');
-                    setSelectedL2Category('all');
-                    setSelectedL3Category('all');
-                    setSelectedL1Area('');
-                    setSelectedL2Area('all');
-                  }}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  {getText('resetButton')}
-                </button>
-                <button
-                  onClick={() => setIsSearchModalOpen(false)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  {getText('searchButton')}
-                </button>
+            {/* Modal Footer (root only) */}
+            {modalStep === 'root' && (
+              <div className="p-4 border-t border-gray-200">
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setSearchKeyword('');
+                      setSelectedL1Category('');
+                      setSelectedL2Category('all');
+                      setSelectedL3Category('all');
+                      setSelectedL1Area('');
+                      setSelectedL2Area('all');
+                    }}
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors"
+                  >
+                    {getText('resetButton')}
+                  </button>
+                  <button
+                    onClick={() => setIsSearchModalOpen(false)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                  >
+                    {getText('searchButton')}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </>
       )}
