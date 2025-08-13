@@ -20,6 +20,9 @@ export default function Home() {
   const [selectedArea, setSelectedArea] = React.useState('');
   const [isMyPageOpen, setIsMyPageOpen] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false); // 로그인 상태 관리
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = React.useState(false);
+  const [isAreaModalOpen, setIsAreaModalOpen] = React.useState(false);
 
   const languages = [
     { code: 'ko', name: '한국어', flag: '🇰🇷' },
@@ -58,6 +61,14 @@ export default function Home() {
       return () => clearInterval(interval);
     }
   }, [isBannerPaused, isMenuOpen, banners.length]);
+
+  // Mobile detection
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleLanguageChange = (languageCode: string) => {
     setCurrentLanguage(languageCode);
@@ -770,11 +781,12 @@ export default function Home() {
                   <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
                     {getText('category')}
                   </label>
+                  {/* PC Select */}
                   <select
                     id="category"
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="hidden md:block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">{getText('allCategories')}</option>
                     {l1Categories.map((category) => (
@@ -783,17 +795,28 @@ export default function Home() {
                       </option>
                     ))}
                   </select>
+                  {/* MO Button opens modal */}
+                  <button
+                    type="button"
+                    onClick={() => setIsCategoryModalOpen(true)}
+                    className="md:hidden w-full px-3 py-3 border border-gray-300 rounded-lg bg-white text-left"
+                  >
+                    {selectedCategory
+                      ? (l1Categories.find(c => c.value === selectedCategory)?.label || getText('allCategories'))
+                      : getText('allCategories')}
+                  </button>
                 </div>
                 
                 <div>
                   <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
                     {getText('location')}
                   </label>
+                  {/* PC Select */}
                   <select
                     id="location"
                     value={selectedArea}
                     onChange={(e) => setSelectedArea(e.target.value)}
-                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="hidden md:block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">{getText('allLocations')}</option>
                     {l1Areas.map((area) => (
@@ -802,6 +825,16 @@ export default function Home() {
                       </option>
                     ))}
                   </select>
+                  {/* MO Button opens modal */}
+                  <button
+                    type="button"
+                    onClick={() => setIsAreaModalOpen(true)}
+                    className="md:hidden w-full px-3 py-3 border border-gray-300 rounded-lg bg-white text-left"
+                  >
+                    {selectedArea
+                      ? (l1Areas.find(a => a.value === selectedArea)?.label || getText('allLocations'))
+                      : getText('allLocations')}
+                  </button>
                 </div>
               </div>
 
@@ -875,6 +908,82 @@ export default function Home() {
         </div>
         </div>
       </main>
+
+      {/* Category Modal (MO) */}
+      {isMobile && isCategoryModalOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsCategoryModalOpen(false)}
+          />
+          <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">{getText('category')}</h3>
+              <button
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+                onClick={() => setIsCategoryModalOpen(false)}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <button
+                className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedCategory === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                onClick={() => { setSelectedCategory(''); setIsCategoryModalOpen(false); }}
+              >
+                {getText('allCategories')}
+              </button>
+              {l1Categories.map((c) => (
+                <button
+                  key={c.value}
+                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedCategory === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  onClick={() => { setSelectedCategory(c.value); setIsCategoryModalOpen(false); }}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Area Modal (MO) */}
+      {isMobile && isAreaModalOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsAreaModalOpen(false)}
+          />
+          <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">{getText('location')}</h3>
+              <button
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+                onClick={() => setIsAreaModalOpen(false)}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <button
+                className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedArea === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                onClick={() => { setSelectedArea(''); setIsAreaModalOpen(false); }}
+              >
+                {getText('allLocations')}
+              </button>
+              {l1Areas.map((a) => (
+                <button
+                  key={a.value}
+                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedArea === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  onClick={() => { setSelectedArea(a.value); setIsAreaModalOpen(false); }}
+                >
+                  {a.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Footer */}
       <footer className="bg-gray-50 border-t border-gray-200">
