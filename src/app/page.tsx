@@ -149,7 +149,7 @@ export default function Home() {
         searchSubtitle: '원하는 조건을 입력하여 공급사를 검색해보세요',
         searchPlaceholder: '제품/서비스명, 공급사명 등 입력하세요',
         searchButton: '검색하기',
-        category: '제품/서비스',
+        category: '품목',
         location: '지역',
         companySize: '기업 규모',
         allCategories: '전체 품목',
