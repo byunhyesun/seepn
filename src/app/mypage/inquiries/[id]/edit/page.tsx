@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, X, CheckCircle, AlertCircle, ChevronDown } from 'lucide-react';
 
 type InquiryCategoryKey = 'service' | 'supplier' | 'certification' | 'payment' | 'bug' | 'etc';
 
@@ -32,6 +32,8 @@ export default function InquiryEditPage() {
   });
 
   const [errors, setErrors] = React.useState<{ [k: string]: string }>({});
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [isCatModalOpen, setIsCatModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     const getUserCountry = async () => {
@@ -44,6 +46,13 @@ export default function InquiryEditPage() {
       }
     };
     getUserCountry();
+  }, []);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const getText = (key: string) => {
@@ -285,22 +294,47 @@ export default function InquiryEditPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {getText('categoryLabel')} <span className="text-red-500">*</span>
                 </label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.category ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                >
-                  <option value="">{getText('selectPlaceholder')}</option>
-                  <option value="service">{getText('service')}</option>
-                  <option value="supplier">{getText('supplier')}</option>
-                  <option value="certification">{getText('certification')}</option>
-                  <option value="payment">{getText('payment')}</option>
-                  <option value="bug">{getText('bug')}</option>
-                  <option value="etc">{getText('etc')}</option>
-                </select>
+                {/* Desktop select */}
+                <div className="hidden md:block">
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.category ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                  >
+                    <option value="">{getText('selectPlaceholder')}</option>
+                    <option value="service">{getText('service')}</option>
+                    <option value="supplier">{getText('supplier')}</option>
+                    <option value="certification">{getText('certification')}</option>
+                    <option value="payment">{getText('payment')}</option>
+                    <option value="bug">{getText('bug')}</option>
+                    <option value="etc">{getText('etc')}</option>
+                  </select>
+                </div>
+                {/* Mobile trigger */}
+                <div className="block md:hidden">
+                  <button
+                    type="button"
+                    onClick={() => setIsCatModalOpen(true)}
+                    className={`w-full px-3 py-2 border rounded-lg bg-white flex items-center justify-between ${
+                      errors.category ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                  >
+                    <span>
+                      {formData.category
+                        ? (formData.category === 'service' ? getText('service')
+                          : formData.category === 'supplier' ? getText('supplier')
+                          : formData.category === 'certification' ? getText('certification')
+                          : formData.category === 'payment' ? getText('payment')
+                          : formData.category === 'bug' ? getText('bug')
+                          : getText('etc'))
+                        : getText('selectPlaceholder')}
+                    </span>
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                  </button>
+                </div>
                 {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category}</p>}
               </div>
 
@@ -387,7 +421,7 @@ export default function InquiryEditPage() {
               </div>
 
               {/* Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6 justify-center items-center">
+              <div className="flex flex-row sm:flex-row gap-4 pt-6 justify-center items-center">
                 <button
                   type="button"
                   onClick={handleCancel}
@@ -399,7 +433,7 @@ export default function InquiryEditPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="sm:px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-auto px-6 sm:px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSubmitting ? getText('submitting') : getText('submit')}
                 </button>
@@ -408,6 +442,48 @@ export default function InquiryEditPage() {
           </div>
         </div>
       </main>
+
+      {/* Mobile Category Modal */}
+      {isMobile && isCatModalOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsCatModalOpen(false)}
+          />
+          <div className="fixed inset-x-4 top-28 bottom-28 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">구분 선택</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" onClick={() => setIsCatModalOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              {[
+                { value: '', label: getText('selectPlaceholder') },
+                { value: 'service', label: getText('service') },
+                { value: 'supplier', label: getText('supplier') },
+                { value: 'certification', label: getText('certification') },
+                { value: 'payment', label: getText('payment') },
+                { value: 'bug', label: getText('bug') },
+                { value: 'etc', label: getText('etc') },
+              ].map((opt) => (
+                <button
+                  key={opt.value || 'all'}
+                  onClick={() => {
+                    setFormData((prev) => ({ ...prev, category: opt.value as any }));
+                    setIsCatModalOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${
+                    formData.category === opt.value ? 'text-blue-600 font-medium' : 'text-gray-700'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
