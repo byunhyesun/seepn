@@ -314,17 +314,12 @@ export default function MyEvaluationsPage() {
                           {s.location}
                         </div>
                       </div>
-                      {/* Description above evaluation period */}
+                      {/* Description above stats & evaluation period */}
                       {s.description && (
                         <div className="text-sm text-gray-700 mb-2">{s.description}</div>
                       )}
-                      {/* Evaluation Period */}
-                      <div className="flex items-center text-sm text-gray-600 mb-2">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        <span>{getText('period')}: {s.startDate} ~ {s.endDate}</span>
-                      </div>
-                      {/* Stats below period: rating, favorites, likes */}
-                      <div className="flex items-center gap-4 text-sm text-gray-700 mt-2">
+                      {/* Stats above evaluation period: rating, favorites, likes */}
+                      <div className="flex items-center gap-4 text-sm text-gray-700 mb-2">
                         <div className="flex items-center">
                           <Star className="h-4 w-4 text-yellow-500 mr-1 fill-current" />
                           <span>{s.rating.toFixed(1)}</span>
@@ -337,6 +332,11 @@ export default function MyEvaluationsPage() {
                           <ThumbsUp className="h-4 w-4 text-blue-500 mr-1" />
                           <span>{getLikesCount(s)}</span>
                         </div>
+                      </div>
+                      {/* Evaluation Period */}
+                      <div className="flex items-center text-sm text-gray-600 mb-2">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        <span>{getText('period')}: {s.startDate} ~ {s.endDate}</span>
                       </div>
                       {/* Actions */}
                       <div className="mt-3 flex justify-end">
