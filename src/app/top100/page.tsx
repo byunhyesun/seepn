@@ -58,22 +58,34 @@ export default function Top100Page() {
   const [selectedL1Category, setSelectedL1Category] = React.useState('');
   const [selectedL2Category, setSelectedL2Category] = React.useState('all');
   const [selectedL3Category, setSelectedL3Category] = React.useState('all');
-  const l2Categories = React.useMemo(
-    () => (selectedL1Category ? getL2Categories(selectedL1Category, currentLanguage) : []),
-    [selectedL1Category, currentLanguage]
-  );
-  const l3Categories = React.useMemo(
-    () => (selectedL2Category && selectedL2Category !== 'all' ? getL3Categories(selectedL1Category, selectedL2Category, currentLanguage) : []),
-    [selectedL1Category, selectedL2Category, currentLanguage]
-  );
+  const l2Categories = React.useMemo(() => {
+    try {
+      return selectedL1Category ? getL2Categories(selectedL1Category, currentLanguage) : [];
+    } catch (error) {
+      console.error('Error loading L2 categories:', error);
+      return [];
+    }
+  }, [selectedL1Category, currentLanguage]);
+  const l3Categories = React.useMemo(() => {
+    try {
+      return selectedL2Category && selectedL2Category !== 'all' ? getL3Categories(selectedL1Category, selectedL2Category, currentLanguage) : [];
+    } catch (error) {
+      console.error('Error loading L3 categories:', error);
+      return [];
+    }
+  }, [selectedL1Category, selectedL2Category, currentLanguage]);
 
   // Area depths (MO modal)
   const [selectedL1Area, setSelectedL1Area] = React.useState('');
   const [selectedL2Area, setSelectedL2Area] = React.useState('all');
-  const l2Areas = React.useMemo(
-    () => (selectedL1Area ? getL2Areas(selectedL1Area, currentLanguage) : []),
-    [selectedL1Area, currentLanguage]
-  );
+  const l2Areas = React.useMemo(() => {
+    try {
+      return selectedL1Area ? getL2Areas(selectedL1Area, currentLanguage) : [];
+    } catch (error) {
+      console.error('Error loading L2 areas:', error);
+      return [];
+    }
+  }, [selectedL1Area, currentLanguage]);
 
   // Get user's country based on IP
   React.useEffect(() => {
