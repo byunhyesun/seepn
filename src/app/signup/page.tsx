@@ -4,6 +4,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
 
 export default function SignupPage() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
@@ -55,6 +56,8 @@ export default function SignupPage() {
         guide3: '- 연속된 숫자 및 문자는 안됨',
         submit: '가입하기',
         cancel: '취소',
+        already: '이미 가입한 회원이라면?',
+        login: '로그인',
         required: '모든 항목을 입력해주세요.',
         invalidEmail: '올바른 이메일을 입력해주세요.',
         mismatch: '비밀번호가 일치하지 않습니다.',
@@ -80,6 +83,8 @@ export default function SignupPage() {
         guide3: '- No sequential letters or digits',
         submit: 'Create Account',
         cancel: 'Cancel',
+        already: 'Already have an account?',
+        login: 'Log in',
         required: 'Please fill out all fields.',
         invalidEmail: 'Please enter a valid email.',
         mismatch: 'Passwords do not match.',
@@ -294,6 +299,10 @@ export default function SignupPage() {
                 </button>
               </div>
             </form>
+          </div>
+          <div className="mt-6 text-center text-sm text-gray-700">
+            <span className="mr-2">{getText('already')}</span>
+            <Link href="/login" className="text-blue-600 hover:underline">{getText('login')}</Link>
           </div>
         </div>
       </main>
