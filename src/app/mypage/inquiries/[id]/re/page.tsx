@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Upload, X, CheckCircle, AlertCircle, ChevronLeft, Paperclip, ChevronDown, ChevronUp } from 'lucide-react';
+import { Upload, X, CheckCircle, AlertCircle, ArrowLeft, Paperclip, ChevronDown, ChevronUp } from 'lucide-react';
 
 type InquiryCategoryKey = 'service' | 'supplier' | 'certification' | 'payment' | 'bug' | 'etc';
 type AttachmentItem = { name: string; size?: string; file?: File };
@@ -270,13 +270,13 @@ export default function InquiryRePage() {
 
       <main className="flex-1" style={{ paddingTop: isBannerVisible ? '112px' : '64px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-          {/* Back */}
+          {/* Back (match detail back UI style) */}
           <div className="mb-6">
             <button
               onClick={() => router.push(`/mypage/inquiries/${id}`)}
-              className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
             >
-              <ChevronLeft className="h-5 w-5 mr-1" />
+              <ArrowLeft className="h-5 w-5 mr-2" />
               {getText('backToDetail')}
             </button>
           </div>
