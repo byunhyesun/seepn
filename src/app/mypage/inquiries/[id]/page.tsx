@@ -298,7 +298,7 @@ export default function InquiryDetailPage() {
               <div className="text-sm text-gray-500 mb-1">{getText('title')}</div>
               <div className="text-gray-900 font-medium">{detail.title}</div>
             </div>
-            {/* Attachments (notice-like UI) */
+            {/* Attachments (notice-like UI) */}
             {detail.attachments && detail.attachments.length > 0 && (
               <div className="mb-4">
                 <div className="text-sm text-gray-500 mb-2">{getText('attachments')}</div>
