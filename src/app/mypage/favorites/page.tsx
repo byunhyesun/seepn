@@ -629,6 +629,17 @@ export default function MyFavoriteSuppliersPage() {
             <div className="flex-1 overflow-y-auto">
               {modalStep === 'root' && (
                 <div className="p-4 space-y-4">
+                  {/* Keyword */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{getText('searchKeyword')}</label>
+                    <input
+                      type="text"
+                      value={searchKeyword}
+                      onChange={(e) => setSearchKeyword(e.target.value)}
+                      placeholder={getText('searchPlaceholder')}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
                   {/* Category triggers */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
