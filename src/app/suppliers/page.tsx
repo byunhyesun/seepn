@@ -6,7 +6,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { getL1Categories, getL2Categories, getL3Categories } from '../../utils/categories';
 import { getL1Areas, getL2Areas } from '../../utils/areas';
-import { Search, Grid3X3, List, MapPin, Star, Filter, X, Heart, ExternalLink } from 'lucide-react';
+import { Search, Grid3X3, List, MapPin, Star, Filter, X, Heart, ExternalLink, ThumbsUp } from 'lucide-react';
 
 export default function SuppliersPage() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
@@ -312,6 +312,10 @@ export default function SuppliersPage() {
     observer.observe(node);
     return () => observer.disconnect();
   }, [filteredSuppliers.length]);
+
+  // Mock counters for likes and favorites
+  const getLikesCount = (supplier: { id: number }) => (supplier.id % 100) + 10;
+  const getFavoritesCount = (supplier: { id: number }) => (supplier.id % 50) + 5;
 
   // 카테고리 선택 핸들러
   const handleL1CategoryChange = (value: string) => {
@@ -790,19 +794,17 @@ export default function SuppliersPage() {
                                   {supplier.location}
                                 </div>
                               </div>
-                              
-                              <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                                {supplier.description}
-                              </p>
-                              
-                              {/* Tags */}
-                              <div className="flex flex-wrap gap-1 mb-4">
-                                {supplier.tags.map((tag, index) => (
-                                  <span key={index} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
+                               {/* Stats above detail button */}
+                               <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                                 <div className="flex items-center gap-1">
+                                   <Heart className="h-4 w-4 text-red-500" />
+                                   <span>{getFavoritesCount(supplier)}</span>
+                                 </div>
+                                 <div className="flex items-center gap-1">
+                                   <ThumbsUp className="h-4 w-4 text-blue-500" />
+                                   <span>{getLikesCount(supplier)}</span>
+                                 </div>
+                               </div>
                               
                               <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium">
                                 {getText('viewDetail')}
@@ -875,19 +877,17 @@ export default function SuppliersPage() {
                                     {supplier.location}
                                   </div>
                                 </div>
-                                
-                                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                                  {supplier.description}
-                                </p>
-                                
-                                {/* Tags */}
-                                <div className="flex flex-wrap gap-1 mb-3">
-                                  {supplier.tags.map((tag, index) => (
-                                    <span key={index} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                                      {tag}
-                                    </span>
-                                  ))}
-                                </div>
+                                 {/* Stats above detail button */}
+                                 <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                                   <div className="flex items-center gap-1">
+                                     <Heart className="h-4 w-4 text-red-500" />
+                                     <span>{getFavoritesCount(supplier)}</span>
+                                   </div>
+                                   <div className="flex items-center gap-1">
+                                     <ThumbsUp className="h-4 w-4 text-blue-500" />
+                                     <span>{getLikesCount(supplier)}</span>
+                                   </div>
+                                 </div>
                                 
                                 <div className="flex justify-end">
                                   <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium">
