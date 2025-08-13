@@ -932,9 +932,9 @@ export default function Home() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
               <button
-                className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedCategory === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedCategory === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
                 onClick={() => { setSelectedCategory(''); setIsCategoryModalOpen(false); }}
               >
                 {getText('allCategories')}
@@ -942,7 +942,7 @@ export default function Home() {
               {l1Categories.map((c) => (
                 <button
                   key={c.value}
-                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedCategory === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedCategory === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
                   onClick={() => { setSelectedCategory(c.value); setIsCategoryModalOpen(false); }}
                 >
                   {c.label}
@@ -970,9 +970,9 @@ export default function Home() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
               <button
-                className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedArea === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedArea === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
                 onClick={() => { setSelectedArea(''); setIsAreaModalOpen(false); }}
               >
                 {getText('allLocations')}
@@ -980,7 +980,7 @@ export default function Home() {
               {l1Areas.map((a) => (
                 <button
                   key={a.value}
-                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedArea === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedArea === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
                   onClick={() => { setSelectedArea(a.value); setIsAreaModalOpen(false); }}
                 >
                   {a.label}
