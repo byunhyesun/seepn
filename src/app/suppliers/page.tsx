@@ -1062,8 +1062,8 @@ export default function SuppliersPage() {
               )}
             </div>
             
-            {/* Modal Footer (hide on Category step) */}
-            {modalStep !== 'category' && (
+            {/* Modal Footer (only show on root step) */}
+            {modalStep === 'root' && (
               <div className="p-4 border-t border-gray-200">
                 <div className="flex gap-2">
                   <button 
