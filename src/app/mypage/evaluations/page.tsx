@@ -509,12 +509,12 @@ export default function MyEvaluationsPage() {
 
             {/* Footer */}
             <div className="p-4 border-t border-gray-200">
-              <div className="flex justify-center gap-2">
+              <div className="flex justify-center gap-4 items-center">
                 <button
                   type="button"
                   onClick={() => setIsEvalOpen(false)}
                   disabled={isSubmitting}
-                  className="px-6 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+                  className="text-sm text-gray-600 hover:text-gray-800 transition-colors no-underline disabled:opacity-50 bg-transparent p-0"
                 >
                   {getText('cancel')}
                 </button>
