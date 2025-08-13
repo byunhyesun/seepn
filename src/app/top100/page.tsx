@@ -936,7 +936,7 @@ export default function Top100Page() {
             <div className="flex-1 overflow-y-auto">
               {modalStep === 'root' && (
                 <div className="p-4 space-y-4">
-                  {/* Category triggers */}
+                  {/* Category trigger (L1 only) */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{getText('category')}</label>
                     <div className="grid grid-cols-1 gap-2">
@@ -944,21 +944,9 @@ export default function Top100Page() {
                         <span className="truncate">{getL1Label() || getText('allCategories')}</span>
                         <ChevronDown className="h-4 w-4 text-gray-400" />
                       </button>
-                      {selectedL1Category !== '' && (
-                        <button type="button" onClick={() => setModalStep('catL2')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
-                          <span className="truncate">{getL2Label() || getText('allCategories')}</span>
-                          <ChevronDown className="h-4 w-4 text-gray-400" />
-                        </button>
-                      )}
-                      {selectedL1Category !== '' && selectedL2Category !== 'all' && (
-                        <button type="button" onClick={() => setModalStep('catL3')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
-                          <span className="truncate">{getL3Label() || getText('allCategories')}</span>
-                          <ChevronDown className="h-4 w-4 text-gray-400" />
-                        </button>
-                      )}
                     </div>
                   </div>
-                  {/* Region triggers */}
+                  {/* Region trigger (L1 only) */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{getText('region')}</label>
                     <div className="grid grid-cols-1 gap-2">
@@ -966,12 +954,6 @@ export default function Top100Page() {
                         <span className="truncate">{getAreaL1Label() || getText('allRegions')}</span>
                         <ChevronDown className="h-4 w-4 text-gray-400" />
                       </button>
-                      {selectedL1Area !== '' && (
-                        <button type="button" onClick={() => setModalStep('areaL2')} className="relative w-full px-3 py-3 border border-gray-300 rounded-lg text-left text-gray-700 bg-white flex items-center justify-between">
-                          <span className="truncate">{getAreaL2Label() || getText('allRegions')}</span>
-                          <ChevronDown className="h-4 w-4 text-gray-400" />
-                        </button>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -981,23 +963,7 @@ export default function Top100Page() {
                 <div className="p-4 space-y-2">
                   <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Category === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Category(''); setSelectedCategory(''); setSelectedL2Category('all'); setSelectedL3Category('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
                   {l1Categories.map((c) => (
-                    <button key={c.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Category(c.value); setSelectedCategory(c.value); setSelectedL2Category('all'); setSelectedL3Category('all'); setModalStep('catL2'); }}>{c.label}</button>
-                  ))}
-                </div>
-              )}
-              {modalStep === 'catL2' && (
-                <div className="p-4 space-y-2">
-                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL2Category('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
-                  {l2Categories.map((c2) => (
-                    <button key={c2.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Category === c2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL2Category(c2.value); setModalStep('catL3'); }}>{c2.label}</button>
-                  ))}
-                </div>
-              )}
-              {modalStep === 'catL3' && (
-                <div className="p-4 space-y-2">
-                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL3Category === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL3Category('all'); setModalStep('root'); }}>{getText('allCategories')}</button>
-                  {l3Categories.map((c3) => (
-                    <button key={c3.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL3Category === c3.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL3Category(c3.value); setModalStep('root'); }}>{c3.label}</button>
+                    <button key={c.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Category === c.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Category(c.value); setSelectedCategory(c.value); setSelectedL2Category('all'); setSelectedL3Category('all'); setModalStep('root'); }}>{c.label}</button>
                   ))}
                 </div>
               )}
@@ -1006,15 +972,7 @@ export default function Top100Page() {
                 <div className="p-4 space-y-2">
                   <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Area(''); setSelectedArea(''); setSelectedL2Area('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
                   {l1Areas.map((a) => (
-                    <button key={a.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Area(a.value); setSelectedArea(a.value); setSelectedL2Area('all'); setModalStep('areaL2'); }}>{a.label}</button>
-                  ))}
-                </div>
-              )}
-              {modalStep === 'areaL2' && (
-                <div className="p-4 space-y-2">
-                  <button className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL2Area('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
-                  {l2Areas.map((a2) => (
-                    <button key={a2.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL2Area(a2.value); setModalStep('root'); }}>{a2.label}</button>
+                    <button key={a.value} className={`w-full text-left py-2 px-3 hover:bg-gray-100 rounded-lg ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { setSelectedL1Area(a.value); setSelectedArea(a.value); setSelectedL2Area('all'); setModalStep('root'); }}>{a.label}</button>
                   ))}
                 </div>
               )}
