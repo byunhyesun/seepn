@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getL1Categories, getL2Categories, getL3Categories } from '@/utils/categories';
 import { getL1Areas, getL2Areas } from '@/utils/areas';
-import { Grid3X3, List, MapPin, Star, Heart, ExternalLink, Filter, Trash2, CheckSquare, X, ChevronDown, ChevronLeft } from 'lucide-react';
+import { Grid3X3, List, MapPin, Star, Heart, ExternalLink, Filter, Trash2, CheckSquare, X, ChevronDown, ChevronLeft, ThumbsUp } from 'lucide-react';
 
 type PostCategory = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
 
@@ -219,6 +219,10 @@ export default function MyFavoriteSuppliersPage() {
   const getL3Label = React.useCallback(() => (selectedL1Category && selectedL2Category !== 'all' && selectedL3Category !== 'all') ? (l3Categories.find(c => c.value === selectedL3Category)?.label || '') : '', [selectedL1Category, selectedL2Category, selectedL3Category, l3Categories]);
   const getAreaL1Label = React.useCallback(() => selectedL1Area ? (l1Areas.find(a => a.value === selectedL1Area)?.label || '') : '', [selectedL1Area, l1Areas]);
   const getAreaL2Label = React.useCallback(() => (selectedL1Area && selectedL2Area !== 'all') ? (l2Areas.find(a => a.value === selectedL2Area)?.label || '') : '', [selectedL1Area, selectedL2Area, l2Areas]);
+
+  // Mock counters for likes and favorites
+  const getLikesCount = (supplier: { id: number }) => (supplier.id % 100) + 10;
+  const getFavoritesCount = (supplier: { id: number }) => (supplier.id % 50) + 5;
 
   const toggleSelectAll = () => {
     if (selectedIds.size === filteredFavorites.length) {
@@ -472,19 +476,13 @@ export default function MyFavoriteSuppliersPage() {
                                     </a>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="flex items-center text-yellow-500">
-                                    <Star className="h-4 w-4 fill-current" />
-                                    <span className="text-sm text-gray-600 ml-1">{supplier.rating}</span>
-                                  </div>
-                                  <button
-                                    onClick={() => toggleFavorite(supplier.id)}
-                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                    title="관심 해제"
-                                  >
-                                    <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                                  </button>
-                                </div>
+                                <button
+                                  onClick={() => toggleFavorite(supplier.id)}
+                                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                  title="관심 해제"
+                                >
+                                  <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                                </button>
                               </div>
                               <div className="space-y-2 mb-3">
                                 <div className="text-sm text-gray-600">{supplier.categoryDepth3}</div>
@@ -493,12 +491,33 @@ export default function MyFavoriteSuppliersPage() {
                                   {supplier.location}
                                 </div>
                               </div>
+                              {/* Description */}
+                              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{supplier.description}</p>
                               <div className="flex justify-between items-center">
                                 <div className="flex flex-wrap gap-1">
                                   {supplier.tags.map((tag, i) => (
                                     <span key={i} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">{tag}</span>
                                   ))}
                                 </div>
+                              </div>
+                              {/* Stats under tags */}
+                              <div className="flex items-center gap-4 text-sm text-gray-600 mt-3">
+                                <div className="flex items-center gap-1 text-yellow-600">
+                                  <Star className="h-4 w-4 fill-current" />
+                                  <span>{supplier.rating}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <ThumbsUp className="h-4 w-4 text-blue-500" />
+                                  <span>{getLikesCount(supplier)}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Heart className="h-4 w-4 text-red-500" />
+                                  <span>{getFavoritesCount(supplier)}</span>
+                                </div>
+                              </div>
+                              {/* Detail button */}
+                              <div className="mt-3 flex justify-end">
+                                <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium">상세보기</button>
                               </div>
                             </div>
                           </div>
@@ -536,19 +555,13 @@ export default function MyFavoriteSuppliersPage() {
                                       </a>
                                     )}
                                   </div>
-                                  <div className="flex items-center gap-2 ml-4">
-                                    <div className="flex items-center text-yellow-500">
-                                      <Star className="h-4 w-4 fill-current" />
-                                      <span className="text-sm text-gray-600 ml-1">{supplier.rating}</span>
-                                    </div>
-                                    <button
-                                      onClick={() => toggleFavorite(supplier.id)}
-                                      className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                                      title="관심 해제"
-                                    >
-                                      <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                                    </button>
-                                  </div>
+                                  <button
+                                    onClick={() => toggleFavorite(supplier.id)}
+                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                    title="관심 해제"
+                                  >
+                                    <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                                  </button>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
                                   <div className="text-sm text-gray-600">{supplier.categoryDepth3}</div>
@@ -557,10 +570,31 @@ export default function MyFavoriteSuppliersPage() {
                                     {supplier.location}
                                   </div>
                                 </div>
+                                {/* Description */}
+                                <p className="text-sm text-gray-600 mb-2 line-clamp-2">{supplier.description}</p>
                                 <div className="flex flex-wrap gap-1 mb-2">
                                   {supplier.tags.map((tag, i) => (
                                     <span key={i} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">{tag}</span>
                                   ))}
+                                </div>
+                                {/* Stats under tags */}
+                                <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+                                  <div className="flex items-center gap-1 text-yellow-600">
+                                    <Star className="h-4 w-4 fill-current" />
+                                    <span>{supplier.rating}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <ThumbsUp className="h-4 w-4 text-blue-500" />
+                                    <span>{getLikesCount(supplier)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Heart className="h-4 w-4 text-red-500" />
+                                    <span>{getFavoritesCount(supplier)}</span>
+                                  </div>
+                                </div>
+                                {/* Detail button */}
+                                <div className="flex justify-end">
+                                  <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium">상세보기</button>
                                 </div>
                               </div>
                             </div>
