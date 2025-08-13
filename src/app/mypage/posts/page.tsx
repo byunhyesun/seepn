@@ -212,17 +212,15 @@ export default function MyPostsPage() {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors mb-1 flex items-center gap-2"
-                      style={{
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                      }}>
-                    <Link href={`/board/${post.id}`}>{post.title}</Link>
-                    {(post as any).attachments?.length > 0 && (
-                      <Paperclip className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                    )}
+                  <h3 className="text-lg font-medium text-gray-900 mb-1">
+                    <div className="flex items-center gap-2">
+                      <Link href={`/board/${post.id}`} className="hover:text-blue-600">
+                        <span className="line-clamp-2">{post.title}</span>
+                      </Link>
+                      {(post as any).attachments?.length > 0 && (
+                        <Paperclip className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                      )}
+                    </div>
                   </h3>
                   {/* Date under title */}
                   <div className="text-sm text-gray-500 mb-2">{formatDate((post as any).registrationDate)}</div>
