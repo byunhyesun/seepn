@@ -3,10 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { Search, Menu, User, Globe, X, Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { getL1Categories } from '../utils/categories';
 import { getL1Areas, getL2Areas } from '../utils/areas';
 
 export default function Home() {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = React.useState(false);
   const [currentLanguage, setCurrentLanguage] = React.useState('ko');
@@ -810,19 +812,42 @@ export default function Home() {
                 </label>
                 <div className="flex gap-4">
                   <div className="relative flex-1">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Search className="h-5 w-5 text-gray-400" />
-                    </div>
                     <input
                       type="text"
                       id="main-search"
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="block w-full pl-3 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder={getText('searchPlaceholder')}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const keyword = (e.currentTarget as HTMLInputElement).value.trim();
+                          const q = encodeURIComponent(keyword);
+                          router.push(`/suppliers${keyword ? `?q=${q}` : ''}`);
+                        }
+                      }}
                     />
+                    <button
+                      type="button"
+                      aria-label="search"
+                      onClick={() => {
+                        const el = document.getElementById('main-search') as HTMLInputElement | null;
+                        const keyword = (el?.value || '').trim();
+                        const q = encodeURIComponent(keyword);
+                        router.push(`/suppliers${keyword ? `?q=${q}` : ''}`);
+                      }}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                    >
+                      <Search className="h-5 w-5" />
+                    </button>
                   </div>
                   <button
                     type="button"
                     className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 whitespace-nowrap"
+                    onClick={() => {
+                      const el = document.getElementById('main-search') as HTMLInputElement | null;
+                      const keyword = (el?.value || '').trim();
+                      const q = encodeURIComponent(keyword);
+                      router.push(`/suppliers${keyword ? `?q=${q}` : ''}`);
+                    }}
                   >
                     {getText('searchButton')}
                   </button>

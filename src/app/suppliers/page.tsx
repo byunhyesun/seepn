@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { getL1Categories, getL2Categories, getL3Categories } from '../../utils/categories';
@@ -30,7 +31,9 @@ export default function SuppliersPage() {
   const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
   
   // 검색어 상태
-  const [searchKeyword, setSearchKeyword] = React.useState('');
+  const searchParams = useSearchParams();
+  const initialQ = searchParams.get('q') || '';
+  const [searchKeyword, setSearchKeyword] = React.useState(initialQ);
   
   // 관심 공급사 상태 (공급사 ID를 Set으로 관리)
   const [favoriteSuppliers, setFavoriteSuppliers] = React.useState<Set<number>>(new Set());
@@ -641,7 +644,19 @@ export default function SuppliersPage() {
                     {/* Gallery View - PC Default, Hidden on Mobile */}
                     {viewMode === 'gallery' && (
                       <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {sampleSuppliers.map((supplier) => (
+                        {sampleSuppliers
+                          .filter((s) => {
+                            const kw = searchKeyword.trim().toLowerCase();
+                            if (!kw) return true;
+                            return (
+                              s.name.toLowerCase().includes(kw) ||
+                              s.description.toLowerCase().includes(kw) ||
+                              s.category.toLowerCase().includes(kw) ||
+                              s.categoryDepth3.toLowerCase().includes(kw) ||
+                              s.tags.some((t) => t.toLowerCase().includes(kw))
+                            );
+                          })
+                          .map((supplier) => (
                           <div key={supplier.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                             {/* Supplier Image */}
                             <div className="h-48 bg-gray-200 flex items-center justify-center">
@@ -724,7 +739,19 @@ export default function SuppliersPage() {
                     {/* List View - PC Optional, Mobile Default */}
                     {(viewMode === 'list' || isMobile) && (
                       <div className="space-y-4">
-                        {sampleSuppliers.map((supplier) => (
+                        {sampleSuppliers
+                          .filter((s) => {
+                            const kw = searchKeyword.trim().toLowerCase();
+                            if (!kw) return true;
+                            return (
+                              s.name.toLowerCase().includes(kw) ||
+                              s.description.toLowerCase().includes(kw) ||
+                              s.category.toLowerCase().includes(kw) ||
+                              s.categoryDepth3.toLowerCase().includes(kw) ||
+                              s.tags.some((t) => t.toLowerCase().includes(kw))
+                            );
+                          })
+                          .map((supplier) => (
                           <div key={supplier.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                             <div className="flex items-start gap-4">
                               {/* Company Icon - PC Only */}
