@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Search, CheckCircle2, Clock, Edit } from 'lucide-react';
+import { Search, CheckCircle2, Clock, Edit, Paperclip, ChevronDown, X } from 'lucide-react';
 
 type InquiryCategoryKey =
   | 'service'
@@ -29,6 +29,8 @@ export default function MyInquiriesPage() {
   const searchParams = useSearchParams();
   const initialTab = (searchParams?.get('tab') as InquiryStatus) || 'all';
   const [activeTab, setActiveTab] = React.useState<InquiryStatus>(initialTab);
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [isTabModalOpen, setIsTabModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     const getUserCountry = async () => {
@@ -41,6 +43,13 @@ export default function MyInquiriesPage() {
       }
     };
     getUserCountry();
+  }, []);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const getText = (key: string) => {
@@ -177,6 +186,7 @@ export default function MyInquiriesPage() {
     answeredAt?: string; // ISO
     content: string;
     reCount?: number;
+    attachments?: { name: string }[];
   };
 
   const sampleInquiries: Inquiry[] = React.useMemo(() => [
@@ -188,7 +198,8 @@ export default function MyInquiriesPage() {
       answered: true,
       answeredAt: '2025-01-12T15:40:00',
       content: '로그인은 되는데 마이페이지 이동 시 에러가 발생합니다.',
-      reCount: 1
+      reCount: 1,
+      attachments: [{ name: 'error_screenshot.png' }]
     },
     {
       id: 102,
@@ -239,7 +250,8 @@ export default function MyInquiriesPage() {
       registrationDate: '2025-01-12T18:25:00',
       answered: false,
       content: '참고용 파일을 첨부했습니다. 확인 부탁드립니다.',
-      reCount: 1
+      reCount: 1,
+      attachments: [{ name: 'reference.pdf' }]
     }
   ], [currentLanguage]);
 
@@ -273,10 +285,19 @@ export default function MyInquiriesPage() {
 
   const formatDate = (iso: string | undefined) => {
     if (!iso) return '-';
-    const date = new Date(iso);
-    return date.toLocaleString(
-      currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN'
-    );
+    const d = new Date(iso);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
+    return `${y}-${m}-${day} ${hh}:${mm}:${ss}`;
+  };
+
+  const getAnsweredLabel = (answered: boolean) => {
+    if (currentLanguage === 'ko') return answered ? '답변' : '미답변';
+    return answered ? 'Answered' : 'Pending';
   };
 
   const handleSearch = () => {
@@ -380,17 +401,22 @@ export default function MyInquiriesPage() {
                   ))}
                 </nav>
               </div>
-              {/* Mobile Select */}
+              {/* Mobile Tab Menu as layer popup trigger */}
               <div className="block md:hidden">
-                <select
-                  value={activeTab}
-                  onChange={(e) => setActiveTab(e.target.value as InquiryStatus)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                <button
+                  type="button"
+                  onClick={() => setIsTabModalOpen(true)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
                 >
-                  <option value="all">{getText('tabAll')}</option>
-                  <option value="answered">{getText('tabAnswered')}</option>
-                  <option value="pending">{getText('tabPending')}</option>
-                </select>
+                  <span>
+                    {([
+                      { key: 'all', label: getText('tabAll') },
+                      { key: 'answered', label: getText('tabAnswered') },
+                      { key: 'pending', label: getText('tabPending') },
+                    ] as const).find(t => t.key === activeTab)?.label}
+                  </span>
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                </button>
               </div>
             </div>
             <button
@@ -406,7 +432,7 @@ export default function MyInquiriesPage() {
             {filteredInquiries.length > 0 ? (
               filteredInquiries.map((inq) => (
                 <div key={inq.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer" onClick={() => window.location.href = `/mypage/inquiries/${inq.id}`}>
-                  {/* Header: category + registration date */}
+                  {/* Header: category */}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <div className="flex items-center gap-2">
                       <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border w-auto max-w-max shrink-0 ${getCategoryInfo(inq.category).color}`}>
@@ -418,12 +444,11 @@ export default function MyInquiriesPage() {
                         </span>
                       )}
                     </div>
-                    <div className="text-sm text-gray-500">{getText('registrationDate')}: {formatDate(inq.registrationDate)}</div>
                   </div>
 
-                  {/* Title */}
+                  {/* Title + attachment icon */}
                   <h3
-                    className="text-lg font-medium text-gray-900 transition-colors mb-2"
+                    className="text-lg font-medium text-gray-900 transition-colors mb-1 flex items-center gap-2"
                     style={{
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
@@ -432,7 +457,12 @@ export default function MyInquiriesPage() {
                     }}
                   >
                     {inq.title}
+                    {inq.attachments && inq.attachments.length > 0 && (
+                      <Paperclip className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                    )}
                   </h3>
+                  {/* Registration date under title */}
+                  <div className="text-sm text-gray-500 mb-2">{formatDate(inq.registrationDate)}</div>
 
                   {/* Answer info */}
                   <div className="mt-1 flex items-center gap-6 text-sm text-gray-600">
@@ -440,12 +470,12 @@ export default function MyInquiriesPage() {
                       {inq.answered ? (
                         <>
                           <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                          <span>{getText('answered')}: {getText('yes')}</span>
+                          <span>{getAnsweredLabel(true)}</span>
                         </>
                       ) : (
                         <>
                           <Clock className="h-4 w-4 text-amber-600" />
-                          <span>{getText('answered')}: {getText('no')}</span>
+                          <span>{getAnsweredLabel(false)}</span>
                         </>
                       )}
                     </div>
@@ -461,6 +491,47 @@ export default function MyInquiriesPage() {
           </div>
         </div>
       </main>
+
+      {/* Mobile Tab Selection Modal */}
+      {isMobile && isTabModalOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-50"
+            onClick={() => setIsTabModalOpen(false)}
+          />
+          <div className="fixed inset-x-4 top-28 bottom-28 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">탭 선택</h3>
+              <button
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+                onClick={() => setIsTabModalOpen(false)}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              {([
+                { key: 'all', label: getText('tabAll') },
+                { key: 'answered', label: getText('tabAnswered') },
+                { key: 'pending', label: getText('tabPending') },
+              ] as const).map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => {
+                    setActiveTab(tab.key as InquiryStatus);
+                    setIsTabModalOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${
+                    activeTab === tab.key ? 'text-blue-600 font-medium' : 'text-gray-700'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Mobile Floating Write Button */}
       <button
