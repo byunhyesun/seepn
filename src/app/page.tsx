@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Search, Menu, User, Globe, X, Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Menu, User, Globe, X, Play, Pause, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getL1Categories } from '../utils/categories';
 import { getL1Areas, getL2Areas } from '../utils/areas';
@@ -799,11 +799,14 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setIsCategoryModalOpen(true)}
-                    className="md:hidden w-full px-3 py-3 border border-gray-300 rounded-lg bg-white text-left"
+                    className="md:hidden w-full px-3 py-3 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
                   >
-                    {selectedCategory
-                      ? (l1Categories.find(c => c.value === selectedCategory)?.label || getText('allCategories'))
-                      : getText('allCategories')}
+                    <span>
+                      {selectedCategory
+                        ? (l1Categories.find(c => c.value === selectedCategory)?.label || getText('allCategories'))
+                        : getText('allCategories')}
+                    </span>
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
                   </button>
                 </div>
                 
@@ -829,11 +832,14 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setIsAreaModalOpen(true)}
-                    className="md:hidden w-full px-3 py-3 border border-gray-300 rounded-lg bg-white text-left"
+                    className="md:hidden w-full px-3 py-3 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
                   >
-                    {selectedArea
-                      ? (l1Areas.find(a => a.value === selectedArea)?.label || getText('allLocations'))
-                      : getText('allLocations')}
+                    <span>
+                      {selectedArea
+                        ? (l1Areas.find(a => a.value === selectedArea)?.label || getText('allLocations'))
+                        : getText('allLocations')}
+                    </span>
+                    <ChevronDown className="h-4 w-4 text-gray-400" />
                   </button>
                 </div>
               </div>
