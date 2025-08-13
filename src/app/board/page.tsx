@@ -484,9 +484,9 @@ export default function BoardPage() {
               <button
                 type="button"
                 onClick={() => setIsListCategoryModalOpen(true)}
-                className="sm:hidden w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
+                className="sm:hidden flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
               >
-                <span>
+                <span className="truncate">
                   {selectedCategory === 'daily' ? getText('categoryDaily') :
                    selectedCategory === 'curious' ? getText('categoryCurious') :
                    selectedCategory === 'together' ? getText('categoryTogether') :
@@ -496,7 +496,7 @@ export default function BoardPage() {
                 </span>
                 <ChevronDown className="h-4 w-4 text-gray-400" />
               </button>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 shrink-0 whitespace-nowrap">
                 {getText('totalPosts').replace('{count}', filteredPosts.length.toString())}
               </span>
             </div>
