@@ -4,7 +4,7 @@ import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { MapPin, Star, ExternalLink, Calendar, X, Heart, ThumbsUp } from 'lucide-react';
+import { MapPin, Star, ExternalLink, Calendar, X, Heart, ThumbsUp, ChevronDown } from 'lucide-react';
 
 type EvalStatus = 'all' | 'in_progress' | 'completed' | 'scheduled';
 
@@ -17,6 +17,8 @@ export default function MyEvaluationsPage() {
   const searchParams = useSearchParams();
   const initialTab = (searchParams?.get('tab') as EvalStatus) || 'all';
   const [activeTab, setActiveTab] = React.useState<EvalStatus>(initialTab);
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [isTabModalOpen, setIsTabModalOpen] = React.useState(false);
   const [isEvalOpen, setIsEvalOpen] = React.useState(false);
   const [evalTargetId, setEvalTargetId] = React.useState<number | null>(null);
   const [purchaseItem, setPurchaseItem] = React.useState('');
@@ -35,6 +37,13 @@ export default function MyEvaluationsPage() {
       }
     };
     getUserCountry();
+  }, []);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const getText = (key: string) => {
@@ -270,19 +279,67 @@ export default function MyEvaluationsPage() {
                 ))}
               </nav>
             </div>
-            {/* Mobile Select */}
+            {/* Mobile Tab Menu as layer popup trigger */}
             <div className="block md:hidden">
-              <select
-                value={activeTab}
-                onChange={(e) => setActiveTab(e.target.value as EvalStatus)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              <button
+                type="button"
+                onClick={() => setIsTabModalOpen(true)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
               >
-                <option value="all">{getText('tabAll')}</option>
-                <option value="in_progress">{getText('tabInProgress')}</option>
-                <option value="completed">{getText('tabCompleted')}</option>
-                <option value="scheduled">{getText('tabScheduled')}</option>
-              </select>
+                <span>
+                  {(
+                    [
+                      { key: 'all', label: getText('tabAll') },
+                      { key: 'in_progress', label: getText('tabInProgress') },
+                      { key: 'completed', label: getText('tabCompleted') },
+                      { key: 'scheduled', label: getText('tabScheduled') },
+                    ] as const
+                  ).find(t => t.key === activeTab)?.label}
+                </span>
+                <ChevronDown className="h-4 w-4 text-gray-400" />
+              </button>
             </div>
+          {/* Mobile Tab Selection Modal */}
+          {isMobile && isTabModalOpen && (
+            <>
+              <div
+                className="fixed inset-0 bg-black bg-opacity-50 z-50"
+                onClick={() => setIsTabModalOpen(false)}
+              />
+              <div className="fixed inset-x-4 top-28 bottom-28 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+                <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-900">탭 선택</h3>
+                  <button
+                    className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+                    onClick={() => setIsTabModalOpen(false)}
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                  {([
+                    { key: 'all', label: getText('tabAll') },
+                    { key: 'in_progress', label: getText('tabInProgress') },
+                    { key: 'completed', label: getText('tabCompleted') },
+                    { key: 'scheduled', label: getText('tabScheduled') },
+                  ] as const).map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => {
+                        setActiveTab(tab.key as EvalStatus);
+                        setIsTabModalOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${
+                        activeTab === tab.key ? 'text-blue-600 font-medium' : 'text-gray-700'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
           </div>
 
           {/* List */}
