@@ -21,7 +21,7 @@ type InquiryDetail = {
   answerContent?: string;
   answerRating?: number; // 1..5
   reCount?: number;
-  previousContent?: string;
+  previousList?: { title?: string; registrationDate?: string; attachments?: string[]; content: string }[];
 };
 
 export default function InquiryDetailPage() {
@@ -183,8 +183,21 @@ export default function InquiryDetailPage() {
       answerAttachments: ['guide.pdf'],
       answerContent: '안녕하세요. 캐시 문제로 보이며 브라우저 캐시 삭제 후 재시도 부탁드립니다.',
       answerRating: 4,
-      reCount: 1,
-      previousContent: '이전 문의: 동일 이슈 발생 기록이 있어 관련 가이드를 요청드립니다.'
+      previousList: [
+        {
+          title: '이전 문의 1',
+          registrationDate: '2025-01-05T10:00:00',
+          attachments: ['log.txt'],
+          content: '동일 이슈가 있어 로그 파일을 전달드립니다.'
+        },
+        {
+          title: '이전 문의 2',
+          registrationDate: '2025-01-08T11:20:00',
+          attachments: [],
+          content: '추가 현상: 특정 브라우저에서만 발생합니다.'
+        }
+      ],
+      reCount: 2
     },
     {
       id: 102,
@@ -203,8 +216,15 @@ export default function InquiryDetailPage() {
       attachments: ['reference.pdf', 'capture.jpg'],
       content: '참고용 파일을 첨부했습니다. 확인 부탁드립니다.',
       answered: false,
-      reCount: 1,
-      previousContent: '이전 문의: 참고 파일을 추가로 전달드립니다.'
+      previousList: [
+        {
+          title: '이전 문의 1',
+          registrationDate: '2025-01-10T09:00:00',
+          attachments: ['ref_v1.pdf'],
+          content: '첫 문의 내용입니다.'
+        }
+      ],
+      reCount: 1
     },
   ];
 
@@ -307,7 +327,7 @@ export default function InquiryDetailPage() {
           </div>
 
           {/* Previous Inquiry Section (between inquiry and answer) */}
-          {detail.answered && detail.previousContent && (
+          {detail.answered && detail.previousList && detail.previousList.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8 mb-6">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-xl font-semibold text-gray-900">이전 문의</h2>
@@ -321,7 +341,32 @@ export default function InquiryDetailPage() {
                 </button>
               </div>
               {showPrev && (
-                <div className="text-sm text-gray-700 whitespace-pre-line">{detail.previousContent}</div>
+                <div className="space-y-3">
+                  {detail.previousList.map((p, idx) => (
+                    <details key={idx} className="border border-gray-200 rounded">
+                      <summary className="cursor-pointer list-none px-3 py-2 flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-900">{p.title || `이전 문의 ${idx + 1}`}</span>
+                        <span className="text-xs text-gray-500">{p.registrationDate ? new Date(p.registrationDate).toLocaleString(currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN') : ''}</span>
+                      </summary>
+                      <div className="px-3 pb-3 text-sm text-gray-700 whitespace-pre-line">
+                        {p.attachments && p.attachments.length > 0 && (
+                          <div className="mb-2 space-y-1">
+                            {p.attachments.map((name, i) => (
+                              <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded border">
+                                <div className="flex items-center">
+                                  <Paperclip className="h-4 w-4 text-gray-400 mr-2" />
+                                  <span className="text-xs text-gray-700">{name}</span>
+                                </div>
+                                <button className="text-blue-600 hover:text-blue-700 text-xs font-medium transition-colors">{getText('downloadFile')}</button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {p.content}
+                      </div>
+                    </details>
+                  ))}
+                </div>
               )}
             </div>
           )}
