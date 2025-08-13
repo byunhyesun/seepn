@@ -22,7 +22,7 @@ export default function Top100Page() {
   const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
   // Removed viewMode state - TOP100 only uses list view
   const [favoriteSuppliers, setFavoriteSuppliers] = React.useState<Set<number>>(new Set());
-  const [activeTab, setActiveTab] = React.useState<'all' | 'likes' | 'rating' | 'reviews' | 'ai'>('all');
+  const [activeTab, setActiveTab] = React.useState<'all' | 'likes' | 'rating' | 'reviews' | 'md' | 'ai'>('all');
 
   // Banner data
   const banners = [
@@ -263,6 +263,7 @@ export default function Top100Page() {
         tabLikes: '좋아요순',
         tabRating: '별점순',
         tabReviews: '리뷰순',
+        tabMD: 'MD 추천 순',
         tabAI: 'AI 평가',
         likes: '좋아요',
         reviewsCount: '리뷰',
@@ -326,6 +327,7 @@ export default function Top100Page() {
         tabLikes: 'By Likes',
         tabRating: 'By Rating',
         tabReviews: 'By Reviews',
+        tabMD: 'MD Picks',
         tabAI: 'AI Score',
         likes: 'Likes',
         reviewsCount: 'Reviews',
@@ -389,6 +391,7 @@ export default function Top100Page() {
         tabLikes: 'いいね順',
         tabRating: '評価順',
         tabReviews: 'レビュー順',
+        tabMD: 'MDおすすめ順',
         tabAI: 'AI評価',
         likes: 'いいね',
         reviewsCount: 'レビュー',
@@ -452,6 +455,7 @@ export default function Top100Page() {
         tabLikes: '点赞排序',
         tabRating: '评分排序',
         tabReviews: '评论排序',
+        tabMD: 'MD 推荐',
         tabAI: 'AI评价',
         likes: '点赞',
         reviewsCount: '评论',
@@ -502,6 +506,9 @@ export default function Top100Page() {
         return suppliers.sort((a, b) => b.rating - a.rating);
       case 'reviews':
         return suppliers.sort((a, b) => b.reviews - a.reviews);
+      case 'md':
+        // Mock MD picks: weight rating + likes moderately
+        return suppliers.sort((a, b) => (b.rating * 10 + b.likes * 0.02) - (a.rating * 10 + a.likes * 0.02));
       case 'ai':
         return suppliers.sort((a, b) => b.aiScore - a.aiScore);
       case 'all':
@@ -628,6 +635,7 @@ export default function Top100Page() {
                         { key: 'likes', label: getText('tabLikes') },
                         { key: 'rating', label: getText('tabRating') },
                         { key: 'reviews', label: getText('tabReviews') },
+                        { key: 'md', label: getText('tabMD') },
                         { key: 'ai', label: getText('tabAI') }
                       ].map((tab) => (
                         <button
@@ -656,6 +664,7 @@ export default function Top100Page() {
                       <option value="likes">{getText('tabLikes')}</option>
                       <option value="rating">{getText('tabRating')}</option>
                       <option value="reviews">{getText('tabReviews')}</option>
+                      <option value="md">{getText('tabMD')}</option>
                       <option value="ai">{getText('tabAI')}</option>
                     </select>
                   </div>
