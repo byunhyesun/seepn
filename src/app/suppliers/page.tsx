@@ -29,7 +29,7 @@ export default function SuppliersPage() {
   
   // 모바일 검색 모달 상태
   const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
-  const [modalStep, setModalStep] = React.useState<'root' | 'catL1' | 'catL2' | 'catL3' | 'region' | 'size'>('root');
+  const [modalStep, setModalStep] = React.useState<'root' | 'catL1' | 'catL2' | 'catL3' | 'areaL1' | 'areaL2' | 'size'>('root');
   const [companySize, setCompanySize] = React.useState('');
   
   // 검색어 상태
@@ -1023,12 +1023,12 @@ export default function SuppliersPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{getText('region')}</label>
                     <div className="grid grid-cols-1 gap-2">
-                      <button type="button" onClick={() => setModalStep('region')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                      <button type="button" onClick={() => setModalStep('areaL1')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
                         <span className="truncate">{getAreaL1Label() || getText('allRegions')}</span>
                         <ChevronDown className="h-4 w-4 text-gray-400" />
                       </button>
                       {selectedL1Area !== '' && (
-                        <button type="button" onClick={() => setModalStep('region')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
+                        <button type="button" onClick={() => setModalStep('areaL2')} className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between">
                           <span className="truncate">{getAreaL2Label() || getText('allRegions')}</span>
                           <ChevronDown className="h-4 w-4 text-gray-400" />
                         </button>
@@ -1081,22 +1081,22 @@ export default function SuppliersPage() {
                   ))}
                 </div>
               )}
-              {modalStep === 'region' && (
+              {modalStep === 'areaL1' && (
                 <div className="p-4 space-y-3">
                   <h3 className="text-sm font-medium text-gray-700 mb-1">{getText('selectRegion')}</h3>
-                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL1AreaChange('')}>{getText('allRegions')}</button>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === '' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(''); setModalStep('root'); }}>{getText('allRegions')}</button>
                   {l1Areas.map((a) => (
-                    <button key={a.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL1AreaChange(a.value)}>{a.label}</button>
+                    <button key={a.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL1Area === a.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL1AreaChange(a.value); setModalStep('areaL2'); }}>{a.label}</button>
                   ))}
-                  {selectedL1Area && (
-                    <>
-                      <h4 className="mt-3 text-sm font-medium text-gray-700">{getText('selectSubRegion')}</h4>
-                      <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL2AreaChange('all')}>{getText('allRegions')}</button>
-                      {l2Areas.map((a2) => (
-                        <button key={a2.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => handleL2AreaChange(a2.value)}>{a2.label}</button>
-                      ))}
-                    </>
-                  )}
+                </div>
+              )}
+              {modalStep === 'areaL2' && (
+                <div className="p-4 space-y-3">
+                  <h4 className="text-sm font-medium text-gray-700">{getText('selectSubRegion')}</h4>
+                  <button className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === 'all' ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange('all'); setModalStep('root'); }}>{getText('allRegions')}</button>
+                  {l2Areas.map((a2) => (
+                    <button key={a2.value} className={`w-full text-left px-3 py-2 border-b border-gray-100 hover:bg-gray-50 ${selectedL2Area === a2.value ? 'text-blue-600 font-medium' : 'text-gray-700'}`} onClick={() => { handleL2AreaChange(a2.value); setModalStep('root'); }}>{a2.label}</button>
+                  ))}
                 </div>
               )}
               {modalStep === 'size' && (
