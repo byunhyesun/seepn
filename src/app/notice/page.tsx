@@ -258,6 +258,18 @@ export default function NoticePage() {
     return `${y}-${m}-${d}`;
   };
 
+  // Format date-time as YYYY-MM-DD hh:mm:ss for detail
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    const ss = String(date.getSeconds()).padStart(2, '0');
+    return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+  };
+
   // Handle notice click
   const handleNoticeClick = (id: number) => {
     router.push(`/notice?id=${id}`);
@@ -290,9 +302,9 @@ export default function NoticePage() {
           <div className="mb-6">
             <button
               onClick={handleBackToList}
-              className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
             >
-              <ChevronLeft className="h-5 w-5 mr-1" />
+              <span className="mr-2">&larr;</span>
               {getText('backToList')}
             </button>
           </div>
@@ -301,21 +313,20 @@ export default function NoticePage() {
           <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8">
             {/* Header */}
             <div className="border-b border-gray-200 pb-6 mb-6">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
-                <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium border ${getCategoryInfo(currentNotice.category).color}`}>
+              <div className="flex items-start gap-3 mb-4">
+                <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium border ${getCategoryInfo(currentNotice.category).color} ${isMobile ? 'max-w-[50%]' : ''}`}>
                   {getCategoryInfo(currentNotice.category).label}
                 </span>
-                <div className="flex items-center text-sm text-gray-500 gap-4">
-                  <div className="flex items-center">
-                    {formatDate(currentNotice.registrationDate)}
-                  </div>
-                  <div className="flex items-center">
-                    <Eye className="h-4 w-4 mr-1" />
-                    {currentNotice.viewCount.toLocaleString()}
-                  </div>
-                </div>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">{currentNotice.title}</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-3">{currentNotice.title}</h1>
+              {/* Meta under title */}
+              <div className="text-sm text-gray-500">
+                <div className="flex items-center justify-between">
+                  <span>{formatDateTime(currentNotice.registrationDate)}</span>
+                  <span className="hidden sm:inline-flex items-center"><Eye className="h-4 w-4 mr-1" />{currentNotice.viewCount.toLocaleString()}</span>
+                </div>
+                <div className="sm:hidden mt-1 inline-flex items-center"><Eye className="h-4 w-4 mr-1" />{currentNotice.viewCount.toLocaleString()}</div>
+              </div>
             </div>
 
             {/* Attachments */}
@@ -330,9 +341,7 @@ export default function NoticePage() {
                         <span className="text-sm text-gray-700">{file.name}</span>
                         <span className="text-xs text-gray-500 ml-2">({file.size})</span>
                       </div>
-                      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors">
-                        {getText('downloadFile')}
-                      </button>
+                      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors" aria-label="download" />
                     </div>
                   ))}
                 </div>
