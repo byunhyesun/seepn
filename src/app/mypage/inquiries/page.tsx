@@ -173,6 +173,7 @@ export default function MyInquiriesPage() {
     answered: boolean;
     answeredAt?: string; // ISO
     content: string;
+    reCount?: number;
   };
 
   const sampleInquiries: Inquiry[] = React.useMemo(() => [
@@ -183,7 +184,8 @@ export default function MyInquiriesPage() {
       registrationDate: '2025-01-12T09:10:00',
       answered: true,
       answeredAt: '2025-01-12T15:40:00',
-      content: '로그인은 되는데 마이페이지 이동 시 에러가 발생합니다.'
+      content: '로그인은 되는데 마이페이지 이동 시 에러가 발생합니다.',
+      reCount: 1
     },
     {
       id: 102,
@@ -233,7 +235,8 @@ export default function MyInquiriesPage() {
       title: '첨부파일 포함 문의 (미답변)',
       registrationDate: '2025-01-12T18:25:00',
       answered: false,
-      content: '참고용 파일을 첨부했습니다. 확인 부탁드립니다.'
+      content: '참고용 파일을 첨부했습니다. 확인 부탁드립니다.',
+      reCount: 1
     }
   ], [currentLanguage]);
 
@@ -402,9 +405,16 @@ export default function MyInquiriesPage() {
                 <div key={inq.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer" onClick={() => window.location.href = `/mypage/inquiries/${inq.id}`}>
                   {/* Header: category + registration date */}
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border w-auto max-w-max shrink-0 ${getCategoryInfo(inq.category).color}`}>
-                      {getCategoryInfo(inq.category).label}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border w-auto max-w-max shrink-0 ${getCategoryInfo(inq.category).color}`}>
+                        {getCategoryInfo(inq.category).label}
+                      </span>
+                      {typeof inq.reCount === 'number' && inq.reCount > 0 && (
+                        <span className="inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium border bg-amber-50 text-amber-800 border-amber-200">
+                          재문의({inq.reCount})
+                        </span>
+                      )}
+                    </div>
                     <div className="text-sm text-gray-500">{getText('registrationDate')}: {formatDate(inq.registrationDate)}</div>
                   </div>
 

@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Paperclip, Star, ChevronLeft } from 'lucide-react';
+import { Paperclip, Star, ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react';
 
 type InquiryCategoryKey = 'service' | 'supplier' | 'certification' | 'payment' | 'bug' | 'etc';
 
@@ -203,6 +203,7 @@ export default function InquiryDetailPage() {
   ];
 
   const detail = React.useMemo(() => sample.find((s) => s.id === id) || sample[0], [id]);
+  const [showPrev, setShowPrev] = React.useState(false);
 
   const formatDateTime = (iso?: string) => {
     if (!iso) return '-';
@@ -345,7 +346,23 @@ export default function InquiryDetailPage() {
           ) : (
             <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">{getText('answerSection')}</h2>
-              <div className="text-gray-700">빠르고 정확한 답변을 위해 검토 중이며, 곧 답변드리겠습니다.</div>
+              <div className="text-gray-700 mb-4">빠르고 정확한 답변을 위해 검토 중이며, 곧 답변드리겠습니다.</div>
+              {/* Previous inquiry collapsible (for pending with history) */}
+              <div className="mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPrev(!showPrev)}
+                  className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50"
+                >
+                  <span className="text-sm font-medium text-gray-900">이전 문의</span>
+                  {showPrev ? <ChevronUp className="h-4 w-4 text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-500" />}
+                </button>
+                {showPrev && (
+                  <div className="bg-white border border-t-0 border-gray-200 rounded-b-lg p-4">
+                    <div className="text-sm text-gray-700 whitespace-pre-line">{detail.content}</div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
