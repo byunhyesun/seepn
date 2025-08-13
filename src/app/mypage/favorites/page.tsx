@@ -511,12 +511,12 @@ export default function MyFavoriteSuppliersPage() {
                                   <span>{supplier.rating}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
-                                  <ThumbsUp className="h-4 w-4 text-blue-500" />
-                                  <span>{getLikesCount(supplier)}</span>
-                                </div>
-                                <div className="flex items-center gap-1">
                                   <Heart className="h-4 w-4 text-red-500" />
                                   <span>{getFavoritesCount(supplier)}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <ThumbsUp className="h-4 w-4 text-blue-500" />
+                                  <span>{getLikesCount(supplier)}</span>
                                 </div>
                               </div>
                               {/* Detail button */}
@@ -592,12 +592,12 @@ export default function MyFavoriteSuppliersPage() {
                                     <span>{supplier.rating}</span>
                                   </div>
                                   <div className="flex items-center gap-1">
-                                    <ThumbsUp className="h-4 w-4 text-blue-500" />
-                                    <span>{getLikesCount(supplier)}</span>
-                                  </div>
-                                  <div className="flex items-center gap-1">
                                     <Heart className="h-4 w-4 text-red-500" />
                                     <span>{getFavoritesCount(supplier)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <ThumbsUp className="h-4 w-4 text-blue-500" />
+                                    <span>{getLikesCount(supplier)}</span>
                                   </div>
                                 </div>
                                 {/* Detail button */}
