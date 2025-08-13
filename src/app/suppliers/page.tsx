@@ -245,6 +245,33 @@ export default function SuppliersPage() {
     }
   }, [selectedL1Area, currentLanguage]); // currentLanguage 의존성 복원
 
+  // Filtered suppliers by keyword, category, area
+  const filteredSuppliers = React.useMemo(() => {
+    const kw = searchKeyword.trim().toLowerCase();
+    return sampleSuppliers
+      .filter((s) => {
+        if (!kw) return true;
+        return (
+          s.name.toLowerCase().includes(kw) ||
+          s.description.toLowerCase().includes(kw) ||
+          s.category.toLowerCase().includes(kw) ||
+          s.categoryDepth3.toLowerCase().includes(kw) ||
+          s.tags.some((t) => t.toLowerCase().includes(kw))
+        );
+      })
+      .filter((s) => {
+        if (!selectedL1Category) return true;
+        return (
+          s.category === selectedL1Category ||
+          s.categoryDepth3.toLowerCase().includes(selectedL1Category.toLowerCase())
+        );
+      })
+      .filter((s) => {
+        if (!selectedL1Area) return true;
+        return s.location.toLowerCase().includes(selectedL1Area.toLowerCase());
+      });
+  }, [searchKeyword, selectedL1Category, selectedL1Area]);
+
   // 카테고리 선택 핸들러
   const handleL1CategoryChange = (value: string) => {
     try {
@@ -299,6 +326,7 @@ export default function SuppliersPage() {
         searchTitle: '검색 조건',
         resultsTitle: '검색 결과',
         noResults: '검색 결과가 없습니다.',
+        noMatchedSuppliers: '검색된 공급사가 없습니다.',
         searchPlaceholder: '공급사명, 제품명 등을 입력하세요',
         searchButton: '검색',
         resetButton: '초기화',
@@ -336,6 +364,7 @@ export default function SuppliersPage() {
         searchTitle: 'Search Criteria',
         resultsTitle: 'Search Results',
         noResults: 'No search results found.',
+        noMatchedSuppliers: 'No suppliers found.',
         searchPlaceholder: 'Enter supplier name, product name, etc.',
         searchButton: 'Search',
         resetButton: 'Reset',
@@ -373,6 +402,7 @@ export default function SuppliersPage() {
         searchTitle: '検索条件',
         resultsTitle: '検索結果',
         noResults: '検索結果がありません。',
+        noMatchedSuppliers: '該当するサプライヤーがありません。',
         searchPlaceholder: 'サプライヤー名、製品名などを入力',
         searchButton: '検索',
         resetButton: 'リセット',
@@ -410,6 +440,7 @@ export default function SuppliersPage() {
         searchTitle: '搜索条件',
         resultsTitle: '搜索结果',
         noResults: '没有找到搜索结果。',
+        noMatchedSuppliers: '未找到匹配的供应商。',
         searchPlaceholder: '输入供应商名称、产品名称等',
         searchButton: '搜索',
         resetButton: '重置',
@@ -624,7 +655,7 @@ export default function SuppliersPage() {
                   <div className="flex items-center gap-4">
                     <h2 className="text-lg font-semibold text-gray-900">{getText('resultsTitle')}</h2>
                     <div className="text-sm text-gray-500">
-                      {getText('totalResults').replace('{count}', sampleSuppliers.length.toString())}
+                      {getText('totalResults').replace('{count}', filteredSuppliers.length.toString())}
                     </div>
                   </div>
                   
@@ -656,36 +687,12 @@ export default function SuppliersPage() {
                 </div>
 
                 {/* Results Content */}
-                {sampleSuppliers.length > 0 ? (
+                {filteredSuppliers.length > 0 ? (
                   <>
                     {/* Gallery View - PC Default, Hidden on Mobile */}
                     {viewMode === 'gallery' && (
                       <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {sampleSuppliers
-                          .filter((s) => {
-                            const kw = searchKeyword.trim().toLowerCase();
-                            if (!kw) return true;
-                            return (
-                              s.name.toLowerCase().includes(kw) ||
-                              s.description.toLowerCase().includes(kw) ||
-                              s.category.toLowerCase().includes(kw) ||
-                              s.categoryDepth3.toLowerCase().includes(kw) ||
-                              s.tags.some((t) => t.toLowerCase().includes(kw))
-                            );
-                          })
-                          .filter((s) => {
-                            // category filter (depth1 or depth3 contains value)
-                            if (!selectedL1Category) return true;
-                            return (
-                              s.category === selectedL1Category ||
-                              s.categoryDepth3.toLowerCase().includes(selectedL1Category.toLowerCase())
-                            );
-                          })
-                          .filter((s) => {
-                            if (!selectedL1Area) return true;
-                            return s.location.toLowerCase().includes(selectedL1Area.toLowerCase());
-                          })
-                          .map((supplier) => (
+                        {filteredSuppliers.map((supplier) => (
                           <div key={supplier.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                             {/* Supplier Image */}
                             <div className="h-48 bg-gray-200 flex items-center justify-center">
@@ -768,30 +775,7 @@ export default function SuppliersPage() {
                     {/* List View - PC Optional, Mobile Default */}
                     {(viewMode === 'list' || isMobile) && (
                       <div className="space-y-4">
-                        {sampleSuppliers
-                          .filter((s) => {
-                            const kw = searchKeyword.trim().toLowerCase();
-                            if (!kw) return true;
-                            return (
-                              s.name.toLowerCase().includes(kw) ||
-                              s.description.toLowerCase().includes(kw) ||
-                              s.category.toLowerCase().includes(kw) ||
-                              s.categoryDepth3.toLowerCase().includes(kw) ||
-                              s.tags.some((t) => t.toLowerCase().includes(kw))
-                            );
-                          })
-                          .filter((s) => {
-                            if (!selectedL1Category) return true;
-                            return (
-                              s.category === selectedL1Category ||
-                              s.categoryDepth3.toLowerCase().includes(selectedL1Category.toLowerCase())
-                            );
-                          })
-                          .filter((s) => {
-                            if (!selectedL1Area) return true;
-                            return s.location.toLowerCase().includes(selectedL1Area.toLowerCase());
-                          })
-                          .map((supplier) => (
+                        {filteredSuppliers.map((supplier) => (
                           <div key={supplier.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                             <div className="flex items-start gap-4">
                               {/* Company Icon - PC Only */}
@@ -874,13 +858,7 @@ export default function SuppliersPage() {
                   </>
                 ) : (
                   <div className="text-center py-12">
-                    <div className="text-gray-400 mb-4">
-                      <Search className="mx-auto h-12 w-12" />
-                    </div>
-                    <p className="text-gray-500 text-lg">{getText('noResults')}</p>
-                    <p className="text-gray-400 text-sm mt-2">
-                      검색 조건을 입력하여 공급사를 찾아보세요.
-                    </p>
+                    <p className="text-gray-500 text-lg">{getText('noMatchedSuppliers')}</p>
                   </div>
                 )}
               </div>
