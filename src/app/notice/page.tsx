@@ -398,22 +398,23 @@ export default function NoticePage() {
                       {/* moved views below date */}
                     </div>
                     
-                    <h3 className="font-semibold text-gray-900 text-lg mb-3 hover:text-blue-600 transition-colors">
-                      {notice.title}
-                    </h3>
-                    
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                    {/* Title with attachment icon */}
+                    <div className="flex items-center gap-2 mb-3">
+                      <h3 className="font-semibold text-gray-900 text-lg hover:text-blue-600 transition-colors">
+                        {notice.title}
+                      </h3>
                       {notice.hasAttachment && (
-                        <div className="flex items-center">
-                          <Paperclip className="h-4 w-4 mr-1" />
-                          <span>첨부파일</span>
-                        </div>
+                        <Paperclip className="h-4 w-4 text-gray-400 flex-shrink-0" />
                       )}
+                    </div>
+                    
+                    {/* Date with views below */}
+                    <div className="text-sm text-gray-500">
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
                         {formatDate(notice.registrationDate)}
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center mt-1">
                         <Eye className="h-4 w-4 mr-1" />
                         {notice.viewCount.toLocaleString()}
                       </div>
