@@ -5,7 +5,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { getL1Categories } from '../../utils/categories';
 import { getL1Areas } from '../../utils/areas';
-import { Search, RotateCcw, Filter, X, Star, Heart, ExternalLink, MapPin, ThumbsUp } from 'lucide-react';
+import { Search, RotateCcw, Filter, X, Star, Heart, ExternalLink, MapPin, ThumbsUp, ChevronDown } from 'lucide-react';
 
 export default function Top100Page() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
@@ -672,18 +672,21 @@ export default function Top100Page() {
                     <button
                       type="button"
                       onClick={() => setIsTabModalOpen(true)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-left"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
                     >
-                      {(
-                        [
-                          { key: 'all', label: getText('tabAll') },
-                          { key: 'likes', label: getText('tabLikes') },
-                          { key: 'rating', label: getText('tabRating') },
-                          { key: 'reviews', label: getText('tabReviews') },
-                          { key: 'md', label: getText('tabMD') },
-                          { key: 'ai', label: getText('tabAI') }
-                        ] as const
-                      ).find(t => t.key === activeTab)?.label}
+                      <span>
+                        {(
+                          [
+                            { key: 'all', label: getText('tabAll') },
+                            { key: 'likes', label: getText('tabLikes') },
+                            { key: 'rating', label: getText('tabRating') },
+                            { key: 'reviews', label: getText('tabReviews') },
+                            { key: 'md', label: getText('tabMD') },
+                            { key: 'ai', label: getText('tabAI') }
+                          ] as const
+                        ).find(t => t.key === activeTab)?.label}
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
                     </button>
                   </div>
                 </div>
