@@ -1062,30 +1062,32 @@ export default function SuppliersPage() {
               )}
             </div>
             
-            {/* Modal Footer */}
-            <div className="p-4 border-t border-gray-200">
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => {
-                    setSearchKeyword('');
-                    setSelectedL1Category('');
-                    setSelectedL2Category('all');
-                    setSelectedL3Category('all');
-                    setSelectedL1Area('');
-                    setSelectedL2Area('all');
-                  }}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  {getText('resetButton')}
-                </button>
-                <button 
-                  onClick={() => setIsSearchModalOpen(false)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
-                >
-                  {getText('searchButton')}
-                </button>
+            {/* Modal Footer (hide on Category step) */}
+            {modalStep !== 'category' && (
+              <div className="p-4 border-t border-gray-200">
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => {
+                      setSearchKeyword('');
+                      setSelectedL1Category('');
+                      setSelectedL2Category('all');
+                      setSelectedL3Category('all');
+                      setSelectedL1Area('');
+                      setSelectedL2Area('all');
+                    }}
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors"
+                  >
+                    {getText('resetButton')}
+                  </button>
+                  <button 
+                    onClick={() => setIsSearchModalOpen(false)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+                  >
+                    {getText('searchButton')}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </>
       )}
