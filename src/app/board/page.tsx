@@ -507,32 +507,34 @@ export default function BoardPage() {
                 <div key={post.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-gray-300 cursor-pointer transition-all">
                   {/* PC Layout */}
                   <Link href={`/board/${post.id}`} className="hidden sm:block">
-                    {/* Header: Category and Meta Info */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-3">
-                        <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${getCategoryInfo(post.category).color}`}>
-                          {getCategoryInfo(post.category).label}
-                        </span>
-                        {post.hasAttachment && (
-                          <Paperclip className="h-4 w-4 text-gray-400" />
-                        )}
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <span>{post.author}</span>
-                        <span>{formatDate(post.registrationDate)}</span>
-                      </div>
+                    {/* Header: Category */}
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${getCategoryInfo(post.category).color}`}>
+                        {getCategoryInfo(post.category).label}
+                      </span>
                     </div>
 
-                    {/* Title */}
-                    <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors mb-3" 
-                        style={{
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden'
-                        }}>
-                      {post.title}
-                    </h3>
+                    {/* Title + Attachment */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors" 
+                          style={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden'
+                          }}>
+                        {post.title}
+                      </h3>
+                      {post.hasAttachment && (
+                        <Paperclip className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      )}
+                    </div>
+
+                    {/* Author / Date under title */}
+                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                      <span>{post.author}</span>
+                      <span>{formatDate(post.registrationDate)}</span>
+                    </div>
 
                     {/* Stats */}
                     <div className="flex items-center justify-between">
@@ -562,22 +564,24 @@ export default function BoardPage() {
                       </span>
                     </div>
 
-                    {/* 2. 제목 */}
-                    <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors mb-3" 
-                        style={{
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden'
-                        }}>
-                      {post.title}
-                    </h3>
-
-                    {/* 3. 첨부파일 닉네임 등록일 */}
-                    <div className="flex items-center gap-3 mb-3 text-sm text-gray-500">
+                    {/* 2. 제목 + 첨부 */}
+                    <div className="flex items-center gap-2 mb-3">
+                      <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors" 
+                          style={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden'
+                          }}>
+                        {post.title}
+                      </h3>
                       {post.hasAttachment && (
                         <Paperclip className="h-4 w-4 text-gray-400" />
                       )}
+                    </div>
+
+                    {/* 3. 닉네임 등록일 */}
+                    <div className="flex items-center gap-3 mb-3 text-sm text-gray-500">
                       <span>{post.author}</span>
                       <span>{formatDate(post.registrationDate)}</span>
                     </div>
