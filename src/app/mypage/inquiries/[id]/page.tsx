@@ -216,11 +216,12 @@ export default function InquiryDetailPage() {
 
   const handleDelete = () => {
     if (confirm('정말로 삭제하시겠습니까?')) {
+      // simulate delete
       alert('삭제되었습니다.');
       router.push('/mypage/inquiries');
     }
   };
-  const handleReInquiry = () => router.push('/mypage/inquiries/write');
+  const handleReInquiry = () => router.push(`/mypage/inquiries/${id}/re`);
   const handleNewInquiry = () => router.push('/mypage/inquiries/write');
   const handleEdit = () => router.push(`/mypage/inquiries/${id}/edit`);
 
