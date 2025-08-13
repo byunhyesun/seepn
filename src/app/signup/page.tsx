@@ -90,34 +90,6 @@ export default function SignupPage() {
   const validateEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   const validatePhone = (value: string) => /^(010|011|016|017|018|019)-?\d{3,4}-?\d{4}$/.test(value);
 
-  // Password policy helpers (for guide only)
-  const containsRequiredTypes = (pwd: string): boolean => {
-    const hasLower = /[a-z]/.test(pwd);
-    const hasUpper = /[A-Z]/.test(pwd);
-    const hasDigit = /[0-9]/.test(pwd);
-    const hasSpecial = /[^A-Za-z0-9]/.test(pwd);
-    return hasLower && hasUpper && hasDigit && hasSpecial;
-  };
-  const hasSequentialRun = (pwd: string): boolean => {
-    if (pwd.length < 3) return false;
-    const toCode = (c: string) => c.charCodeAt(0);
-    for (let i = 0; i <= pwd.length - 3; i++) {
-      const a = pwd[i], b = pwd[i + 1], c = pwd[i + 2];
-      if (/^[A-Za-z]{3}$/.test(a + b + c)) {
-        const ca = toCode(a), cb = toCode(b), cc = toCode(c);
-        if (cb - ca === 1 && cc - cb === 1) return true;
-      }
-      if (/^[0-9]{3}$/.test(a + b + c)) {
-        const ca = toCode(a), cb = toCode(b), cc = toCode(c);
-        if (cb - ca === 1 && cc - cb === 1) return true;
-      }
-    }
-    return false;
-  };
-  const ruleLengthOk = password.length >= 8 && password.length <= 20;
-  const ruleTypesOk = containsRequiredTypes(password);
-  const ruleNoSequentialOk = password.length === 0 ? false : !hasSequentialRun(password);
-  const guideClass = (ok: boolean) => (password.length === 0 ? 'text-gray-700' : ok ? 'text-green-600' : 'text-red-600');
 
   const canSubmit = !!email && !!password && !!confirm && !!fullName && !!phone && !isSubmitting;
 
@@ -203,15 +175,7 @@ export default function SignupPage() {
                     {showPwd ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-                {/* Password policy guide */}
-                <div className="mt-3 bg-white">
-                  <div className="text-sm font-medium text-gray-900 mb-2">{getText('guideTitle')}</div>
-                  <ul className="space-y-1 text-sm">
-                    <li className={guideClass(ruleLengthOk)}>{getText('guide1')}</li>
-                    <li className={guideClass(ruleTypesOk)}>{getText('guide2')}</li>
-                    <li className={guideClass(ruleNoSequentialOk)}>{getText('guide3')}</li>
-                  </ul>
-                </div>
+                {/* Password policy guide removed per request */}
               </div>
 
               {/* Confirm Password */}
