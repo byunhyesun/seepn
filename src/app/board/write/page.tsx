@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ArrowLeft, Upload, X, Bold, Italic, Underline, List, ListOrdered, Link2 } from 'lucide-react';
+import { ArrowLeft, Upload, X, Bold, Italic, Underline, List, ListOrdered, Link2, ChevronDown } from 'lucide-react';
 
 type PostCategory = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
 
@@ -17,6 +17,7 @@ export default function BoardWritePage() {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   
   // Form states
   const [selectedCategory, setSelectedCategory] = useState<PostCategory>('daily');
@@ -292,11 +293,12 @@ export default function BoardWritePage() {
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
                   {getText('category')}
                 </label>
+                {/* PC select */}
                 <select
                   id="category"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value as PostCategory)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  className="hidden sm:block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 >
                   <option value="daily">{getText('categoryDaily')}</option>
                   <option value="curious">{getText('categoryCurious')}</option>
@@ -305,6 +307,21 @@ export default function BoardWritePage() {
                   <option value="share">{getText('categoryShare')}</option>
                   <option value="tell">{getText('categoryTell')}</option>
                 </select>
+                {/* MO trigger */}
+                <button
+                  type="button"
+                  onClick={() => setIsCategoryModalOpen(true)}
+                  className="sm:hidden w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
+                >
+                  <span className="truncate">
+                    {selectedCategory === 'daily' ? getText('categoryDaily') :
+                     selectedCategory === 'curious' ? getText('categoryCurious') :
+                     selectedCategory === 'together' ? getText('categoryTogether') :
+                     selectedCategory === 'inform' ? getText('categoryInform') :
+                     selectedCategory === 'share' ? getText('categoryShare') : getText('categoryTell')}
+                  </span>
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                </button>
               </div>
 
               {/* Title */}
@@ -491,6 +508,38 @@ export default function BoardWritePage() {
           </div>
         </div>
       </main>
+      {/* Category Modal (MO) */}
+      {isMobile && isCategoryModalOpen && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsCategoryModalOpen(false)} />
+          <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">{getText('category')}</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" onClick={() => setIsCategoryModalOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+              {([
+                { key: 'daily', label: getText('categoryDaily') },
+                { key: 'curious', label: getText('categoryCurious') },
+                { key: 'together', label: getText('categoryTogether') },
+                { key: 'inform', label: getText('categoryInform') },
+                { key: 'share', label: getText('categoryShare') },
+                { key: 'tell', label: getText('categoryTell') },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.key}
+                  onClick={() => { setSelectedCategory(opt.key as PostCategory); setIsCategoryModalOpen(false); }}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedCategory === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
   );
