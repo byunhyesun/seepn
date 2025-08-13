@@ -33,6 +33,8 @@ export default function SuppliersPage() {
   // 검색어 상태
   const searchParams = useSearchParams();
   const initialQ = searchParams.get('q') || '';
+  const initialC = searchParams.get('c') || '';
+  const initialA = searchParams.get('a') || '';
   const [searchKeyword, setSearchKeyword] = React.useState(initialQ);
   
   // 관심 공급사 상태 (공급사 ID를 Set으로 관리)
@@ -218,6 +220,21 @@ export default function SuppliersPage() {
       return [];
     }
   }, [currentLanguage]);
+
+  // Sync initial category/area from query on first render when options become available
+  React.useEffect(() => {
+    if (initialC && l1Categories.length > 0) {
+      setSelectedL1Category(initialC);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [l1Categories.length]);
+
+  React.useEffect(() => {
+    if (initialA && l1Areas.length > 0) {
+      setSelectedL1Area(initialA);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [l1Areas.length]);
 
   const l2Areas = React.useMemo(() => {
     try {
@@ -656,6 +673,18 @@ export default function SuppliersPage() {
                               s.tags.some((t) => t.toLowerCase().includes(kw))
                             );
                           })
+                          .filter((s) => {
+                            // category filter (depth1 or depth3 contains value)
+                            if (!selectedL1Category) return true;
+                            return (
+                              s.category === selectedL1Category ||
+                              s.categoryDepth3.toLowerCase().includes(selectedL1Category.toLowerCase())
+                            );
+                          })
+                          .filter((s) => {
+                            if (!selectedL1Area) return true;
+                            return s.location.toLowerCase().includes(selectedL1Area.toLowerCase());
+                          })
                           .map((supplier) => (
                           <div key={supplier.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                             {/* Supplier Image */}
@@ -750,6 +779,17 @@ export default function SuppliersPage() {
                               s.categoryDepth3.toLowerCase().includes(kw) ||
                               s.tags.some((t) => t.toLowerCase().includes(kw))
                             );
+                          })
+                          .filter((s) => {
+                            if (!selectedL1Category) return true;
+                            return (
+                              s.category === selectedL1Category ||
+                              s.categoryDepth3.toLowerCase().includes(selectedL1Category.toLowerCase())
+                            );
+                          })
+                          .filter((s) => {
+                            if (!selectedL1Area) return true;
+                            return s.location.toLowerCase().includes(selectedL1Area.toLowerCase());
                           })
                           .map((supplier) => (
                           <div key={supplier.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">

@@ -820,8 +820,12 @@ export default function Home() {
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           const keyword = (e.currentTarget as HTMLInputElement).value.trim();
-                          const q = encodeURIComponent(keyword);
-                          router.push(`/suppliers${keyword ? `?q=${q}` : ''}`);
+                          const params = new URLSearchParams();
+                          if (keyword) params.set('q', keyword);
+                          if (selectedCategory) params.set('c', selectedCategory);
+                          if (selectedArea) params.set('a', selectedArea);
+                          const qs = params.toString();
+                          router.push(`/suppliers${qs ? `?${qs}` : ''}`);
                         }
                       }}
                     />
@@ -831,8 +835,12 @@ export default function Home() {
                       onClick={() => {
                         const el = document.getElementById('main-search') as HTMLInputElement | null;
                         const keyword = (el?.value || '').trim();
-                        const q = encodeURIComponent(keyword);
-                        router.push(`/suppliers${keyword ? `?q=${q}` : ''}`);
+                        const params = new URLSearchParams();
+                        if (keyword) params.set('q', keyword);
+                        if (selectedCategory) params.set('c', selectedCategory);
+                        if (selectedArea) params.set('a', selectedArea);
+                        const qs = params.toString();
+                        router.push(`/suppliers${qs ? `?${qs}` : ''}`);
                       }}
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                     >
@@ -845,8 +853,12 @@ export default function Home() {
                     onClick={() => {
                       const el = document.getElementById('main-search') as HTMLInputElement | null;
                       const keyword = (el?.value || '').trim();
-                      const q = encodeURIComponent(keyword);
-                      router.push(`/suppliers${keyword ? `?q=${q}` : ''}`);
+                      const params = new URLSearchParams();
+                      if (keyword) params.set('q', keyword);
+                      if (selectedCategory) params.set('c', selectedCategory);
+                      if (selectedArea) params.set('a', selectedArea);
+                      const qs = params.toString();
+                      router.push(`/suppliers${qs ? `?${qs}` : ''}`);
                     }}
                   >
                     {getText('searchButton')}
