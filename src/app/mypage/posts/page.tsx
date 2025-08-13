@@ -4,7 +4,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-import { Heart, MessageCircle, Eye } from 'lucide-react';
+import { Heart, MessageCircle, Eye, Paperclip } from 'lucide-react';
 
 type PostCategoryKey = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
 
@@ -116,7 +116,7 @@ export default function MyPostsPage() {
 
   // Sample posts (subset from board with authors)
   const allPosts = React.useMemo(() => ([
-    { id: 1, category: 'curious' as PostCategoryKey, title: '새로운 공급사를 찾고 있어요', author: '기술탐험가7', registrationDate: '2025-01-12T14:30:00', likes: 12, comments: 5, views: 156 },
+    { id: 1, category: 'curious' as PostCategoryKey, title: '새로운 공급사를 찾고 있어요', author: '기술탐험가7', registrationDate: '2025-01-12T14:30:00', likes: 12, comments: 5, views: 156, attachments: [{ name: 'specs.pdf' }] },
     { id: 2, category: 'curious' as PostCategoryKey, title: '공급사 평가 기준이 궁금합니다', author: 'NewbieMom2', registrationDate: '2025-01-12T11:20:00', likes: 8, comments: 3, views: 89 },
     { id: 3, category: 'together' as PostCategoryKey, title: '함께 전시회 가실 분 계신가요?', author: '전시회러버', registrationDate: '2025-01-11T16:45:00', likes: 15, comments: 7, views: 203 },
     { id: 4, category: 'inform' as PostCategoryKey, title: '새로운 결제 시스템 안내', author: 'Admin2025', registrationDate: '2025-01-11T09:15:00', likes: 25, comments: 12, views: 445 },
@@ -147,10 +147,11 @@ export default function MyPostsPage() {
   }, [myPosts, selectedYear, selectedMonth]);
 
   const formatDate = (iso: string) => {
-    const date = new Date(iso);
-    return date.toLocaleDateString(
-      currentLanguage === 'ko' ? 'ko-KR' : currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN'
-    );
+    const d = new Date(iso);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   };
 
   return (
@@ -203,16 +204,15 @@ export default function MyPostsPage() {
             {filteredPosts.length > 0 ? (
               filteredPosts.map((post) => (
                 <div key={post.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-gray-300 transition-all">
-                  {/* Category and date */}
+                  {/* Category */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                     <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${getCategoryInfo(post.category).color}`}>
                       {getCategoryInfo(post.category).label}
                     </span>
-                    <div className="text-sm text-gray-500">{formatDate(post.registrationDate)}</div>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors mb-1"
+                  <h3 className="text-lg font-medium text-gray-900 hover:text-blue-600 transition-colors mb-1 flex items-center gap-2"
                       style={{
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
@@ -220,7 +220,12 @@ export default function MyPostsPage() {
                         overflow: 'hidden'
                       }}>
                     <Link href={`/board/${post.id}`}>{post.title}</Link>
+                    {(post as any).attachments?.length > 0 && (
+                      <Paperclip className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                    )}
                   </h3>
+                  {/* Date under title */}
+                  <div className="text-sm text-gray-500 mb-2">{formatDate((post as any).registrationDate)}</div>
                   {/* Stats below title */}
                   <div className="mt-2 flex items-center gap-6 text-sm text-gray-500">
                     <div className="flex items-center gap-1">
