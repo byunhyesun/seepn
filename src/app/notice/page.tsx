@@ -307,7 +307,6 @@ export default function NoticePage() {
                 </span>
                 <div className="flex items-center text-sm text-gray-500 gap-4">
                   <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
                     {formatDate(currentNotice.registrationDate)}
                   </div>
                   <div className="flex items-center">
@@ -411,7 +410,6 @@ export default function NoticePage() {
                     {/* Date with views below */}
                     <div className="text-sm text-gray-500">
                       <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
                         {formatDate(notice.registrationDate)}
                       </div>
                       <div className="flex items-center mt-1">
