@@ -232,6 +232,13 @@ export default function Top100Page() {
     }
   ];
 
+  // Helpers for scoring (mock where data is unavailable)
+  const getFavoritesCount = (s: { id: number }) => (s.id % 50) + 5;
+  const getRecentLikes = (s: { likes: number }) => s.likes; // No date data; using likes as recent proxy
+  const calculateOverallScore = (s: { rating: number; reviews: number; likes: number; id: number }) =>
+    (s.rating * 0.4) + (s.reviews * 0.25) + (getRecentLikes(s) * 0.2) + (getFavoritesCount(s) * 0.15);
+  const mdPicks: number[] = [3, 1, 5, 2, 4, 6]; // Admin-configurable order (sample)
+
   // Internationalization function
   const getText = (key: string) => {
     const translations: { [key: string]: { [key: string]: string } } = {
@@ -501,24 +508,30 @@ export default function Top100Page() {
     
     switch (activeTab) {
       case 'likes':
-        return suppliers.sort((a, b) => b.likes - a.likes);
+        // 좋아요: 최근 3개월치 반영 (데이터 부재로 likes 사용)
+        return suppliers.sort((a, b) => getRecentLikes(b) - getRecentLikes(a));
       case 'rating':
-        return suppliers.sort((a, b) => b.rating - a.rating);
+        // 별점: 평균 + 리뷰수 보정 (리뷰 5건 미만은 제외)
+        return suppliers
+          .filter((s) => s.reviews >= 5)
+          .sort((a, b) => (b.rating + b.reviews * 0.01) - (a.rating + a.reviews * 0.01));
       case 'reviews':
+        // 리뷰: 총 수 + 최신 리뷰 가중치 (데이터 부재로 reviews만 사용)
         return suppliers.sort((a, b) => b.reviews - a.reviews);
       case 'md':
-        // Mock MD picks: weight rating + likes moderately
-        return suppliers.sort((a, b) => (b.rating * 10 + b.likes * 0.02) - (a.rating * 10 + a.likes * 0.02));
+        // MD 추천: 운영자 설정 순서 우선 (없는 항목은 뒤에)
+        const indexOf = (id: number) => {
+          const idx = mdPicks.indexOf(id);
+          return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
+        };
+        return suppliers.sort((a, b) => indexOf(a.id) - indexOf(b.id));
       case 'ai':
-        return suppliers.sort((a, b) => b.aiScore - a.aiScore);
+        // AI 추천: 개인화 데이터 부재로 임시 점수 (rating*10 + likes*0.02)
+        return suppliers.sort((a, b) => (b.rating * 10 + b.likes * 0.02) - (a.rating * 10 + a.likes * 0.02));
       case 'all':
       default:
-        // 전체: 별점 + 좋아요수 + 리뷰 + 경고수(역순)를 종합한 점수
-        return suppliers.sort((a, b) => {
-          const scoreA = (a.rating * 20) + (a.likes * 0.01) + (a.reviews * 0.1) - (a.warnings * 5);
-          const scoreB = (b.rating * 20) + (b.likes * 0.01) + (b.reviews * 0.1) - (b.warnings * 5);
-          return scoreB - scoreA;
-        });
+        // 종합 TOP100: (별점×0.4) + (리뷰수×0.25) + (좋아요수×0.2) + (관심수×0.15)
+        return suppliers.sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a));
     }
   }, [activeTab]);
 
