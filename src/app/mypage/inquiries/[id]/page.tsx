@@ -20,6 +20,8 @@ type InquiryDetail = {
   answerAttachments?: string[];
   answerContent?: string;
   answerRating?: number; // 1..5
+  reCount?: number;
+  previousContent?: string;
 };
 
 export default function InquiryDetailPage() {
@@ -181,6 +183,8 @@ export default function InquiryDetailPage() {
       answerAttachments: ['guide.pdf'],
       answerContent: '안녕하세요. 캐시 문제로 보이며 브라우저 캐시 삭제 후 재시도 부탁드립니다.',
       answerRating: 4,
+      reCount: 1,
+      previousContent: '이전 문의: 동일 이슈 발생 기록이 있어 관련 가이드를 요청드립니다.'
     },
     {
       id: 102,
@@ -198,7 +202,9 @@ export default function InquiryDetailPage() {
       registrationDate: '2025-01-12T18:25:00',
       attachments: ['reference.pdf', 'capture.jpg'],
       content: '참고용 파일을 첨부했습니다. 확인 부탁드립니다.',
-      answered: false
+      answered: false,
+      reCount: 1,
+      previousContent: '이전 문의: 참고 파일을 추가로 전달드립니다.'
     },
   ];
 
@@ -292,6 +298,24 @@ export default function InquiryDetailPage() {
               <div className="text-sm text-gray-500 mb-1">{getText('content')}</div>
               <div className="text-gray-900 whitespace-pre-line">{detail.content}</div>
             </div>
+            {/* Previous Inquiry collapsible inside Inquiry section for re-inquiries */}
+            {detail.reCount && detail.reCount > 0 && detail.previousContent && (
+              <div className="mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPrev(!showPrev)}
+                  className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50"
+                >
+                  <span className="text-sm font-medium text-gray-900">이전 문의</span>
+                  {showPrev ? <ChevronUp className="h-4 w-4 text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-500" />}
+                </button>
+                {showPrev && (
+                  <div className="bg-white border border-t-0 border-gray-200 rounded-b-lg p-4">
+                    <div className="text-sm text-gray-700 whitespace-pre-line">{detail.previousContent}</div>
+                  </div>
+                )}
+              </div>
+            )}
             <div>
               <div className="text-sm text-gray-500 mb-1">{getText('answered')}</div>
               <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium border ${detail.answered ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-700 border-gray-200'}`}>
@@ -346,23 +370,7 @@ export default function InquiryDetailPage() {
           ) : (
             <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">{getText('answerSection')}</h2>
-              <div className="text-gray-700 mb-4">빠르고 정확한 답변을 위해 검토 중이며, 곧 답변드리겠습니다.</div>
-              {/* Previous inquiry collapsible (for pending with history) */}
-              <div className="mt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowPrev(!showPrev)}
-                  className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50"
-                >
-                  <span className="text-sm font-medium text-gray-900">이전 문의</span>
-                  {showPrev ? <ChevronUp className="h-4 w-4 text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-500" />}
-                </button>
-                {showPrev && (
-                  <div className="bg-white border border-t-0 border-gray-200 rounded-b-lg p-4">
-                    <div className="text-sm text-gray-700 whitespace-pre-line">{detail.content}</div>
-                  </div>
-                )}
-              </div>
+              <div className="text-gray-700 mb-2">빠르고 정확한 답변을 위해 검토 중이며, 곧 답변드리겠습니다.</div>
             </div>
           )}
 
