@@ -96,7 +96,7 @@ export default function WithdrawalPage() {
       />
 
       <main className="flex-1" style={{ paddingTop: isBannerVisible ? '112px' : '64px' }}>
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-gray-900">{getText('pageTitle')}</h1>
           </div>
