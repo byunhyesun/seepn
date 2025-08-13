@@ -249,12 +249,13 @@ export default function NoticePage() {
     return categoryMap[category as keyof typeof categoryMap] || categoryMap.general;
   };
 
-  // Format date
+  // Format date as YYYY-MM-DD for list view
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(currentLanguage === 'ko' ? 'ko-KR' : 
-                                   currentLanguage === 'en' ? 'en-US' : 
-                                   currentLanguage === 'ja' ? 'ja-JP' : 'zh-CN');
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   };
 
   // Handle notice click
@@ -394,12 +395,7 @@ export default function NoticePage() {
                           {getCategoryInfo(notice.category).label}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 ml-4 text-sm text-gray-500">
-                        <div className="flex items-center">
-                          <Eye className="h-4 w-4 mr-1" />
-                          {notice.viewCount.toLocaleString()}
-                        </div>
-                      </div>
+                      {/* moved views below date */}
                     </div>
                     
                     <h3 className="font-semibold text-gray-900 text-lg mb-3 hover:text-blue-600 transition-colors">
@@ -416,6 +412,10 @@ export default function NoticePage() {
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
                         {formatDate(notice.registrationDate)}
+                      </div>
+                      <div className="flex items-center">
+                        <Eye className="h-4 w-4 mr-1" />
+                        {notice.viewCount.toLocaleString()}
                       </div>
                     </div>
                   </div>
