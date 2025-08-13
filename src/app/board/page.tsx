@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Search, Paperclip, Heart, MessageCircle, Eye, Edit } from 'lucide-react';
+import { Search, Paperclip, Heart, MessageCircle, Eye, Edit, ChevronDown, X } from 'lucide-react';
 
 export default function BoardPage() {
   const router = useRouter();
@@ -17,6 +17,8 @@ export default function BoardPage() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchType, setSearchType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchTypeModalOpen, setIsSearchTypeModalOpen] = useState(false);
+  const [isListCategoryModalOpen, setIsListCategoryModalOpen] = useState(false);
 
   // Mobile detection
   useEffect(() => {
@@ -419,15 +421,27 @@ export default function BoardPage() {
           {/* Search Section */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
             <div className="flex flex-col sm:flex-row gap-2">
+              {/* PC select */}
               <select
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                className="hidden sm:block px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
               >
                 <option value="all">{getText('searchAll')}</option>
                 <option value="title">{getText('searchTitle')}</option>
                 <option value="content">{getText('searchContent')}</option>
               </select>
+              {/* MO trigger */}
+              <button
+                type="button"
+                onClick={() => setIsSearchTypeModalOpen(true)}
+                className="sm:hidden w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
+              >
+                <span>
+                  {searchType === 'title' ? getText('searchTitle') : searchType === 'content' ? getText('searchContent') : getText('searchAll')}
+                </span>
+                <ChevronDown className="h-4 w-4 text-gray-400" />
+              </button>
               
               <div className="flex-1 flex gap-2">
                 <input
@@ -452,10 +466,11 @@ export default function BoardPage() {
           {/* Category Filter and Write Button (PC) */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div className="flex items-center gap-4">
+              {/* PC select */}
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                className="hidden sm:block px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
               >
                 <option value="">{getText('categoryAll')}</option>
                 <option value="daily">{getText('categoryDaily')}</option>
@@ -465,6 +480,22 @@ export default function BoardPage() {
                 <option value="share">{getText('categoryShare')}</option>
                 <option value="tell">{getText('categoryTell')}</option>
               </select>
+              {/* MO trigger */}
+              <button
+                type="button"
+                onClick={() => setIsListCategoryModalOpen(true)}
+                className="sm:hidden w-full px-3 py-2 border border-gray-300 rounded-lg bg-white flex items-center justify-between"
+              >
+                <span>
+                  {selectedCategory === 'daily' ? getText('categoryDaily') :
+                   selectedCategory === 'curious' ? getText('categoryCurious') :
+                   selectedCategory === 'together' ? getText('categoryTogether') :
+                   selectedCategory === 'inform' ? getText('categoryInform') :
+                   selectedCategory === 'share' ? getText('categoryShare') :
+                   selectedCategory === 'tell' ? getText('categoryTell') : getText('categoryAll')}
+                </span>
+                <ChevronDown className="h-4 w-4 text-gray-400" />
+              </button>
               <span className="text-sm text-gray-600">
                 {getText('totalPosts').replace('{count}', filteredPosts.length.toString())}
               </span>
@@ -587,6 +618,70 @@ export default function BoardPage() {
           </div>
         </div>
       </main>
+
+      {/* Search Type Modal (MO) */}
+      {isMobile && isSearchTypeModalOpen && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsSearchTypeModalOpen(false)} />
+          <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">{getText('searchButton')}</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" onClick={() => setIsSearchTypeModalOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {([
+                { key: 'all', label: getText('searchAll') },
+                { key: 'title', label: getText('searchTitle') },
+                { key: 'content', label: getText('searchContent') },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.key}
+                  onClick={() => { setSearchType(opt.key); setIsSearchTypeModalOpen(false); }}
+                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${searchType === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* List Category Modal (MO) */}
+      {isMobile && isListCategoryModalOpen && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setIsListCategoryModalOpen(false)} />
+          <div className="fixed inset-x-4 top-20 bottom-20 bg-white rounded-lg shadow-xl z-50 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">{getText('pageTitle')}</h3>
+              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg" onClick={() => setIsListCategoryModalOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {([
+                { key: '', label: getText('categoryAll') },
+                { key: 'daily', label: getText('categoryDaily') },
+                { key: 'curious', label: getText('categoryCurious') },
+                { key: 'together', label: getText('categoryTogether') },
+                { key: 'inform', label: getText('categoryInform') },
+                { key: 'share', label: getText('categoryShare') },
+                { key: 'tell', label: getText('categoryTell') },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.key || 'all'}
+                  onClick={() => { setSelectedCategory(opt.key); setIsListCategoryModalOpen(false); }}
+                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedCategory === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Mobile Floating Write Button */}
       <button
