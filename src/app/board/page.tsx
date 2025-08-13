@@ -630,7 +630,7 @@ export default function BoardPage() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
               {([
                 { key: 'all', label: getText('searchAll') },
                 { key: 'title', label: getText('searchTitle') },
@@ -639,7 +639,7 @@ export default function BoardPage() {
                 <button
                   key={opt.key}
                   onClick={() => { setSearchType(opt.key); setIsSearchTypeModalOpen(false); }}
-                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${searchType === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${searchType === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
                 >
                   {opt.label}
                 </button>
@@ -660,7 +660,7 @@ export default function BoardPage() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
               {([
                 { key: '', label: getText('categoryAll') },
                 { key: 'daily', label: getText('categoryDaily') },
@@ -673,7 +673,7 @@ export default function BoardPage() {
                 <button
                   key={opt.key || 'all'}
                   onClick={() => { setSelectedCategory(opt.key); setIsListCategoryModalOpen(false); }}
-                  className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${selectedCategory === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 rounded-lg ${selectedCategory === opt.key ? 'text-blue-600 font-medium' : 'text-gray-700'}`}
                 >
                   {opt.label}
                 </button>
