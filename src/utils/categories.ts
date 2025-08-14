@@ -56,17 +56,13 @@ const translations: { [key: string]: { [key: string]: string } } = {
       // L2 카테고리 번역 (주요 항목)
       '사무용품': 'Office Supplies',
       '공장용 소모품': 'Factory Supplies',
-      '교육 서비스': 'Education Services',
       '명함': 'Business Cards',
       '스티커': 'Stickers',
       '판촉물': 'Promotional Items',
       '홍보': 'Promotion',
       '간식 서비스': 'Snack Services',
-      '출장 서비스': 'Business Trip Services',
       '세차 서비스': 'Car Wash Services',
       '세탁 서비스': 'Laundry Services',
-      '시설 공사': 'Facility Construction',
-      '건물 관리': 'Building Management'
     },
     ja: {
       '비품/소모품': '備品・消耗品',
@@ -89,17 +85,13 @@ const translations: { [key: string]: { [key: string]: string } } = {
       // L2 카테고리 번역 (주요 항목)
       '사무용품': '事務用品',
       '공장용 소모품': '工場用消耗品',
-      '교육 서비스': '教育サービス',
       '명함': '名刺',
       '스티커': 'ステッカー',
       '판촉물': '販促物',
       '홍보': '広報',
       '간식 서비스': '軽食サービス',
-      '출장 서비스': '出張サービス',
       '세차 서비스': '洗車サービス',
       '세탁 서비스': 'クリーニングサービス',
-      '시설 공사': '施設工事',
-      '건물 관리': '建物管理'
     },
     zh: {
       '비품/소모품': '办公用品',
@@ -122,17 +114,13 @@ const translations: { [key: string]: { [key: string]: string } } = {
       // L2 카테고리 번역 (주요 항목)
       '사무용품': '办公用品',
       '공장용 소모품': '工厂用品',
-      '교육 서비스': '教育服务',
       '명함': '名片',
       '스티커': '贴纸',
       '판촉물': '促销品',
       '홍보': '宣传',
       '간식 서비스': '零食服务',
-      '출장 서비스': '出差服务',
       '세차 서비스': '洗车服务',
       '세탁 서비스': '洗衣服务',
-      '시설 공사': '设施建设',
-      '건물 관리': '建筑管리'
     }
 };
 

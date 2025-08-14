@@ -39,6 +39,8 @@ export default function MyPageDashboard() {
         setUserCountry(data.country_name || '대한민국');
       } catch (e) {
         setUserCountry('대한민국');
+        console.error('Failed to fetch user country', e);
+        throw new Error('Failed to fetch user country');
       }
     };
     fetchCountry();

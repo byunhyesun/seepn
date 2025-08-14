@@ -25,8 +25,8 @@ export default function MyPageProfileEdit() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   // Agreements
-  const [agreeTerms, setAgreeTerms] = useState(true);
-  const [agreePrivacy, setAgreePrivacy] = useState(true);
+  const [agreeTerms, _] = useState(true);
+  const [agreePrivacy, __] = useState(true);
   const [agreeMarketing, setAgreeMarketing] = useState(false);
   const [marketingEmail, setMarketingEmail] = useState(false);
   const [marketingSMS, setMarketingSMS] = useState(false);

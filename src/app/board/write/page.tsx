@@ -213,7 +213,7 @@ export default function BoardWritePage() {
     if (editorRef.current && content) {
       editorRef.current.innerHTML = content;
     }
-  }, []);
+  }, [content]);
 
   // Update editor when content changes externally
   useEffect(() => {

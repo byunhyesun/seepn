@@ -1,19 +1,19 @@
 'use client'
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { getL1Categories, getL2Categories, getL3Categories } from '../../utils/categories';
 import { getL1Areas, getL2Areas } from '../../utils/areas';
-import { Search, RotateCcw, Filter, X, Star, Heart, ExternalLink, MapPin, ThumbsUp, ChevronDown, ChevronLeft } from 'lucide-react';
+import { Filter, X, Star, Heart, ExternalLink, MapPin, ThumbsUp, ChevronDown, ChevronLeft } from 'lucide-react';
 
 export default function Top100Page() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
   const [currentLanguage, setCurrentLanguage] = React.useState('ko');
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [userCountry, setUserCountry] = React.useState('');
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isMyPageOpen, setIsMyPageOpen] = React.useState(false);
+  // const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  // const [isMyPageOpen, setIsMyPageOpen] = React.useState(false);
   
   // Search states
   const [selectedCategory, setSelectedCategory] = React.useState('');
@@ -22,7 +22,7 @@ export default function Top100Page() {
   const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
   const [modalStep, setModalStep] = React.useState<'root' | 'catL1' | 'catL2' | 'catL3' | 'areaL1' | 'areaL2'>('root');
   // Removed viewMode state - TOP100 only uses list view
-  const [favoriteSuppliers, setFavoriteSuppliers] = React.useState<Set<number>>(new Set());
+  // const [favoriteSuppliers, setFavoriteSuppliers] = React.useState<Set<number>>(new Set());
   const [activeTab, setActiveTab] = React.useState<'all' | 'likes' | 'rating' | 'reviews' | 'md' | 'ai'>('all');
 
   // Banner data
@@ -58,34 +58,35 @@ export default function Top100Page() {
   const [selectedL1Category, setSelectedL1Category] = React.useState('');
   const [selectedL2Category, setSelectedL2Category] = React.useState('all');
   const [selectedL3Category, setSelectedL3Category] = React.useState('all');
-  const l2Categories = React.useMemo(() => {
-    try {
-      return selectedL1Category ? getL2Categories(selectedL1Category, currentLanguage) : [];
-    } catch (error) {
-      console.error('Error loading L2 categories:', error);
-      return [];
-    }
-  }, [selectedL1Category, currentLanguage]);
-  const l3Categories = React.useMemo(() => {
-    try {
-      return selectedL2Category && selectedL2Category !== 'all' ? getL3Categories(selectedL1Category, selectedL2Category, currentLanguage) : [];
-    } catch (error) {
-      console.error('Error loading L3 categories:', error);
-      return [];
-    }
-  }, [selectedL1Category, selectedL2Category, currentLanguage]);
+  // const l2Categories = React.useMemo(() => {
+  //   try {
+  //     return selectedL1Category ? getL2Categories(selectedL1Category, currentLanguage) : [];
+  //   } catch (error) {
+  //     console.error('Error loading L2 categories:', error);
+  //     return [];
+  //   }
+  // }, [selectedL1Category, currentLanguage]);
+  // const l3Categories = React.useMemo(() => {
+  //   try {
+  //     return selectedL2Category && selectedL2Category !== 'all' ? getL3Categories(selectedL1Category, selectedL2Category, currentLanguage) : [];
+  //   } catch (error) {
+  //     console.error('Error loading L3 categories:', error);
+  //     return [];
+  //   }
+  // }, [selectedL1Category, selectedL2Category, currentLanguage]);
 
   // Area depths (MO modal)
   const [selectedL1Area, setSelectedL1Area] = React.useState('');
   const [selectedL2Area, setSelectedL2Area] = React.useState('all');
-  const l2Areas = React.useMemo(() => {
-    try {
-      return selectedL1Area ? getL2Areas(selectedL1Area, currentLanguage) : [];
-    } catch (error) {
-      console.error('Error loading L2 areas:', error);
-      return [];
-    }
-  }, [selectedL1Area, currentLanguage]);
+  console.info('selectedL2Area', selectedL2Area);
+  // const l2Areas = React.useMemo(() => {
+  //   try {
+  //     return selectedL1Area ? getL2Areas(selectedL1Area, currentLanguage) : [];
+  //   } catch (error) {
+  //     console.error('Error loading L2 areas:', error);
+  //     return [];
+  //   }
+  // }, [selectedL1Area, currentLanguage]);
 
   // Helpers for displaying selected labels in MO modal root
   const getL1Label = React.useCallback(() => {
@@ -93,25 +94,25 @@ export default function Top100Page() {
     return l1Categories.find((c) => c.value === selectedL1Category)?.label || '';
   }, [selectedL1Category, l1Categories]);
 
-  const getL2Label = React.useCallback(() => {
-    if (!selectedL1Category || selectedL2Category === 'all') return '';
-    return l2Categories.find((c) => c.value === selectedL2Category)?.label || '';
-  }, [selectedL1Category, selectedL2Category, l2Categories]);
+  // const getL2Label = React.useCallback(() => {
+  //   if (!selectedL1Category || selectedL2Category === 'all') return '';
+  //   return l2Categories.find((c) => c.value === selectedL2Category)?.label || '';
+  // }, [selectedL1Category, selectedL2Category, l2Categories]);
 
-  const getL3Label = React.useCallback(() => {
-    if (!selectedL1Category || selectedL2Category === 'all' || selectedL3Category === 'all') return '';
-    return l3Categories.find((c) => c.value === selectedL3Category)?.label || '';
-  }, [selectedL1Category, selectedL2Category, selectedL3Category, l3Categories]);
+  // const getL3Label = React.useCallback(() => {
+  //   if (!selectedL1Category || selectedL2Category === 'all' || selectedL3Category === 'all') return '';
+  //   return l3Categories.find((c) => c.value === selectedL3Category)?.label || '';
+  // }, [selectedL1Category, selectedL2Category, selectedL3Category, l3Categories]);
 
   const getAreaL1Label = React.useCallback(() => {
     if (!selectedL1Area) return '';
     return l1Areas.find((a) => a.value === selectedL1Area)?.label || '';
   }, [selectedL1Area, l1Areas]);
 
-  const getAreaL2Label = React.useCallback(() => {
-    if (!selectedL1Area || selectedL2Area === 'all') return '';
-    return l2Areas.find((a) => a.value === selectedL2Area)?.label || '';
-  }, [selectedL1Area, selectedL2Area, l2Areas]);
+  // const getAreaL2Label = React.useCallback(() => {
+  //   if (!selectedL1Area || selectedL2Area === 'all') return '';
+  //   return l2Areas.find((a) => a.value === selectedL2Area)?.label || '';
+  // }, [selectedL1Area, selectedL2Area, l2Areas]);
 
   // Get user's country based on IP
   React.useEffect(() => {
@@ -186,20 +187,20 @@ export default function Top100Page() {
   };
 
   // Toggle favorite supplier
-  const toggleFavorite = (supplierId: number) => {
-    setFavoriteSuppliers(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(supplierId)) {
-        newSet.delete(supplierId);
-      } else {
-        newSet.add(supplierId);
-      }
-      return newSet;
-    });
-  };
+  // const toggleFavorite = (supplierId: number) => {
+  //   setFavoriteSuppliers(prev => {
+  //     const newSet = new Set(prev);
+  //     if (newSet.has(supplierId)) {
+  //       newSet.delete(supplierId);
+  //     } else {
+  //       newSet.add(supplierId);
+  //     }
+  //     return newSet;
+  //   });
+  // };
 
   // Sample TOP100 suppliers data
-  const sampleTop100Suppliers = [
+  const sampleTop100Suppliers = useMemo(() =>[
     {
       id: 1,
       rank: 1,
@@ -301,7 +302,7 @@ export default function Top100Page() {
       website: 'https://www.innovationoffice.co.kr',
       image: '/api/placeholder/300/200'
     }
-  ];
+  ], []);
 
   // Resolve selected labels for filtering
   const selectedCategoryLabel = React.useMemo(() => {
@@ -631,7 +632,7 @@ export default function Top100Page() {
         // 종합 TOP100: (별점×0.4) + (리뷰수×0.25) + (좋아요수×0.2) + (관심수×0.15)
         return suppliers.sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a));
     }
-  }, [activeTab, filteredSuppliers]);
+  }, [activeTab, filteredSuppliers, mdPicks, calculateOverallScore]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -640,20 +641,9 @@ export default function Top100Page() {
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
         setCurrentLanguage={setCurrentLanguage}
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-        isMyPageOpen={isMyPageOpen}
-        setIsMyPageOpen={setIsMyPageOpen}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
-        banners={banners}
-        currentBannerIndex={currentBannerIndex}
-        setCurrentBannerIndex={setCurrentBannerIndex}
-        isBannerPaused={isBannerPaused}
-        setIsBannerPaused={setIsBannerPaused}
-        getText={getText}
       />
-      
       {/* Main Content */}
       <main className="flex-1" style={{ paddingTop: isBannerVisible ? '112px' : '64px' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1018,7 +1008,7 @@ export default function Top100Page() {
         </>
       )}
       
-      <Footer userCountry={userCountry} getText={getText} />
+      <Footer userCountry={userCountry} currentLanguage={''} />
     </div>
   );
 }

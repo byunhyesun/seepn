@@ -1,14 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { getL1Categories, getL2Categories, getL3Categories } from '../../utils/categories';
 import { getL1Areas, getL2Areas } from '../../utils/areas';
-import { Search, Grid3X3, List, MapPin, Star, Filter, X, Heart, ExternalLink, ThumbsUp, ChevronDown, ChevronLeft } from 'lucide-react';
+import { Grid3X3, List, MapPin, Star, Filter, X, Heart, ExternalLink, ThumbsUp, ChevronDown, ChevronLeft } from 'lucide-react';
 
-export default function SuppliersPage() {
+function SuppliersContent() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
   const [currentLanguage, setCurrentLanguage] = React.useState('ko');
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -40,23 +40,23 @@ export default function SuppliersPage() {
   const [searchKeyword, setSearchKeyword] = React.useState(initialQ);
   
   // 관심 공급사 상태 (공급사 ID를 Set으로 관리)
-  const [favoriteSuppliers, setFavoriteSuppliers] = React.useState<Set<number>>(new Set());
+  // const [favoriteSuppliers, setFavoriteSuppliers] = React.useState<Set<number>>(new Set());
 
   // 관심 공급사 토글 함수
-  const toggleFavorite = (supplierId: number) => {
-    setFavoriteSuppliers(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(supplierId)) {
-        newSet.delete(supplierId);
-      } else {
-        newSet.add(supplierId);
-      }
-      return newSet;
-    });
-  };
+  // const toggleFavorite = (supplierId: number) => {
+  //   setFavoriteSuppliers(prev => {
+  //     const newSet = new Set(prev);
+  //     if (newSet.has(supplierId)) {
+  //       newSet.delete(supplierId);
+  //     } else {
+  //       newSet.add(supplierId);
+  //     }
+  //     return newSet;
+  //   });
+  // };
   
   // 샘플 공급사 데이터
-  const sampleSuppliers = [
+  const sampleSuppliers = React.useMemo(() => [
     {
       id: 1,
       name: '(주)테크솔루션',
@@ -128,7 +128,7 @@ export default function SuppliersPage() {
       website: 'https://www.smartoffice.co.kr',
       image: '/api/placeholder/300/200'
     }
-  ];
+  ], []);
 
   // Expand sample data to simulate a longer list
   const allSuppliers = React.useMemo(() => {
@@ -144,7 +144,7 @@ export default function SuppliersPage() {
       }
     }
     return expanded;
-  }, []);
+  }, [sampleSuppliers]);
 
   // Get user's country based on IP
   React.useEffect(() => {
@@ -538,11 +538,11 @@ export default function SuppliersPage() {
     if (!selectedL1Category || !selectedL2Category || selectedL2Category === 'all' || selectedL3Category === 'all') return '';
     return l3Categories.find(c => c.value === selectedL3Category)?.label || '';
   }, [selectedL1Category, selectedL2Category, selectedL3Category, l3Categories]);
-  const getCategoryPathLabel = React.useCallback(() => {
-    const parts = [getL1Label(), getL2Label(), getL3Label()].filter(Boolean);
-    if (parts.length === 0) return getText('allCategories');
-    return parts.join(' / ');
-  }, [getL1Label, getL2Label, getL3Label, getText]);
+  // const getCategoryPathLabel = React.useCallback(() => {
+  //   const parts = [getL1Label(), getL2Label(), getL3Label()].filter(Boolean);
+  //   if (parts.length === 0) return getText('allCategories');
+  //   return parts.join(' / ');
+  // }, [getL1Label, getL2Label, getL3Label, getText]);
 
   // Helpers for region labels
   const getAreaL1Label = React.useCallback(() => {
@@ -1147,5 +1147,13 @@ export default function SuppliersPage() {
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
+  );
+}
+
+export default function SuppliersPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <SuppliersContent />
+    </Suspense>
   );
 }

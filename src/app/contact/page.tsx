@@ -30,6 +30,7 @@ export default function ContactPage() {
 
   // Mobile detection
   useEffect(() => {
+    console.log('isMobile', isMobile);
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -37,7 +38,7 @@ export default function ContactPage() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [isMobile]);
 
   // Fetch user country
   useEffect(() => {

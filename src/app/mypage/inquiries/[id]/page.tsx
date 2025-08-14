@@ -170,7 +170,7 @@ export default function InquiryDetailPage() {
     return (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key];
   };
 
-  const sample: InquiryDetail[] = [
+  const sample: InquiryDetail[] = React.useMemo(() => [
     {
       id: 101,
       category: 'service',
@@ -226,9 +226,9 @@ export default function InquiryDetailPage() {
       ],
       reCount: 1
     },
-  ];
+  ], []);
 
-  const detail = React.useMemo(() => sample.find((s) => s.id === id) || sample[0], [id]);
+  const detail = React.useMemo(() => sample.find((s) => s.id === id) || sample[0], [id, sample]);
   const [showPrev, setShowPrev] = React.useState(false);
 
   const formatDateTime = (iso?: string) => {
@@ -262,7 +262,7 @@ export default function InquiryDetailPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />

@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Calendar, Paperclip, ChevronLeft, Eye } from 'lucide-react';
 
-export default function NoticePage() {
+function NoticeContent() {
   const [currentLanguage, setCurrentLanguage] = useState('ko');
   const [userCountry, setUserCountry] = useState('대한민국');
   const [isBannerVisible, setIsBannerVisible] = useState(true);
@@ -441,5 +441,13 @@ export default function NoticePage() {
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
+  );
+}
+
+export default function NoticePage() {
+  return (
+    <Suspense fallback={<div />}>
+      <NoticeContent />
+    </Suspense>
   );
 }

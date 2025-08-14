@@ -27,6 +27,7 @@ export default function BoardDetailPage() {
 
   // Mobile detection
   useEffect(() => {
+    console.log('isMobile', isMobile);
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -34,7 +35,7 @@ export default function BoardDetailPage() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [isMobile]);
 
   // Fetch user country
   useEffect(() => {
@@ -304,7 +305,8 @@ export default function BoardDetailPage() {
         content: newComment,
         author: '기술탐험가7', // Current user nickname
         authorId: currentUserId,
-        registrationDate: new Date().toISOString()
+        registrationDate: new Date().toISOString(),
+        replies: []
       };
       setComments(prev => [...prev, comment]);
       setNewComment('');

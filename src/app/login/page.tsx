@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Eye, EyeOff } from 'lucide-react';
+import { LoginTexts } from '../types';
 
 export default function LoginPage() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
@@ -26,13 +27,15 @@ export default function LoginPage() {
         setUserCountry(data.country_name || '대한민국');
       } catch (error) {
         setUserCountry('대한민국');
+        console.error('Failed to fetch user country', error);
+        throw new Error('Failed to fetch user country');
       }
     };
     getUserCountry();
   }, []);
 
-  const getText = (key: string) => {
-    const texts = {
+  const getText = (key: keyof LoginTexts) => {
+    const texts: Record<'ko' | 'en' | 'ja' | 'zh', LoginTexts> = {
       ko: {
         pageTitle: '로그인',
         email: '이메일',
@@ -82,14 +85,15 @@ export default function LoginPage() {
         required: '请输入邮箱和密码。'
       }
     } as const;
-    return (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key];
+    return texts[currentLanguage]?.[key] ?? texts.ko[key];
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    const requiredText = getText('required') ?? '';
     if (!email.trim() || !password.trim()) {
-      setError(getText('required'));
+      setError(requiredText);
       return;
     }
     setIsSubmitting(true);
@@ -100,6 +104,7 @@ export default function LoginPage() {
       // redirect after login (mock)
       window.location.href = '/';
     } catch (err) {
+      console.error('Login failed', err);
       setError('로그인에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsSubmitting(false);
@@ -112,7 +117,7 @@ export default function LoginPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />

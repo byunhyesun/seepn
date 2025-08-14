@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
@@ -17,7 +17,7 @@ type InquiryCategoryKey =
 
 type InquiryStatus = 'all' | 'answered' | 'pending';
 
-export default function MyInquiriesPage() {
+function MyInquiriesContent() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
   const [currentLanguage, setCurrentLanguage] = React.useState<'ko' | 'en' | 'ja' | 'zh'>('ko');
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -253,7 +253,7 @@ export default function MyInquiriesPage() {
       reCount: 1,
       attachments: [{ name: 'reference.pdf' }]
     }
-  ], [currentLanguage]);
+  ], []);
 
   const filteredInquiries = React.useMemo(() => {
     return sampleInquiries.filter((inq) => {
@@ -301,8 +301,6 @@ export default function MyInquiriesPage() {
   };
 
   const handleSearch = () => {
-    // Filtering is reactive; keep for UX parity
-    // eslint-disable-next-line no-console
     console.log('search', { selectedCategory, searchType, searchQuery });
   };
 
@@ -316,7 +314,7 @@ export default function MyInquiriesPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />
@@ -544,6 +542,14 @@ export default function MyInquiriesPage() {
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
+  );
+}
+
+export default function MyInquiriesPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <MyInquiriesContent />
+    </Suspense>
   );
 }
 

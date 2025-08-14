@@ -248,37 +248,37 @@ export default function BoardPage() {
   };
 
   // Validate nickname format
-  const validateNickname = (nickname: string): boolean => {
-    // Check length (1-10 characters)
-    if (nickname.length === 0 || nickname.length > 10) {
-      return false;
-    }
+  // const validateNickname = (nickname: string): boolean => {
+  //   // Check length (1-10 characters)
+  //   if (nickname.length === 0 || nickname.length > 10) {
+  //     return false;
+  //   }
     
-    // Check format: Korean, English letters and numbers, must start with letter or Korean
-    const nicknameRegex = /^[a-zA-Z가-힣][a-zA-Z0-9가-힣]*$/;
-    return nicknameRegex.test(nickname);
-  };
+  //   // Check format: Korean, English letters and numbers, must start with letter or Korean
+  //   const nicknameRegex = /^[a-zA-Z가-힣][a-zA-Z0-9가-힣]*$/;
+  //   return nicknameRegex.test(nickname);
+  // };
 
   // Generate random nickname (Korean + English)
-  const generateNickname = () => {
-    const englishChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const koreanChars = '가나다라마바사아자차카타파하거너더러머버서어저처커터퍼허고노도로모보소오조초코토포호구누두루무부수우주추쿠투푸후';
-    const startChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz가나다라마바사아자차카타파하';
+  // const generateNickname = () => {
+  //   const englishChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  //   const koreanChars = '가나다라마바사아자차카타파하거너더러머버서어저처커터퍼허고노도로모보소오조초코토포호구누두루무부수우주추쿠투푸후';
+  //   const startChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz가나다라마바사아자차카타파하';
     
-    let nickname = '';
-    const length = Math.floor(Math.random() * 6) + 3; // 3-8 characters (한글은 2바이트이므로 조금 짧게)
+  //   let nickname = '';
+  //   const length = Math.floor(Math.random() * 6) + 3; // 3-8 characters (한글은 2바이트이므로 조금 짧게)
     
-    // First character should be a letter or Korean
-    nickname += startChars.charAt(Math.floor(Math.random() * startChars.length));
+  //   // First character should be a letter or Korean
+  //   nickname += startChars.charAt(Math.floor(Math.random() * startChars.length));
     
-    // Remaining characters can be Korean, English letters or numbers
-    const allChars = englishChars + koreanChars;
-    for (let i = 1; i < length; i++) {
-      nickname += allChars.charAt(Math.floor(Math.random() * allChars.length));
-    }
+  //   // Remaining characters can be Korean, English letters or numbers
+  //   const allChars = englishChars + koreanChars;
+  //   for (let i = 1; i < length; i++) {
+  //     nickname += allChars.charAt(Math.floor(Math.random() * allChars.length));
+  //   }
     
-    return nickname;
-  };
+  //   return nickname;
+  // };
 
   // Sample board posts with Korean + English nicknames
   const samplePosts = [

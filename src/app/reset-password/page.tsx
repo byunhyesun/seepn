@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
@@ -13,7 +13,7 @@ export default function ResetPasswordPage() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
   const [currentLanguage, setCurrentLanguage] = React.useState<'ko' | 'en' | 'ja' | 'zh'>('ko');
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [userCountry, setUserCountry] = React.useState('대한민국');
+  // const [userCountry, setUserCountry] = React.useState('대한민국');
 
   const [password, setPassword] = React.useState('');
   const [confirm, setConfirm] = React.useState('');
@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />
@@ -127,8 +127,16 @@ export default function ResetPasswordPage() {
         </div>
       </main>
 
-      <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
+      <Footer currentLanguage={currentLanguage} userCountry={'대한민국'} />
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div />}> 
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
 

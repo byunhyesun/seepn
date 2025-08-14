@@ -30,6 +30,8 @@ export default function MyPostsPage() {
         setUserCountry(data.country_name || '대한민국');
       } catch (error) {
         setUserCountry('대한민국');
+        console.error('Failed to fetch user country', error);
+        throw new Error('Failed to fetch user country');
       }
     };
     getUserCountry();
@@ -170,7 +172,7 @@ export default function MyPostsPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />

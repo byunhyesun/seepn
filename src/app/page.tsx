@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Search, Menu, User, Globe, X, Play, Pause, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getL1Categories } from '../utils/categories';
-import { getL1Areas, getL2Areas } from '../utils/areas';
+import { getL1Areas } from '../utils/areas';
 
 export default function Home() {
   const router = useRouter();
@@ -416,10 +416,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <a href="/" className="flex items-center hover:opacity-80 transition-opacity">
+              <Link href='/' className="flex items-center hover:opacity-80 transition-opacity">
                 <h1 className="text-2xl font-bold text-gray-900">SEEPN</h1>
                 <span className="hidden md:block ml-2 text-sm text-gray-500">{getText('serviceName')}</span>
-              </a>
+              </Link>
             </div>
             
             {/* Menu, User, and Language Icons */}

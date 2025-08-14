@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useSearchParams } from 'next/navigation';
 
-export default function TermsPage() {
+function TermsContent() {
+  const searchParams = useSearchParams();
   const [currentLanguage, setCurrentLanguage] = useState('ko');
   const [selectedVersion, setSelectedVersion] = useState('v2.0');
   const [isMobile, setIsMobile] = useState(false);
@@ -13,6 +15,7 @@ export default function TermsPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Mobile detection
+  console.info('isMobile', isMobile);
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -194,6 +197,68 @@ export default function TermsPage() {
 
   const versionData = getVersionData(selectedVersion);
 
+  const isEmbed = searchParams?.get('embed') === '1';
+
+  const content = (
+    <div className="prose max-w-none">
+      {/* Article 1 */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article1')}</h2>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article1Content')}</p>
+      </div>
+
+      {/* Article 2 */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article2')}</h2>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article2Content')}</p>
+      </div>
+
+      {/* Article 3 */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article3')}</h2>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article3Content')}</p>
+      </div>
+
+      {/* Article 4 */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article4')}</h2>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article4Content')}</p>
+      </div>
+
+      {/* Article 5 */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article5')}</h2>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article5Content')}</p>
+      </div>
+
+      {/* Article 6 */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article6')}</h2>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article6Content')}</p>
+      </div>
+
+      {/* Article 7 */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article7')}</h2>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article7Content')}</p>
+      </div>
+
+      {/* Article 8 */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article8')}</h2>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article8Content')}</p>
+      </div>
+    </div>
+  );
+
+  if (isEmbed) {
+    return (
+      <div className="p-4 md:p-6">
+        {content}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header 
@@ -244,60 +309,20 @@ export default function TermsPage() {
 
         {/* Terms Content */}
         <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8">
-          <div className="prose max-w-none">
-            {/* Article 1 */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article1')}</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article1Content')}</p>
-            </div>
-
-            {/* Article 2 */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article2')}</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article2Content')}</p>
-            </div>
-
-            {/* Article 3 */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article3')}</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article3Content')}</p>
-            </div>
-
-            {/* Article 4 */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article4')}</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article4Content')}</p>
-            </div>
-
-            {/* Article 5 */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article5')}</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article5Content')}</p>
-            </div>
-
-            {/* Article 6 */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article6')}</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article6Content')}</p>
-            </div>
-
-            {/* Article 7 */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article7')}</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article7Content')}</p>
-            </div>
-
-            {/* Article 8 */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">{getText('article8')}</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">{getText('article8Content')}</p>
-            </div>
-          </div>
+          {content}
         </div>
         </div>
       </main>
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
+  );
+}
+
+export default function TermsPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <TermsContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -8,7 +8,7 @@ import { MapPin, Star, ExternalLink, Calendar, X, Heart, ThumbsUp, ChevronDown }
 
 type EvalStatus = 'all' | 'in_progress' | 'completed' | 'scheduled';
 
-export default function MyEvaluationsPage() {
+function MyEvaluationsContent() {
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
   const [currentLanguage, setCurrentLanguage] = React.useState<'ko' | 'en' | 'ja' | 'zh'>('ko');
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -33,7 +33,9 @@ export default function MyEvaluationsPage() {
         const data = await response.json();
         setUserCountry(data.country_name || '대한민국');
       } catch (error) {
+        console.error('Failed to fetch user country', error);
         setUserCountry('대한민국');
+        throw new Error('Failed to fetch user country');
       }
     };
     getUserCountry();
@@ -242,7 +244,7 @@ export default function MyEvaluationsPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />
@@ -534,6 +536,14 @@ export default function MyEvaluationsPage() {
 
       <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
     </div>
+  );
+}
+
+export default function MyEvaluationsPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <MyEvaluationsContent />
+    </Suspense>
   );
 }
 

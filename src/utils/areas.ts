@@ -105,6 +105,7 @@ export const getL1Areas = (language: string = 'ko'): AreaOption[] => {
 
 // 특정 L1에 속하는 L2 지역 목록 추출 (시/군/구 단위)
 export const getL2Areas = (l1: string, language: string = 'ko'): AreaOption[] => {
+  console.info('getL2Areas', l1, language);
   const filteredAreas = areas.filter(area => area.L1 === l1 && area.L2);
   
   // L2 지역은 현재 번역 데이터가 없으므로 원본 그대로 사용

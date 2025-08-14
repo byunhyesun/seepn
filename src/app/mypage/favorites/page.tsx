@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import { getL1Categories, getL2Categories, getL3Categories } from '@/utils/categories';
 import { getL1Areas, getL2Areas } from '@/utils/areas';
 import { Grid3X3, List, MapPin, Star, Heart, ExternalLink, Filter, Trash2, CheckSquare, X, ChevronDown, ChevronLeft, ThumbsUp } from 'lucide-react';
+import { LoginTexts } from '@/app/types';
 
 type PostCategory = 'daily' | 'curious' | 'together' | 'inform' | 'share' | 'tell';
 
@@ -90,8 +91,8 @@ export default function MyFavoriteSuppliersPage() {
   }, []);
 
   // i18n
-  const getText = (key: string) => {
-    const texts = {
+  const getText = (key: keyof LoginTexts) => {
+    const texts: Record<'ko' | 'en' | 'ja' | 'zh', LoginTexts> = {
       ko: {
         pageTitle: '관심 공급사',
         leftTitle: '검색',
@@ -173,7 +174,7 @@ export default function MyFavoriteSuppliersPage() {
         viewDetail: '查看详情',
       },
     } as const;
-    return (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key];
+    return texts[currentLanguage]?.[key] ?? texts.ko[key];
   };
 
   // Options
@@ -282,7 +283,7 @@ export default function MyFavoriteSuppliersPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />

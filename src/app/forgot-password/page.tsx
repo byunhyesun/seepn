@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { LoginTexts } from '../types';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -27,13 +28,15 @@ export default function ForgotPasswordPage() {
         setUserCountry(data.country_name || '대한민국');
       } catch (error) {
         setUserCountry('대한민국');
+        console.error('Failed to fetch user country', error);
+        throw new Error('Failed to fetch user country');
       }
     };
     getUserCountry();
   }, []);
 
-  const getText = (key: string) => {
-    const texts = {
+  const getText = (key: keyof LoginTexts) => {
+    const texts: Record<'ko' | 'en' | 'ja' | 'zh', LoginTexts> = {
       ko: {
         pageTitle: '비밀번호 찾기',
         email: '가입한 이메일 입력',
@@ -45,7 +48,7 @@ export default function ForgotPasswordPage() {
         invalidEmail: '올바른 이메일을 입력하세요.',
         enterCode: '전송된 인증번호 6자리를 입력하세요.',
         incorrectCode: '인증번호가 올바르지 않습니다.',
-        proceed: '검증이 완료되었습니다. 비밀번호 재설정 화면으로 이동합니다.'
+        proceed: '검증이 완료되었습니다. 비밀번호 재설정 화면으로 이동합니다.',
       },
       en: {
         pageTitle: 'Find Password',
@@ -59,42 +62,69 @@ export default function ForgotPasswordPage() {
         enterCode: 'Enter the 6-digit code you received.',
         incorrectCode: 'Incorrect verification code.',
         proceed: 'Verification completed. Redirecting to reset page.'
+      },
+      ja: {
+        pageTitle: 'パスワードを探す',
+        email: '登録したメールアドレスを入力してください',
+        code: '認証コードを入力してください',
+        sendCode: 'コードを送信',
+        verifying: '検証中...',
+        verify: 'コードを確認',
+        sent: '認証コードをメールに送信しました。',
+        invalidEmail: '有効なメールアドレスを入力してください。',
+        enterCode: '受信した6桁のコードを入力してください。',
+        incorrectCode: '認証コードが正しくありません。',
+        proceed: '検証が完了しました。リセットページに移動します。'
+      },
+      zh: {
+        pageTitle: '找回密码',
+        email: '请输入注册邮箱',
+        code: '输入验证码',
+        sendCode: '发送验证码',
+        verifying: '验证中...',
+        verify: '验证验证码',
+        sent: '验证码已发送到您的邮箱。',
+        invalidEmail: '请输入有效的邮箱地址。',
+        enterCode: '请输入收到的6位验证码。',
+        incorrectCode: '验证码不正确。',
+        proceed: '验证完成。正在跳转到重置页面。'
       }
     } as const;
-    return (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key];
+    return texts[currentLanguage]?.[key] ?? texts.ko[key];
+    // return (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key];
   };
 
   const validateEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
   const handleSendCode = async () => {
     setMessage('');
-    if (!validateEmail(email)) {
-      setMessage(getText('invalidEmail'));
+    if (!email || !validateEmail(email)) {
+      setMessage(getText('invalidEmail') ?? '');
       return;
     }
     setIsSending(true);
     await new Promise((r) => setTimeout(r, 600));
     // Mock 6-digit code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setSentCode(code);
-    setMessage(getText('sent'));
+    setSentCode(code ?? '');
+    setMessage(getText('sent') ?? '');
     setIsSending(false);
   };
 
   const handleVerify = async () => {
     setMessage('');
     if (!inputCode || inputCode.length !== 6) {
-      setMessage(getText('enterCode'));
+      setMessage(getText('enterCode') ?? '');
       return;
     }
     setIsVerifying(true);
     await new Promise((r) => setTimeout(r, 500));
     if (inputCode !== sentCode) {
-      setMessage(getText('incorrectCode'));
+      setMessage(getText('incorrectCode') ?? '');
       setIsVerifying(false);
       return;
     }
-    setMessage(getText('proceed'));
+    setMessage(getText('proceed') ?? '');
     setTimeout(() => {
       router.push(`/reset-password?email=${encodeURIComponent(email)}`);
     }, 700);
@@ -106,7 +136,7 @@ export default function ForgotPasswordPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />

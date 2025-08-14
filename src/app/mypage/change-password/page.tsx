@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { LoginTexts } from '@/app/types';
 
 export default function ChangePasswordPage() {
-  const [currentLanguage, setCurrentLanguage] = useState('ko');
-  const [userCountry, setUserCountry] = useState('대한민국');
+  const [currentLanguage, setCurrentLanguage] = useState<'ko' | 'en' | 'ja' | 'zh'>('ko');
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -19,8 +19,8 @@ export default function ChangePasswordPage() {
   const [showNewPwd, setShowNewPwd] = useState(false);
   const [showNewPwdConfirm, setShowNewPwdConfirm] = useState(false);
 
-  const getText = (key: string) => {
-    const texts = {
+  const getText = (key: keyof LoginTexts) => {
+    const texts: Record<'ko' | 'en' | 'ja' | 'zh', LoginTexts> = {
       ko: {
         pageTitle: '비밀번호 변경',
         currentPassword: '현재 비밀번호 입력',
@@ -92,9 +92,8 @@ export default function ChangePasswordPage() {
         error: '修改失败，请重试。'
       }
     };
-    return (
-      (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key]
-    );
+    return texts[currentLanguage]?.[key] ?? texts.ko[key];
+
   };
 
   const containsRequiredTypes = (pwd: string): boolean => {
@@ -173,6 +172,8 @@ export default function ChangePasswordPage() {
       setNewPasswordConfirm('');
     } catch (err) {
       setMessage('error');
+      console.error('Failed to change password', err);
+      throw new Error('Failed to change password');
     } finally {
       setIsSubmitting(false);
     }
@@ -184,7 +185,7 @@ export default function ChangePasswordPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />
@@ -301,7 +302,7 @@ export default function ChangePasswordPage() {
         </div>
       </main>
 
-      <Footer currentLanguage={currentLanguage} userCountry={userCountry} />
+      <Footer currentLanguage={currentLanguage} userCountry={'대한민국'} />
     </div>
   );
 }

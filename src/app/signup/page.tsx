@@ -23,6 +23,14 @@ export default function SignupPage() {
   const [error, setError] = React.useState('');
   const [message, setMessage] = React.useState('');
 
+  // Agreements state
+  const [isTermsExpanded, setIsTermsExpanded] = React.useState(false);
+  const [agreeTos, setAgreeTos] = React.useState(false);
+  const [agreePrivacy, setAgreePrivacy] = React.useState(false);
+  const [agreeMarketingEmail, setAgreeMarketingEmail] = React.useState(false);
+  const [agreeMarketingSms, setAgreeMarketingSms] = React.useState(false);
+  const [openPolicy, setOpenPolicy] = React.useState<null | 'tos' | 'privacy' | 'marketing'>(null);
+
   React.useEffect(() => {
     const getUserCountry = async () => {
       try {
@@ -31,6 +39,8 @@ export default function SignupPage() {
         setUserCountry(data.country_name || '대한민국');
       } catch (error) {
         setUserCountry('대한민국');
+        console.error('Failed to fetch user country', error);
+        throw new Error('Failed to fetch user country');
       }
     };
     getUserCountry();
@@ -50,7 +60,6 @@ export default function SignupPage() {
         reenterPassword: '비밀번호를 다시 입력하세요',
         enterFullName: '성명을 입력하세요',
         enterPhone: '휴대폰 번호를 입력하세요 (예: 010-1234-5678)',
-        guideTitle: '비밀번호 설정 안내',
         guide1: '- 최소 8자리 최대 20자리',
         guide2: '- 영문 대/소문자, 숫자, 특수문자 사용',
         guide3: '- 연속된 숫자 및 문자는 안됨',
@@ -63,7 +72,23 @@ export default function SignupPage() {
         mismatch: '비밀번호가 일치하지 않습니다.',
         invalidPhone: '올바른 휴대폰 번호 형식을 입력해주세요.',
         success: '가입이 완료되었습니다. 로그인 화면으로 이동합니다.',
-        validationPolicy: '비밀번호 정책을 만족하지 않습니다.'
+        validationPolicy: '비밀번호 정책을 만족하지 않습니다.',
+        agreementsTitle: '약관 동의',
+        agreeAll: '전체 동의',
+        toggleOpen: '열기',
+        toggleClose: '닫기',
+        tos: '이용약관 동의',
+        privacy: '개인정보 수집 및 이용 동의',
+        marketing: '마케팅 활용 동의',
+        optional: '선택',
+        marketingEmail: '이메일',
+        marketingSms: 'SMS',
+        view: '보기',
+        agreeRequired: '필수 약관에 동의해주세요.',
+        policyTosTitle: '이용약관',
+        policyPrivacyTitle: '개인정보 수집 및 이용',
+        policyMarketingTitle: '마케팅 활용',
+        close: '닫기'
       },
       en: {
         pageTitle: 'Sign Up',
@@ -77,7 +102,6 @@ export default function SignupPage() {
         reenterPassword: 'Re-enter your password',
         enterFullName: 'Enter your name',
         enterPhone: 'Enter mobile number (e.g., 010-1234-5678)',
-        guideTitle: 'Password policy',
         guide1: '- 8 to 20 characters',
         guide2: '- Use upper/lower letters, numbers, special chars',
         guide3: '- No sequential letters or digits',
@@ -90,7 +114,23 @@ export default function SignupPage() {
         mismatch: 'Passwords do not match.',
         invalidPhone: 'Please enter a valid phone number format.',
         success: 'Sign up complete. Redirecting to login.',
-        validationPolicy: 'Password does not meet the policy.'
+        validationPolicy: 'Password does not meet the policy.',
+        agreementsTitle: 'Agreements',
+        agreeAll: 'Agree to all',
+        toggleOpen: 'Open',
+        toggleClose: 'Close',
+        tos: 'Terms of Service',
+        privacy: 'Privacy Collection and Use',
+        marketing: 'Marketing Usage',
+        optional: 'Optional',
+        marketingEmail: 'Email',
+        marketingSms: 'SMS',
+        view: 'View',
+        agreeRequired: 'Please agree to required terms.',
+        policyTosTitle: 'Terms of Service',
+        policyPrivacyTitle: 'Privacy Collection and Use',
+        policyMarketingTitle: 'Marketing Usage',
+        close: 'Close'
       }
     } as const;
     return (texts as any)[currentLanguage]?.[key] ?? (texts as any).ko[key];
@@ -130,8 +170,17 @@ export default function SignupPage() {
   const ruleTypesOk = containsRequiredTypes(password);
   const ruleNoSequentialOk = password.length === 0 ? false : !hasSequentialRun(password);
   const guideClass = (ok: boolean) => (password.length === 0 ? 'text-gray-700' : ok ? 'text-green-600' : 'text-red-600');
+  const agreementsValid = agreeTos && agreePrivacy;
+  const canSubmit = !!email && !!password && !!confirm && !!fullName && !!phone && isValidPassword(password) && agreementsValid && !isSubmitting;
 
-  const canSubmit = !!email && !!password && !!confirm && !!fullName && !!phone && isValidPassword(password) && !isSubmitting;
+  const marketingAll = agreeMarketingEmail && agreeMarketingSms;
+  const allChecked = agreeTos && agreePrivacy && marketingAll;
+  const toggleAll = (checked: boolean) => {
+    setAgreeTos(checked);
+    setAgreePrivacy(checked);
+    setAgreeMarketingEmail(checked);
+    setAgreeMarketingSms(checked);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,6 +188,10 @@ export default function SignupPage() {
     setMessage('');
     if (!email || !password || !confirm || !fullName || !phone) {
       setError(getText('required'));
+      return;
+    }
+    if (!agreementsValid) {
+      setError(getText('agreeRequired'));
       return;
     }
     if (!validateEmail(email)) {
@@ -172,7 +225,7 @@ export default function SignupPage() {
         isBannerVisible={isBannerVisible}
         setIsBannerVisible={setIsBannerVisible}
         currentLanguage={currentLanguage}
-        setCurrentLanguage={setCurrentLanguage}
+        setCurrentLanguage={(lang: string) => setCurrentLanguage(lang as 'ko' | 'en' | 'ja' | 'zh')}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
       />
@@ -185,6 +238,104 @@ export default function SignupPage() {
 
           <div className="bg-white border border-gray-200 rounded-lg p-6 md:p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Agreements */}
+              <div className="border border-gray-200 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={allChecked}
+                      onChange={(e) => toggleAll(e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                    <span className="text-sm font-semibold text-gray-900">{`${getText('agreementsTitle')} ${getText('agreeAll')}`}</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setIsTermsExpanded(!isTermsExpanded)}
+                    className="text-sm text-gray-700 hover:text-gray-900"
+                  >
+                    {isTermsExpanded ? getText('toggleClose') : getText('toggleOpen')}
+                  </button>
+                </div>
+                {isTermsExpanded && (
+                  <div className="mt-4 space-y-3">
+                    {/* TOS */}
+                    <div className="flex items-start justify-between">
+                      <label className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={agreeTos}
+                          onChange={(e) => setAgreeTos(e.target.checked)}
+                          className="h-4 w-4 mt-0.5"
+                        />
+                        <span className="text-sm text-gray-800">{getText('tos')} <span className="ml-1 text-xs text-red-600">(필수)</span></span>
+                      </label>
+                      <button
+                        type="button"
+                        className="text-sm text-blue-600 hover:underline"
+                        onClick={() => setOpenPolicy('tos')}
+                      >
+                        {getText('view')}
+                      </button>
+                    </div>
+                    {/* Privacy */}
+                    <div className="flex items-start justify-between">
+                      <label className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={agreePrivacy}
+                          onChange={(e) => setAgreePrivacy(e.target.checked)}
+                          className="h-4 w-4 mt-0.5"
+                        />
+                        <span className="text-sm text-gray-800">{getText('privacy')} <span className="ml-1 text-xs text-red-600">(필수)</span></span>
+                      </label>
+                      <button
+                        type="button"
+                        className="text-sm text-blue-600 hover:underline"
+                        onClick={() => setOpenPolicy('privacy')}
+                      >
+                        {getText('view')}
+                      </button>
+                    </div>
+                    {/* Marketing (optional) */}
+                    <div>
+                      <div className="flex items-start justify-between">
+                        <label className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            checked={marketingAll}
+                            onChange={(e) => { setAgreeMarketingEmail(e.target.checked); setAgreeMarketingSms(e.target.checked); }}
+                            className="h-4 w-4 mt-0.5"
+                          />
+                          <span className="text-sm text-gray-800">{getText('marketing')} <span className="ml-1 text-xs text-gray-500">({getText('optional')})</span></span>
+                        </label>
+                        <button
+                          type="button"
+                          className="text-sm text-blue-600 hover:underline"
+                          onClick={() => setOpenPolicy('marketing')}
+                        >
+                          {getText('view')}
+                        </button>
+                      </div>
+                      <div className="mt-2 pl-7 flex items-center gap-4 text-sm text-gray-800">
+                        <label className="flex items-center gap-2">
+                          <input type="checkbox" className="h-4 w-4" checked={agreeMarketingEmail} onChange={(e) => setAgreeMarketingEmail(e.target.checked)} />
+                          <span>{getText('marketingEmail')}</span>
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input type="checkbox" className="h-4 w-4" checked={agreeMarketingSms} onChange={(e) => setAgreeMarketingSms(e.target.checked)} />
+                          <span>{getText('marketingSms')}</span>
+                        </label>
+                      </div>
+                    </div>
+                    {!agreementsValid && (
+                      <div className="text-xs text-red-600">{getText('agreeRequired')}</div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               {/* Email */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">{getText('email')}</label>
@@ -300,6 +451,50 @@ export default function SignupPage() {
               </div>
             </form>
           </div>
+          {/* Policy Modal */}
+          {openPolicy && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black opacity-40" onClick={() => setOpenPolicy(null)} />
+              <div className="relative bg-white rounded-lg shadow-lg w-11/12 max-w-2xl max-h-[80vh] p-5 overflow-auto">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {openPolicy === 'tos' && getText('policyTosTitle')}
+                    {openPolicy === 'privacy' && getText('policyPrivacyTitle')}
+                    {openPolicy === 'marketing' && getText('policyMarketingTitle')}
+                  </h3>
+                  <button
+                    type="button"
+                    className="text-sm text-gray-700 hover:text-gray-900"
+                    onClick={() => setOpenPolicy(null)}
+                  >
+                    {getText('close')}
+                  </button>
+                </div>
+                <div className="text-sm text-gray-700 space-y-3">
+                  {openPolicy === 'tos' && (
+                    <div className="w-full">
+                      <iframe title="terms" src="/terms?embed=1" className="w-full h-[60vh] border-0" />
+                    </div>
+                  )}
+                  {openPolicy === 'privacy' && (
+                    <div className="space-y-2">
+                      <p>SEEPN은 아래와 같이 개인정보를 수집 및 이용합니다.</p>
+                      <p><span className="font-semibold">수집목적</span> : 회원가입 시 본인확인, 마케팅 활용</p>
+                      <p><span className="font-semibold">수집항목</span> : 이메일, 비밀번호, 성명, 휴대폰 번호</p>
+                      <p><span className="font-semibold">보유기간</span> : 회원탈퇴 시</p>
+                      <p><span className="font-semibold">동의 거부 시 안내</span> : 동의를 거부하실 수 있으며, 필수 항목 미동의 시 회원가입이 제한될 수 있습니다.</p>
+                    </div>
+                  )}
+                  {openPolicy === 'marketing' && (
+                    <>
+                      <p>마케팅 정보 수신 동의 시, 이메일/문자 등을 통해 맞춤형 소식과 혜택을 받아보실 수 있습니다.</p>
+                      <p>동의하지 않으셔도 서비스 이용에는 제한이 없습니다. 언제든 동의를 철회할 수 있습니다.</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           <div className="mt-6 text-center text-sm text-gray-700">
             <span className="mr-2">{getText('already')}</span>
             <Link href="/login" className="text-blue-600 hover:underline">{getText('login')}</Link>

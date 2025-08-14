@@ -16,7 +16,7 @@ export default function BoardEditPage() {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [currentUserId] = useState(1); // 현재 로그인한 사용자 ID (예시)
+  // const [currentUserId] = useState(1); // 현재 로그인한 사용자 ID (예시)
   
   // Form states
   const [selectedCategory, setSelectedCategory] = useState('curious');
@@ -31,6 +31,7 @@ export default function BoardEditPage() {
 
   // Mobile detection
   useEffect(() => {
+    console.log('isMobile', isMobile);
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -38,7 +39,7 @@ export default function BoardEditPage() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [isMobile]);
 
   // Fetch user country
   useEffect(() => {
@@ -223,7 +224,7 @@ export default function BoardEditPage() {
     if (editorRef.current && content) {
       editorRef.current.innerHTML = content;
     }
-  }, []);
+  }, [content]);
 
   // Update editor when content changes externally
   useEffect(() => {
