@@ -12,10 +12,10 @@ export interface Samplesupplier {
   image: string;
 }
 
-export const samplesuppliers: [] = [
+export const samplesuppliers: Samplesupplier[] = [
   {
     id: 1,
-    name: "홍길동후후",
+    name: "홍길동 후후",
     category: "정보통신",
     categoryDepth3: "시스템 개발",
     location: "서울특별시 강남구",
