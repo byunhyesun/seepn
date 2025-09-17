@@ -1,11 +1,12 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { samplesuppliers } from "../data/samplesuppliers";
 import { SampleSupplierList } from "../../components/SampleSupplierList";
+import { SearchSidebar } from "../../components/SearchSidebar";
 import {
   getL1Categories,
   getL2Categories,
@@ -419,7 +420,7 @@ function SuppliersContent() {
         searchPlaceholder: "공급사명, 제품명 등을 입력하세요",
         searchButton: "검색",
         resetButton: "초기화",
-        category: "품목",
+        category: "2품목",
         region: "지역",
         companySize: "기업 규모",
         searchKeyword: "검색어",
@@ -616,7 +617,7 @@ function SuppliersContent() {
     if (!selectedL1Area || selectedL2Area === "all") return "";
     return l2Areas.find((a) => a.value === selectedL2Area)?.label || "";
   }, [selectedL1Area, selectedL2Area, l2Areas]);
-
+  const [isOpen, setIsOpen] = useState(true);
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header
@@ -639,20 +640,31 @@ function SuppliersContent() {
               {getText("pageTitle")}
             </h1>
           </div>
+          <div className="flex gap-8 w-full">
+            {/* Left Menu */}
 
+            {/* Content */}
+          </div>
           {/* Content Layout: Left (30%) + Right (70%) on PC, Full width on Mobile */}
+          <SearchSidebar
+            searchKeyword={searchKeyword}
+            setSearchKeyword={setSearchKeyword}
+            getText={getText}
+            getL1Categories={getL1Categories}
+            getL2Categories={getL2Categories}
+            getL3Categories={getL3Categories}
+          />
+          {/* 기존사이드검색바시작 */}
           <div className="flex gap-8">
-            {/* Left Area - Search Section (30%) - Hidden on Mobile */}
-            <div className="hidden md:block w-[30%]">
+            {/* <div className="hidden md:block w-[30%]">
               <div className="bg-white border border-gray-200 rounded-lg p-6 sticky top-8">
                 <h2 className="text-lg font-semibold text-gray-900 mb-6">
                   {getText("searchTitle")}
                 </h2>
 
-                {/* Search Form */}
-                <div className="space-y-4">
-                  {/* Search Input */}
-                  <div>
+                <div className="space-y-4"> */}
+            {/* Search Input */}
+            {/* <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {getText("searchKeyword")}
                     </label>
@@ -663,16 +675,16 @@ function SuppliersContent() {
                       placeholder={getText("searchPlaceholder")}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                  </div>
+                  </div> */}
 
-                  {/* Category Filter - 3 Depth */}
-                  <div>
+            {/* Category Filter - 3 Depth */}
+            {/* <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {getText("category")}
-                    </label>
+                    </label> */}
 
-                    {/* L1 Category */}
-                    <select
+            {/* L1 Category */}
+            {/* <select
                       value={selectedL1Category}
                       onChange={(e) => handleL1CategoryChange(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
@@ -683,10 +695,10 @@ function SuppliersContent() {
                           {category.label}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
 
-                    {/* L2 Category */}
-                    {selectedL1Category && selectedL1Category !== "" && (
+            {/* L2 Category */}
+            {/* {selectedL1Category && selectedL1Category !== "" && (
                       <select
                         value={selectedL2Category}
                         onChange={(e) => handleL2CategoryChange(e.target.value)}
@@ -699,10 +711,10 @@ function SuppliersContent() {
                           </option>
                         ))}
                       </select>
-                    )}
+                    )} */}
 
-                    {/* L3 Category */}
-                    {selectedL2Category && selectedL2Category !== "all" && (
+            {/* L3 Category */}
+            {/* {selectedL2Category && selectedL2Category !== "all" && (
                       <select
                         value={selectedL3Category}
                         onChange={(e) => handleL3CategoryChange(e.target.value)}
@@ -716,16 +728,16 @@ function SuppliersContent() {
                         ))}
                       </select>
                     )}
-                  </div>
+                  </div> */}
 
-                  {/* Region Filter - 2 Depth */}
-                  <div>
+            {/* Region Filter - 2 Depth */}
+            {/* <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {getText("region")}
-                    </label>
+                    </label> */}
 
-                    {/* L1 Area */}
-                    <select
+            {/* L1 Area */}
+            {/* <select
                       value={selectedL1Area}
                       onChange={(e) => handleL1AreaChange(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
@@ -736,10 +748,10 @@ function SuppliersContent() {
                           {area.label}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
 
-                    {/* L2 Area */}
-                    {selectedL1Area && (
+            {/* L2 Area */}
+            {/* {selectedL1Area && (
                       <select
                         value={selectedL2Area}
                         onChange={(e) => handleL2AreaChange(e.target.value)}
@@ -753,10 +765,10 @@ function SuppliersContent() {
                         ))}
                       </select>
                     )}
-                  </div>
+                  </div> */}
 
-                  {/* Company Size Filter */}
-                  <div>
+            {/* Company Size Filter */}
+            {/* <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {getText("companySize")}
                     </label>
@@ -767,10 +779,10 @@ function SuppliersContent() {
                       <option value="small">{getText("smallCorp")}</option>
                       <option value="startup">{getText("startup")}</option>
                     </select>
-                  </div>
+                  </div> */}
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-2 pt-4">
+            {/* Action Buttons */}
+            {/* <div className="flex gap-2 pt-4">
                     <button
                       onClick={() => {
                         setSearchKeyword("");
@@ -790,10 +802,11 @@ function SuppliersContent() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
+            {/* 기존사이드검색바끝 */}
 
             {/* Right Area - Content Section (70% on PC, 100% on Mobile) */}
-            <div className="w-full md:w-[70%]">
+            <div className="w-full mt-6">
               <div className="bg-white border border-gray-200 rounded-lg p-6">
                 {/* Header with View Toggle */}
                 <div className="flex items-center justify-between mb-6">
