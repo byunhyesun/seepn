@@ -334,9 +334,6 @@ export default function Top100Page() {
   // Helpers for scoring (mock where data is unavailable)
   const getFavoritesCount = (s: { id: number }) => (s.id % 50) + 5;
   const getRecentLikes = (s: { likes: number }) => s.likes; // No date data; using likes as recent proxy
-  const calculateOverallScore = (s: { rating: number; reviews: number; likes: number; id: number }) =>
-    (s.rating * 0.4) + (s.reviews * 0.25) + (getRecentLikes(s) * 0.2) + (getFavoritesCount(s) * 0.15);
-  const mdPicks: number[] = [3, 1, 5, 2, 4, 6]; // Admin-configurable order (sample)
 
   // Internationalization function
   const getText = (key: string) => {
@@ -604,6 +601,9 @@ export default function Top100Page() {
   // Sort suppliers based on active tab (after filtering)
   const sortedSuppliers = React.useMemo(() => {
     const suppliers = [...filteredSuppliers];
+    const mdPicks: number[] = [3, 1, 5, 2, 4, 6]; // Admin-configurable order (sample)
+    const calculateOverallScore = (s: { rating: number; reviews: number; likes: number; id: number }) =>
+      (s.rating * 0.4) + (s.reviews * 0.25) + (getRecentLikes(s) * 0.2) + (getFavoritesCount(s) * 0.15);
     
     switch (activeTab) {
       case 'likes':
@@ -632,7 +632,7 @@ export default function Top100Page() {
         // 종합 TOP100: (별점×0.4) + (리뷰수×0.25) + (좋아요수×0.2) + (관심수×0.15)
         return suppliers.sort((a, b) => calculateOverallScore(b) - calculateOverallScore(a));
     }
-  }, [activeTab, filteredSuppliers, mdPicks, calculateOverallScore]);
+  }, [activeTab, filteredSuppliers]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
