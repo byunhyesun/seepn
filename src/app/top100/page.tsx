@@ -374,6 +374,7 @@ export default function Top100Page() {
   // Helpers for scoring (mock where data is unavailable)
   const getFavoritesCount = (s: { id: number }) => (s.id % 50) + 5;
   const getRecentLikes = (s: { likes: number }) => s.likes; // No date data; using likes as recent proxy
+
   const calculateOverallScore = (s: {
     rating: number;
     reviews: number;
@@ -692,6 +693,18 @@ export default function Top100Page() {
   const sortedSuppliers = React.useMemo(() => {
     const suppliers = [...filteredSuppliers];
 
+    const mdPicks: number[] = [3, 1, 5, 2, 4, 6]; // Admin-configurable order (sample)
+    const calculateOverallScore = (s: {
+      rating: number;
+      reviews: number;
+      likes: number;
+      id: number;
+    }) =>
+      s.rating * 0.4 +
+      s.reviews * 0.25 +
+      getRecentLikes(s) * 0.2 +
+      getFavoritesCount(s) * 0.15;
+
     switch (activeTab) {
       case "likes":
         // 좋아요: 최근 3개월치 반영 (데이터 부재로 likes 사용)
@@ -728,7 +741,6 @@ export default function Top100Page() {
         );
     }
   }, [activeTab, filteredSuppliers, mdPicks, calculateOverallScore]);
-  const [isOpen, setIsOpen] = useState(false); // 초기 상태는 '닫힘' (false)
 
   return (
     <div className="min-h-screen bg-white flex flex-col">

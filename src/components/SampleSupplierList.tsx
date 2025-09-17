@@ -1,5 +1,5 @@
 import React from "react";
-import { Samplesupplier } from "../data/samplesuppliers";
+import { Samplesupplier } from "../app/data/samplesuppliers";
 import {
   Grid3X3,
   List,
