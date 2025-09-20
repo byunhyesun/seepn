@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 interface SearchSidebarProps {
   searchKeyword: string;
   setSearchKeyword: (value: string) => void;
@@ -94,7 +93,7 @@ export const SearchSidebar: React.FC<SearchSidebarProps> = ({
       console.error("Error in handleL3CategoryChange:", error);
     }
   };
-  const [isOpen, setIsOpen] = useState(false); // 초기 상태는 '닫힘' (false)
+
   // 지역 선택 핸들러
 
   const getText = (key: string) => {
@@ -268,129 +267,129 @@ export const SearchSidebar: React.FC<SearchSidebarProps> = ({
         <p>{getText("resultsTitle")}</p>
       </div> */}
       <div className="flex gap-8">
-        <div className="w-full md:block">
+        <div className="hidden md:block w-[30%]">
           <div className="bg-white border border-gray-200 rounded-lg p-6 sticky top-8">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {getText("searchKeyword")}
-            </label>
-            <div className="flex">
-              <input
-                type="text"
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                placeholder={getText("searchPlaceholder")}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <button onClick={() => setIsOpen(!isOpen)} className="">
-                {isOpen ? (
-                  <FaChevronUp className="w-4 h-4" />
-                ) : (
-                  <FaChevronDown className="w-4 h-4" />
-                )}
-              </button>
-            </div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
+              {getText("searchTitle")}
+            </h2>
+
             {/* Search Form */}
-            <div className={`mt-4 ${isOpen ? "block" : "hidden"}`}>
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">
-                {getText("searchTitle")}
-              </h2>
+            <div className="space-y-4">
               {/* Search Input */}
-              <div></div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {getText("searchKeyword")}
+                </label>
+                <input
+                  type="text"
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  placeholder={getText("searchPlaceholder")}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
               {/* L1 */}
-              <div className="w-full flex justify-between gap-6">
-                <div className="w-full">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {getText("category")}
-                  </label>
-                  <select
-                    value={selectedL1Category}
-                    onChange={(e) => {
-                      setSelectedL1Category(e.target.value);
-                      setSelectedL2Category("");
-                      setSelectedL3Category("");
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"
-                  >
-                    <option value="">{getText("allCategories")}</option>
-                    {l1Categories.map((cat) => (
-                      <option key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {/* L2 */}
-                <div className="w-full">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {getText("region")}
-                  </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {getText("category")}
+              </label>
+              <select
+                value={selectedL1Category}
+                onChange={(e) => {
+                  setSelectedL1Category(e.target.value);
+                  setSelectedL2Category("");
+                  setSelectedL3Category("");
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"
+              >
+                <option value="">{getText("allCategories")}</option>
+                {l1Categories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
 
-                  {/* L1 Category */}
-                  <select
-                    value={selectedL1Category}
-                    onChange={(e) => handleL1CategoryChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
-                  >
-                    <option value="">{getText("allCategories")}</option>
-                    {l1Categories.map((category) => (
-                      <option key={category.value} value={category.value}>
-                        {category.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              {/* L2 */}
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {getText("region")}
+              </label>
 
-                {/* L3 Category */}
-                <div className="w-full">
-                  {selectedL2Category && selectedL2Category !== "all" && (
-                    <select
-                      value={selectedL3Category}
-                      onChange={(e) => handleL3CategoryChange(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="all">{getText("allCategories")}</option>
-                      {l3Categories.map((category) => (
-                        <option key={category.value} value={category.value}>
-                          {category.label}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {getText("companySize")}
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                      <option value="">{getText("allSizes")}</option>
-                      <option value="large">{getText("largeCorp")}</option>
-                      <option value="medium">{getText("mediumCorp")}</option>
-                      <option value="small">{getText("smallCorp")}</option>
-                      <option value="startup">{getText("startup")}</option>
-                    </select>
-                  </div>
-                </div>
+              {/* L1 Category */}
+              <select
+                value={selectedL1Category}
+                onChange={(e) => handleL1CategoryChange(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+              >
+                <option value="">{getText("allCategories")}</option>
+                {l1Categories.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+
+              {/* L2 Category */}
+              {selectedL1Category && selectedL1Category !== "" && (
+                <select
+                  value={selectedL2Category}
+                  onChange={(e) => handleL2CategoryChange(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                >
+                  <option value="all">{getText("allCategories")}</option>
+                  {l2Categories.map((category) => (
+                    <option key={category.value} value={category.value}>
+                      {category.label}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {/* L3 Category */}
+              {selectedL2Category && selectedL2Category !== "all" && (
+                <select
+                  value={selectedL3Category}
+                  onChange={(e) => handleL3CategoryChange(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">{getText("allCategories")}</option>
+                  {l3Categories.map((category) => (
+                    <option key={category.value} value={category.value}>
+                      {category.label}
+                    </option>
+                  ))}
+                </select>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {getText("companySize")}
+                </label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">{getText("allSizes")}</option>
+                  <option value="large">{getText("largeCorp")}</option>
+                  <option value="medium">{getText("mediumCorp")}</option>
+                  <option value="small">{getText("smallCorp")}</option>
+                  <option value="startup">{getText("startup")}</option>
+                </select>
               </div>
               {/* 현재 선택 결과 */}
               {/* <div className="mt-4 text-sm text-gray-600">
                 선택: {selectedL1Category} &gt; {selectedL2Category} &gt;{" "}
                 {selectedL3Category}
               </div> */}
-              <div className="flex margincenter gap-2 pt-4 w-full md:w-[30%] ">
-                <button
-                  onClick={() => {
-                    setSearchKeyword("");
-                    setSelectedL1Category("");
-                    setSelectedL2Category("all");
-                    setSelectedL3Category("all");
-                  }}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
-                >
-                  {getText("resetButton")}
-                </button>
-                <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
-                  {getText("searchButton")}
-                </button>
-              </div>
+              <button
+                onClick={() => {
+                  setSearchKeyword("");
+                  setSelectedL1Category("");
+                  setSelectedL2Category("all");
+                  setSelectedL3Category("all");
+                }}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+              >
+                {getText("resetButton")}
+              </button>
+              <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                {getText("searchButton")}
+              </button>
             </div>
           </div>
         </div>

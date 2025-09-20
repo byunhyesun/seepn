@@ -1,11 +1,8 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { samplesuppliers } from "../data/samplesuppliers";
-import { SampleSupplierList } from "../../components/SampleSupplierList";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import {
   getL1Categories,
   getL2Categories,
@@ -25,8 +22,6 @@ import {
 } from "lucide-react";
 
 export default function Top100Page() {
-  const [tab, setTab] = useState("top");
-
   const [isBannerVisible, setIsBannerVisible] = React.useState(true);
   const [currentLanguage, setCurrentLanguage] = React.useState("ko");
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -650,45 +645,6 @@ export default function Top100Page() {
   };
 
   // Sort suppliers based on active tab (after filtering)
-
-  const filteredSuppliers1 = (() => {
-    switch (tab) {
-      case "top":
-        return samplesuppliers.slice(0, 10); // top 10
-      case "likes":
-        return [...samplesuppliers].sort(
-          (a, b) => getRecentLikes(b) - getRecentLikes(a)
-        ); // rating 정렬 예시
-      case "rating":
-        // 별점: 평균 + 리뷰수 보정 (리뷰 5건 미만은 제외)
-
-        return [...samplesuppliers]
-          .filter((s) => s.reviews >= 5)
-          .sort(
-            (a, b) =>
-              b.rating + b.reviews * 0.01 - (a.rating + a.reviews * 0.01)
-          );
-      case "reviews":
-        return [...samplesuppliers].sort((a, b) => b.reviews - a.reviews); // 태그 개수 기준 정렬 예시
-      case "md":
-        // MD 추천: 운영자 설정 순서 우선 (없는 항목은 뒤에)
-        const indexOf = (id: number) => {
-          const idx = mdPicks.indexOf(id);
-          return idx === -1 ? Number.MAX_SAFE_INTEGER : idx;
-        };
-        return [...samplesuppliers].sort(
-          (a, b) => indexOf(a.id) - indexOf(b.id)
-        );
-      case "ai":
-        // AI 추천: 개인화 데이터 부재로 임시 점수 (rating*10 + likes*0.02)
-        return [...samplesuppliers].sort(
-          (a, b) =>
-            b.rating * 10 + b.likes * 0.02 - (a.rating * 10 + a.likes * 0.02)
-        );
-      default:
-        return samplesuppliers;
-    }
-  })();
   const sortedSuppliers = React.useMemo(() => {
     const suppliers = [...filteredSuppliers];
 
@@ -728,7 +684,6 @@ export default function Top100Page() {
         );
     }
   }, [activeTab, filteredSuppliers, mdPicks, calculateOverallScore]);
-  const [isOpen, setIsOpen] = useState(false); // 초기 상태는 '닫힘' (false)
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -754,89 +709,75 @@ export default function Top100Page() {
           </div>
 
           {/* Content Layout: Left (30%) + Right (70%) on PC, Full width on Mobile */}
-          <div className="gap-8">
+          <div className="flex gap-8">
             {/* Left Area - Search Section (30%) - Hidden on Mobile */}
-            <div className="">
+            <div className="hidden md:block w-[30%]">
               <div className="bg-white border border-gray-200 rounded-lg p-6 sticky top-8">
-                <div className="flex justify-between">
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    {getText("leftTitle")}
-                  </h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-6">
+                  {getText("leftTitle")}
+                </h2>
 
-                  {/* Search Form */}
-                  <button onClick={() => setIsOpen(!isOpen)} className="">
-                    {isOpen ? (
-                      <FaChevronUp className="w-4 h-4" />
-                    ) : (
-                      <FaChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-                <div>
-                  <div className={`mt-4 ${!isOpen ? "block" : "hidden"}`}>
-                    {/* 여기에 내용이 표시됩니다. */}
-                    <div className="flex">
-                      {/* Category Select */}
-                      <div className="w-full md:w-[100%] mr-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          {getText("category")}
-                        </label>
-                        <select
-                          value={selectedCategory}
-                          onChange={handleCategoryChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                          <option value="">{getText("allCategories")}</option>
-                          {l1Categories.map((category) => (
-                            <option key={category.value} value={category.value}>
-                              {category.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                {/* Search Form */}
+                <div className="space-y-4">
+                  {/* Category Select */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {getText("category")}
+                    </label>
+                    <select
+                      value={selectedCategory}
+                      onChange={handleCategoryChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">{getText("allCategories")}</option>
+                      {l1Categories.map((category) => (
+                        <option key={category.value} value={category.value}>
+                          {category.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                      {/* Area Select */}
-                      <div className="w-full md:w-[100%] ml-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          {getText("region")}
-                        </label>
-                        <select
-                          value={selectedArea}
-                          onChange={handleAreaChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                          <option value="">{getText("allRegions")}</option>
-                          {l1Areas.map((area) => (
-                            <option key={area.value} value={area.value}>
-                              {area.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                  {/* Area Select */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {getText("region")}
+                    </label>
+                    <select
+                      value={selectedArea}
+                      onChange={handleAreaChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">{getText("allRegions")}</option>
+                      {l1Areas.map((area) => (
+                        <option key={area.value} value={area.value}>
+                          {area.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                      {/* Action Buttons */}
-                    </div>
-                    <div className="flex margincenter gap-2 pt-4 w-full md:w-[30%] ">
-                      <button
-                        onClick={handleReset}
-                        className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
-                      >
-                        {getText("resetButton")}
-                      </button>
-                      <button
-                        onClick={handleSearch}
-                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                      >
-                        {getText("searchButton")}
-                      </button>
-                    </div>
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-4">
+                    <button
+                      onClick={handleReset}
+                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                    >
+                      {getText("resetButton")}
+                    </button>
+                    <button
+                      onClick={handleSearch}
+                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    >
+                      {getText("searchButton")}
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Right Area - Content Section (70%) */}
-            <div className="w-full mt-6">
+            <div className="w-full md:w-[70%]">
               <div className="bg-white border border-gray-200 rounded-lg p-6">
                 {/* Header */}
                 <div className="mb-6">
@@ -844,38 +785,9 @@ export default function Top100Page() {
                     {getText("resultsTitle")}
                   </h2>
                 </div>
-                {/* Tab Menu */}
-                <div>
-                  <div className="test">
-                    {/* 탭 UI */}
-                    <div className="flex space-x-4 mb-4">
-                      {(
-                        [
-                          { key: "top", label: "종합 TOP 100" },
-                          { key: "likes", label: "좋아요" },
-                          { key: "rating", label: "별점" },
-                          { key: "comments", label: "리뷰" },
-                          { key: "md", label: "MD 추천" },
-                          { key: "ai", label: "AI 추천" },
-                        ] as const
-                      ).map((tabItem) => (
-                        <button
-                          key={tabItem.key}
-                          onClick={() => setTab(tabItem.key)}
-                          className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                            tab === tabItem.key
-                              ? "border-blue-500 text-blue-600"
-                              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                          }`}
-                        >
-                          {tabItem.label}
-                        </button>
-                      ))}
-                    </div>
 
-                    {/* 자식 컴포넌트 */}
-                    <SampleSupplierList samplesuppliers={filteredSuppliers1} />
-                  </div>
+                {/* Tab Menu */}
+                <div className="mb-6">
                   {/* PC Tab Menu */}
                   <div className="hidden md:block border-b border-gray-200">
                     <nav className="-mb-px flex space-x-8">
